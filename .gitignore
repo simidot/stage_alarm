@@ -37,4 +37,7 @@ out/
 .vscode/
 
 ### yaml ###
-*.yaml
+#*.yaml
+
+### db.sqlite ###
+db.sqlite
