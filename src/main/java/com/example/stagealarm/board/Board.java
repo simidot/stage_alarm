@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.User;
 
 @Getter
 @Builder
@@ -13,5 +14,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Board  extends BaseEntity {
-  // todo 좀 더 생각 필요
+  private String title;
+  private String content;
+  private String activate;
+  private Long views;
+  private User userId;
+  private Category categoryId;
 }

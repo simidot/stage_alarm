@@ -13,6 +13,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Category extends BaseEntity {
-  // todo 좀 더 생각 필요
   private String category;
 }
