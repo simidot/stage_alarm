@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<!--공통 js/css 관리하는 영역-->
+<th:block th:replace="~{layout/layoutConfig :: configFragment}"></th:block>
+
+<body>
+<!--header 영역 참조-->
+<th:block th:replace="~{header/header :: headerFragment}"></th:block>
+
+<!--main 영역 참조-->
+<div id="content-wrapper" style="display: flex;">
+    <div id="sidebar" class="sidebar col-md-3 col-lg-2 d-md-block">
+        <!-- Sidebar -->
+        <div>
+<!--        <div th:if="${#httpServletRequest.requestURI.startsWith('/admin')}">-->
+            <th:block th:replace="~{sidebar/sidebar :: sidebarFragment}"></th:block>
+        </div>
+<!--        <div th:unless="${#httpServletRequest.requestURI.startsWith('/admin')}">-->
+<!--            <th:block th:replace="~{sidebar/sidebar :: sidebarFragment}"></th:block>-->
+<!--        </div>-->
+    </div>
+
+    <div id="main-content" style="flex: 1;">
+        <!-- main content -->
+        <th:block layout:fragment="content"></th:block>
+    </div>
+</div>
+
+<!--footer 영역 참조-->
+<th:block th:replace="~{footer/footer :: footerFragment}"></th:block>
+
+</body>
+</html>
