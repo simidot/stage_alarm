@@ -39,3 +39,5 @@
 ---
 
 Github Repository URL: https://github.com/TECHIT-TEAM-i5/stage_alarm
+
+![img.png](img.png)
