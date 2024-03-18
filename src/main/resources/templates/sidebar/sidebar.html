@@ -1,0 +1,48 @@
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="sidebarFragment">
+<nav>
+    <div style="padding-top: 20px;">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="#!">Shows</a>
+            </li>
+            <li class="nav-item" th:onclick="|toggleComSubMenu();|">
+                <a class="nav-link">Community</a>
+                <!-- Wrap the sub-menu items in a container with an id -->
+                <div id="communitySubMenu" style="display: none;">
+                    <ul class="nav flex-column ml-3">
+                        <li class="nav-item">
+                            <a class="nav-link sub-menu" href="#!">공연 후기</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sub-menu" href="#!">동행 모집</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sub-menu" href="#!">아티스트</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sub-menu" href="#!">자유 </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item" th:onclick="|toggleMySubMenu();|">
+                <a class="nav-link">My Page</a>
+                <!-- Wrap the sub-menu items in a container with an id -->
+                <div id="myPageSubMenu" style="display: none;">
+                    <ul class="nav flex-column ml-3">
+                        <li class="nav-item">
+                            <a class="nav-link sub-menu" href="#!">My Info</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sub-menu" href="#!">My Subscribes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sub-menu" href="#!">My Likes</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+</html>
