@@ -1,15 +1,15 @@
 package com.example.stagealarm.board;
 
 import com.example.stagealarm.BaseEntity;
+import com.example.stagealarm.image.entity.Image;
 import com.example.stagealarm.user.UserEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -27,4 +27,8 @@ public class Board  extends BaseEntity {
   private UserEntity userEntity;
   @ManyToOne(fetch = FetchType.LAZY)
   private Category category;
+
+  @OneToMany(cascade = CascadeType.ALL)
+  private List<Image> imageList;
+
 }

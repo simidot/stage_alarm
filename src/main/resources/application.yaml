@@ -15,6 +15,11 @@ spring:
     database-platform: org.hibernate.community.dialect.SQLiteDialect
     show-sql: true
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
 
 jwt:
   secret: sakjhgdfksljbvdkbjkebwflkasjknvxckljw
@@ -26,3 +31,15 @@ thymeleaf:
   suffix: .html
   enabled: true
 
+cloud:
+  aws:
+    s3:
+      bucket: stage-alarm
+    credentials:
+      access-key:
+      secret-key:
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
