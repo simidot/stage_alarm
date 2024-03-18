@@ -1,9 +1,6 @@
 package com.example.stagealarm;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -17,5 +14,6 @@ public class BaseEntity {
   private Long id;
 
   @CreatedDate
+  @Column(nullable = false)
   private LocalDateTime createdAt;
 }
