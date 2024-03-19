@@ -1,6 +1,7 @@
-package com.example.stagealarm.genre;
+package com.example.stagealarm.genre.entity;
 
 import com.example.stagealarm.BaseEntity;
+import com.example.stagealarm.genre.entity.Genre;
 import com.example.stagealarm.user.UserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
