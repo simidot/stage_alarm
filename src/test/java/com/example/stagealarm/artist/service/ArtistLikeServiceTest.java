@@ -46,7 +46,7 @@ class ArtistLikeServiceTest {
 //                .name("아이유")
 //                .build();
 
-        UserEntity userEntity = new UserEntity(1L);
+        UserEntity userEntity = new UserEntity();
         Artist artist = new Artist(2L);
 
         System.out.println(artist.getId());
@@ -89,7 +89,7 @@ class ArtistLikeServiceTest {
         dto.setUserId(1L);
         dto.setArtistId(2L);
 
-        UserEntity userEntity = new UserEntity(1L);
+        UserEntity userEntity = new UserEntity();
         Artist artist = new Artist(2L);
 
         ArtistLike like = new ArtistLike();
@@ -105,6 +105,5 @@ class ArtistLikeServiceTest {
         //then
         assertDoesNotThrow(() -> artistLikeService.deleteLike(dto));
         verify(artistLikeRepository, times(1)).delete(like);
-
     }
 }
