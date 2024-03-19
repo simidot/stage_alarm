@@ -21,6 +21,10 @@ public class Artist extends BaseEntity {
   private String gender;
   private String profileImg;
 
+  public Artist(Long id) {
+    super();
+  }
+
   public static Artist fromDto(ArtistDto artistDto){
     return Artist.builder()
             .name(artistDto.getName())
