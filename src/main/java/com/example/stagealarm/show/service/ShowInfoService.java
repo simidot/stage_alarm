@@ -21,7 +21,7 @@ public class ShowInfoService {
 
     // 공연 정보 등록
     @Transactional
-    public ResponseEntity<Void> create(ShowInfoDto dto, MultipartFile file) {
+    public void create(ShowInfoDto dto, MultipartFile file) {
         // 관리자 계정인지 아닌지 확인하는 과정 추가로 필요
         ShowInfo showInfo = ShowInfo.builder()
                 .date(dto.getDate())
@@ -37,7 +37,6 @@ public class ShowInfoService {
                 .build();
 
         showInfoRepository.save(showInfo);
-        return ResponseEntity.ok().build();
     }
 
     // 공연 정보 조회 (전체)
@@ -54,7 +53,7 @@ public class ShowInfoService {
 
     // 공연 정보 업데이트
     @Transactional
-    public ResponseEntity<Void> update(Long id, ShowInfoDto dto) {
+    public void update(Long id, ShowInfoDto dto) {
         // 관리자 계정인지 아닌지 확인하는 과정 추가로 필요
 
         ShowInfo showInfo = showInfoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -70,13 +69,11 @@ public class ShowInfoService {
         showInfo.setPosterImage("image");
         showInfo.setPrice(dto.getPrice());
 
-        return ResponseEntity.ok().build();
     }
 
     @Transactional
-    public ResponseEntity<Void> delete(Long id) {
+    public void delete(Long id) {
         showInfoRepository.deleteById(id);
-        return ResponseEntity.ok().build();
     }
 
 }

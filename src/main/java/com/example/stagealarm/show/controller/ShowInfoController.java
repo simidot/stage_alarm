@@ -19,14 +19,17 @@ public class ShowInfoController {
     private final ShowInfoService showInfoService;
 
     @GetMapping
-    public void readAll(Model model) {
+    public String readAll(Model model) {
         List<ShowInfo> showInfos = showInfoService.readAll();
         model.addAttribute("shows", showInfos);
+
+        return "content/shows";
     }
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody ShowInfoDto dto, MultipartFile file) {
-        return showInfoService.create(dto, file);
+        showInfoService.create(dto, file);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}")
@@ -37,12 +40,13 @@ public class ShowInfoController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable("id") Long id, @RequestBody ShowInfoDto dto) {
-        ResponseEntity<Void> update = showInfoService.update(id, dto);
-        return update;
+        showInfoService.update(id, dto);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        return showInfoService.delete(id);
+        showInfoService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

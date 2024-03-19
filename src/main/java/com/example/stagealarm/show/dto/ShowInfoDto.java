@@ -6,13 +6,14 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Builder
 @AllArgsConstructor
 public class ShowInfoDto {
     private LocalDate date;
-    private LocalDateTime startTime;
+    private LocalTime startTime;
     private Integer hours;
     private Integer duration;
     private String location;
