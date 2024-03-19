@@ -1,7 +1,7 @@
-package com.example.stagealarm.show;
+package com.example.stagealarm.show.entity;
 
 import com.example.stagealarm.BaseEntity;
-import com.example.stagealarm.genre.Genre;
+import com.example.stagealarm.user.UserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class ShowGenre extends BaseEntity {
-  @ManyToOne(fetch = FetchType.LAZY)
-  private Genre genre;
+public class ShowLike extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   private ShowInfo showInfo;
+  @ManyToOne(fetch = FetchType.LAZY)
+  private UserEntity userEntity;
 }
