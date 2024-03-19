@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Builder
@@ -19,7 +20,7 @@ public class ShowInfo extends BaseEntity {
   @Setter
   private LocalDate date; //공연 날짜
   @Setter
-  private LocalDateTime startTime; //공연 시작 시간
+  private LocalTime startTime; //공연 시작 시간
   @Setter
   private Integer hours; //예상 공연 시간
   @Setter
