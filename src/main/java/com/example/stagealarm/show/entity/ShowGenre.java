@@ -1,7 +1,7 @@
 package com.example.stagealarm.show.entity;
 
 import com.example.stagealarm.BaseEntity;
-import com.example.stagealarm.genre.Genre;
+import com.example.stagealarm.genre.entity.Genre;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
