@@ -1,6 +1,6 @@
 package com.example.stagealarm.artist.service;
 
-import com.example.stagealarm.artist.Artist;
+import com.example.stagealarm.artist.entity.Artist;
 import com.example.stagealarm.artist.dto.ArtistDto;
 import com.example.stagealarm.artist.repo.ArtistRepository;
 import lombok.RequiredArgsConstructor;

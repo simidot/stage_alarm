@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <title>subscribe</title>
+<body>
+
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
+        <div class="container mt-5">
+            <h3 class="text-left">구독 서비스</h3>
+            <hr>
+            <div class="row mt-5">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">아티스트 구독</h5>
+                            <hr>
+                            <div id="artistList" class="container mt-5">
+                                <div class="row justify-content-start">
+                                    <!-- Ajax로 받아온 아티스트 목록을 동적으로 추가할 공간 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">장르 구독</h5>
+                            <hr>
+                            <!-- 여기에 장르 구독 관련 내용을 추가 -->
+                            <div id="genreList" class="container mt-5">
+                                <div class="row justify-content-start">
+                                    <!-- Ajax로 받아온 아티스트 목록을 동적으로 추가할 공간 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<script th:inline="javascript">
+    // Ajax로 아티스트 목록을 가져와서 테이블에 추가하는 코드 작성
+    $(document).ready(function () {
+        $.ajax({
+            url: "/artist",
+            type: "GET",
+            success: function(data) {
+                // 받아온 아티스트 목록을 표시
+                const $artistList = $('#artistList .row');
+                $.each(data, function(index, artist) {
+                    var artistCard =
+                        '<div class="col-md-4">' +
+                        '<div class="text-center">' +
+                        '<img src="' + artist.profileImg + '" class="rounded-circle img-thumbnail mb-3" alt="Artist Profile Picture" width="200" height="200">' +
+                        '<h4>' + artist.name + '</h4>' +
+                        '<p>나이: ' + artist.age + '</p>' +
+                        '<p>성별: ' + artist.gender + '</p>' +
+                        '<button class="btn btn-outline-primary like-btn" data-artist-id="' + artist.id + '">좋아요</button>' +
+                        '</div>' +
+                        '</div>';
+
+                    // 가로로 3개씩 채우기
+                    if (index % 3 === 0) {
+                        $artistList.append('<div class="w-100"></div>'); // 줄 바꾸기
+                    }
+                    $artistList.append(artistCard);
+                });
+
+                // 좋아요 버튼 클릭 이벤트 처리
+                $('.like-btn').click(function() {
+                    var artistId = $(this).data('artist-id');
+                    // 여기에 좋아요 기능을 추가할 수 있습니다.
+                    console.log('좋아요 클릭 - 아티스트 ID:', artistId);
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX 요청 실패:", status, error);
+            }
+        });
+
+        $.ajax({
+            url: "/genre",
+            type: "GET",
+            success: function(data) {
+                // 받아온 아티스트 목록을 표시
+                const $genreList = $('#genreList .row');
+                $.each(data, function(index, genre) {
+                    const genreHtml = '<div class="d-flex justify-content-between align-items-center mb-3">' +
+                        '<span>' + genre.name + '</span>' +
+                        '<button class="btn btn-outline-primary subscribe-btn" data-id="' + genre.id + '">구독</button>' +
+                        '</div><br>';
+                    $genreList.append(genreHtml);
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX 요청 실패:", status, error);
+            }
+        });
+        // 장르 구독 버튼 클릭 이벤트 처리
+        $(document).on('click', '.subscribe-btn', function () {
+            const genreId = $(this).data('id');
+            $.ajax({
+                url: "/genre"
+            })
+            // 여기에 장르 구독 기능을 추가할 수 있습니다.
+            console.log('장르 구독 클릭 - 장르 ID:', genreId);
+        });
+    });
+</script>
+</body>
+</html>

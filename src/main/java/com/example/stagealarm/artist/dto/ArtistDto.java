@@ -1,6 +1,6 @@
 package com.example.stagealarm.artist.dto;
 
-import com.example.stagealarm.artist.Artist;
+import com.example.stagealarm.artist.entity.Artist;
 import lombok.*;
 
 import java.time.LocalDateTime;

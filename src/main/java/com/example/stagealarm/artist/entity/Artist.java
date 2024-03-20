@@ -1,4 +1,4 @@
-package com.example.stagealarm.artist;
+package com.example.stagealarm.artist.entity;
 
 import com.example.stagealarm.BaseEntity;
 import com.example.stagealarm.artist.dto.ArtistDto;

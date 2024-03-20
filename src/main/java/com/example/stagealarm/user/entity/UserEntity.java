@@ -1,14 +1,10 @@
-package com.example.stagealarm.user;
+package com.example.stagealarm.user.entity;
 
 import com.example.stagealarm.BaseEntity;
-import com.example.stagealarm.board.Board;
 import com.example.stagealarm.user.dto.UserDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Builder

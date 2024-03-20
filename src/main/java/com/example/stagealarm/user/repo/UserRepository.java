@@ -1,6 +1,6 @@
 package com.example.stagealarm.user.repo;
 
-import com.example.stagealarm.user.UserEntity;
+import com.example.stagealarm.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

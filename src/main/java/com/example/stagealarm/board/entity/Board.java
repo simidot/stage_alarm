@@ -2,7 +2,7 @@ package com.example.stagealarm.board.entity;
 
 import com.example.stagealarm.BaseEntity;
 import com.example.stagealarm.image.entity.Image;
-import com.example.stagealarm.user.UserEntity;
+import com.example.stagealarm.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

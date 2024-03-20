@@ -1,7 +1,5 @@
 package com.example.stagealarm.genre.dto;
 
-import com.example.stagealarm.artist.Artist;
-import com.example.stagealarm.artist.dto.ArtistDto;
 import com.example.stagealarm.genre.entity.Genre;
 import lombok.*;
 

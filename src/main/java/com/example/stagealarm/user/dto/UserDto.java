@@ -1,6 +1,6 @@
 package com.example.stagealarm.user.dto;
 
-import com.example.stagealarm.user.UserEntity;
+import com.example.stagealarm.user.entity.UserEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
