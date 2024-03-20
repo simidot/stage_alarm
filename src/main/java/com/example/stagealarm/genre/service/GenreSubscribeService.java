@@ -5,7 +5,7 @@ import com.example.stagealarm.genre.entity.Genre;
 import com.example.stagealarm.genre.entity.GenreSubscribe;
 import com.example.stagealarm.genre.repo.GenreRepository;
 import com.example.stagealarm.genre.repo.GenreSubscribeRepo;
-import com.example.stagealarm.user.UserEntity;
+import com.example.stagealarm.user.entity.UserEntity;
 import com.example.stagealarm.user.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

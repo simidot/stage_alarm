@@ -4,7 +4,7 @@ import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.jwt.JwtRequestDto;
 import com.example.stagealarm.jwt.JwtResponseDto;
 import com.example.stagealarm.jwt.JwtTokenUtils;
-import com.example.stagealarm.user.UserEntity;
+import com.example.stagealarm.user.entity.UserEntity;
 import com.example.stagealarm.user.dto.CustomUserDetails;
 import com.example.stagealarm.user.dto.UserDto;
 import com.example.stagealarm.user.repo.UserRepository;

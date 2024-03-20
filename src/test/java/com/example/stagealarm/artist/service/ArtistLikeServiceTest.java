@@ -1,11 +1,11 @@
 package com.example.stagealarm.artist.service;
 
-import com.example.stagealarm.artist.Artist;
-import com.example.stagealarm.artist.ArtistLike;
+import com.example.stagealarm.artist.entity.Artist;
+import com.example.stagealarm.artist.entity.ArtistLike;
 import com.example.stagealarm.artist.dto.ArtistLikeDto;
 import com.example.stagealarm.artist.repo.ArtistLikeRepository;
 import com.example.stagealarm.artist.repo.ArtistRepository;
-import com.example.stagealarm.user.UserEntity;
+import com.example.stagealarm.user.entity.UserEntity;
 import com.example.stagealarm.user.repo.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

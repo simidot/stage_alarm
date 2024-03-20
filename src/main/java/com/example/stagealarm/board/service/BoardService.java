@@ -8,7 +8,7 @@ import com.example.stagealarm.board.entity.Board;
 import com.example.stagealarm.board.repo.BoardRepository;
 import com.example.stagealarm.board.repo.QBoardRepo;
 import com.example.stagealarm.facade.AuthenticationFacade;
-import com.example.stagealarm.user.UserEntity;
+import com.example.stagealarm.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

@@ -2,7 +2,7 @@ package com.example.stagealarm.genre.repo;
 
 import com.example.stagealarm.genre.entity.Genre;
 import com.example.stagealarm.genre.entity.GenreSubscribe;
-import com.example.stagealarm.user.UserEntity;
+import com.example.stagealarm.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

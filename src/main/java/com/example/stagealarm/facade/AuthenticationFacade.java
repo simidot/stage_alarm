@@ -1,6 +1,6 @@
 package com.example.stagealarm.facade;
 
-import com.example.stagealarm.user.UserEntity;
+import com.example.stagealarm.user.entity.UserEntity;
 import com.example.stagealarm.user.dto.CustomUserDetails;
 import com.example.stagealarm.user.repo.UserRepository;
 import lombok.RequiredArgsConstructor;

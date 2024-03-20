@@ -1,4 +1,4 @@
-package com.example.stagealarm.alarm;
+package com.example.stagealarm.alarm.entity;
 
 import com.example.stagealarm.BaseEntity;
 import jakarta.persistence.Entity;
