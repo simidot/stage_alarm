@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+  <title>Category</title>
+  <link rel="stylesheet" type="text/css" href="/css/category.css">
+</head>
+<body>
+
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+  <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
+    <div>
+      <div class="board-container">
+        <div class="board-header">
+          <span>[[${board}]] 게시판</span>
+          <div class="view-options">
+            <button id="dateSort">작성일 순</button>
+            <button id="viewSort">조회 순</button>
+          </div>
+        </div>
+        <table>
+          <thead class="table-header">
+          <tr>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성일</th>
+            <th>조회</th>
+          </tr>
+          </thead>
+          <tbody>
+          <!-- 게시글 목록 -->
+            <tr th:each="row: ${rows}">
+              <td th:href="@{/boards/deatail/{boardId}(boardId=${row.id})}" th:text="${row.title}">제목</td>
+              <td th:text="${row.writer}">작성자</td>
+              <td th:text="${row.date}">작성일</td>
+              <td th:text="${row.views}">조회</td>
+            </tr>
+          </tbody>
+        </table>
+        <button class="write-btn">글쓰기</button>
+        <div class="pagination">
+          <!-- 페이지 넘김 버튼 -->
+        </div>
+        <div class="search-box">
+          <input type="text" placeholder="검색">
+          <button>검색</button>
+        </div>
+      </div>
+    </div>
+    <br>
+  </div>
+</main>
+
+</body>
+</html>
