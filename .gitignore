@@ -41,3 +41,6 @@ out/
 
 ### db.sqlite ###
 db.sqlite
+
+### data.sql ###
+data.sql
