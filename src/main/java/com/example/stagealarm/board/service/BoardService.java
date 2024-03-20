@@ -7,13 +7,14 @@ import com.example.stagealarm.board.entity.ActivateEnum;
 import com.example.stagealarm.board.entity.Board;
 import com.example.stagealarm.board.repo.BoardRepository;
 import com.example.stagealarm.board.repo.QBoardRepo;
+import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.user.UserEntity;
-import com.example.stagealarm.user.test.AuthenticationFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,7 +32,7 @@ public class BoardService {
   public BoardDto createBoard(BoardDto dto) {
     try {
       // 유저 정보 가져오기
-      UserEntity user = auth.getAuth();
+      UserEntity user = (UserEntity) auth.getAuth().getPrincipal();
 
       // 생성
       Board newBoard = Board.builder()
@@ -72,7 +73,7 @@ public class BoardService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
       // 수정 요청자 정보 가져오기
-      UserEntity user = auth.getAuth();
+      UserEntity user = (UserEntity) auth.getAuth().getPrincipal();
 
       // 권한 확인
       if (!user.getId().equals(targetBoard.getUserEntity().getId()))
@@ -99,7 +100,7 @@ public class BoardService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
       // 삭제 요청자 정보 가져오기
-      UserEntity user = auth.getAuth();
+      UserEntity user = (UserEntity) auth.getAuth().getPrincipal();
 
       // 권한 확인
       if (!user.getId().equals(targetBoard.getUserEntity().getId()))

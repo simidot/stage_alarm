@@ -1,9 +1,12 @@
 package com.example.stagealarm.board.entity;
 
 import com.example.stagealarm.BaseEntity;
+import com.example.stagealarm.image.entity.Image;
 import com.example.stagealarm.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -28,4 +31,7 @@ public class Board  extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   private UserEntity userEntity;
+
+  @OneToMany(cascade = CascadeType.ALL)
+  private List<Image> imageList;
 }

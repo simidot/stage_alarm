@@ -1,7 +1,6 @@
 package com.example.stagealarm.show.entity;
 
 import com.example.stagealarm.BaseEntity;
-import com.example.stagealarm.board.Comment;
 import com.example.stagealarm.user.UserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,5 +22,5 @@ public class ShowComments extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   private ShowInfo showInfo;
   @ManyToOne(fetch = FetchType.LAZY)
-  private Comment parentComment;
+  private ShowComments parentComment;
 }

@@ -1,7 +1,7 @@
 package com.example.stagealarm.image.entity;
 
 import com.example.stagealarm.BaseEntity;
-import com.example.stagealarm.board.Board;
+import com.example.stagealarm.board.entity.Board;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
