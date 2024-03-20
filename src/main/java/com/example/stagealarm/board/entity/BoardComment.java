@@ -1,4 +1,4 @@
-package com.example.stagealarm.board;
+package com.example.stagealarm.board.entity;
 
 import com.example.stagealarm.BaseEntity;
 import com.example.stagealarm.user.UserEntity;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Comment extends BaseEntity {
+public class BoardComment extends BaseEntity {
   private String content;
   private Integer depth; //todo: enum도 괜찮음. 구현에서 정하기
 
@@ -24,5 +24,5 @@ public class Comment extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   private Board board;
   @ManyToOne(fetch = FetchType.LAZY)
-  private Comment parentComment;
+  private BoardComment parentComment;
 }
