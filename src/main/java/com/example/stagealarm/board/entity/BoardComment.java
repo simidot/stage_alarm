@@ -5,10 +5,7 @@ import com.example.stagealarm.user.entity.UserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
@@ -16,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardComment extends BaseEntity {
+  @Setter
   private String content;
   private Integer depth; //todo: enum도 괜찮음. 구현에서 정하기
 

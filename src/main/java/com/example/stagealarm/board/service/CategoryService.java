@@ -14,9 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -63,6 +60,7 @@ public class CategoryService {
     return boardPage.map(BoardDto::fromEntity);
   }
 
+  // 어떤 게시판인지 반환
   public String returnBoard(String category) {
     Long categoryId = makeCategoryId(category);
 
