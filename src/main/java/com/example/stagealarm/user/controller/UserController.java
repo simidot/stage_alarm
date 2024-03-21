@@ -1,14 +1,20 @@
 package com.example.stagealarm.user.controller;
 
+import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.jwt.JwtRequestDto;
 import com.example.stagealarm.jwt.JwtResponseDto;
 import com.example.stagealarm.user.dto.UserDto;
 import com.example.stagealarm.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -16,14 +22,17 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
+    private final AuthenticationFacade facade;
 
-    // 로그인 하기(jwt 토큰 발급 받기)
+    // 로그인 하기
     @PostMapping("/login")
     public JwtResponseDto token(
             @RequestBody
             JwtRequestDto dto
     ){
+        log.info("로그인 하기");
         return userService.issueToken(dto);
+
     }
 
     // 회원 가입
@@ -84,5 +93,15 @@ public class UserController {
     }
 
 
+    // 로그인 이미지 클릭시 토글화면을 위함
+    @GetMapping("/auth/status")
+    public ResponseEntity<?> isAuthenticated() {
+        Map<String, Object> response = new HashMap<>();
 
+        // 인증된 사용자면 ture 익명 사용자면 false
+        boolean isAuthenticated = !(facade.getAuth() instanceof AnonymousAuthenticationToken);
+
+        response.put("isAuthenticated", isAuthenticated);
+        return ResponseEntity.ok(response);
+    }
 }
