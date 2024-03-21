@@ -1,6 +1,6 @@
 package com.example.stagealarm.config;
 
-import com.example.stagealarm.user.UserEntity;
+import com.example.stagealarm.user.entity.UserEntity;
 import com.example.stagealarm.user.repo.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

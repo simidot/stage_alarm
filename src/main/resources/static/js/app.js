@@ -24,12 +24,17 @@ window.onclick = function(event) {
 
 // sidebar 토글 js
 function toggleMySubMenu() {
-    var myPageSubMenu = document.getElementById('myPageSubMenu');
+    const myPageSubMenu = document.getElementById('myPageSubMenu');
     myPageSubMenu.style.display = (myPageSubMenu.style.display === 'none' || myPageSubMenu.style.display === '') ? 'block' : 'none';
 }
 
 function toggleComSubMenu() {
-    var communitySubMenu = document.getElementById('communitySubMenu');
+    const communitySubMenu = document.getElementById('communitySubMenu');
     communitySubMenu.style.display = (communitySubMenu.style.display === 'none' || communitySubMenu.style.display === '') ? 'block' : 'none';
+}
+
+function toggleShowSubMenu() {
+    const showSubMenu = document.getElementById('showSubMenu');
+    showSubMenu.style.display = (showSubMenu.style.display === 'none' || showSubMenu.style.display === '') ? 'block' : 'none';
 }
 

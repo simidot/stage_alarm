@@ -1,4 +1,4 @@
-package com.example.stagealarm.board;
+package com.example.stagealarm.alarm.entity;
 
 import com.example.stagealarm.BaseEntity;
 import jakarta.persistence.Entity;
@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category extends BaseEntity {
-  private String category;
+public class Alarm extends BaseEntity {
+  private String message;
 }

@@ -1,7 +1,8 @@
-package com.example.stagealarm.show.entity;
+package com.example.stagealarm.artist.entity;
 
 import com.example.stagealarm.BaseEntity;
 import com.example.stagealarm.artist.entity.Artist;
+import com.example.stagealarm.genre.entity.Genre;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
@@ -15,10 +16,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class ShowArtist extends BaseEntity {
-  @ManyToOne(fetch = FetchType.LAZY)
-  private ShowInfo showInfo;
+public class ArtistGenre extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   private Artist artist;
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Genre genre;
 }
