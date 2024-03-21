@@ -1,17 +1,18 @@
 package com.example.stagealarm.show.service;
 
-import com.example.stagealarm.show.dto.ShowInfoDto;
+import com.example.stagealarm.show.dto.ShowInfoRequestDto;
+import com.example.stagealarm.show.dto.ShowInfoResponseDto;
 import com.example.stagealarm.show.entity.ShowInfo;
 import com.example.stagealarm.show.repo.ShowInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,7 +22,7 @@ public class ShowInfoService {
 
     // 공연 정보 등록
     @Transactional
-    public void create(ShowInfoDto dto, MultipartFile file) {
+    public ShowInfoResponseDto create(ShowInfoRequestDto dto, MultipartFile file) {
         // 관리자 계정인지 아닌지 확인하는 과정 추가로 필요
         ShowInfo showInfo = ShowInfo.builder()
                 .date(dto.getDate())
@@ -36,24 +37,29 @@ public class ShowInfoService {
                 .price(dto.getPrice())
                 .build();
 
-        showInfoRepository.save(showInfo);
+        ShowInfo saved = showInfoRepository.save(showInfo);
+
+        return ShowInfoResponseDto.fromEntity(saved);
     }
 
     // 공연 정보 조회 (전체)
-    public List<ShowInfo> readAll() {
-        return showInfoRepository.findAll();
+    public List<ShowInfoResponseDto> readAll() {
+        List<ShowInfo> all = showInfoRepository.findAll();
+
+        return all.stream().map(ShowInfoResponseDto::fromEntity).collect(Collectors.toList());
     }
 
     // 공연 정보 조히 (단일)
-    public ShowInfo readOne(Long id) {
-        return showInfoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    public ShowInfoResponseDto readOne(Long id) {
+        ShowInfo showInfo = showInfoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return ShowInfoResponseDto.fromEntity(showInfo);
     }
 
 
 
     // 공연 정보 업데이트
     @Transactional
-    public void update(Long id, ShowInfoDto dto) {
+    public void update(Long id, ShowInfoRequestDto dto) {
         // 관리자 계정인지 아닌지 확인하는 과정 추가로 필요
 
         ShowInfo showInfo = showInfoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
