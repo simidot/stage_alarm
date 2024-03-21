@@ -27,6 +27,7 @@ public class UserDto {
         return UserDto.builder()
                 .id(userEntity.getId())
                 .createdAt(userEntity.getCreatedAt())
+                .loginId(userEntity.getLoginId())
                 .password(userEntity.getPassword())
                 .email(userEntity.getEmail())
                 .gender(userEntity.getGender())
