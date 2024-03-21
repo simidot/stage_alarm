@@ -1,49 +1,68 @@
 package com.example.stagealarm.show.controller;
 
-import com.example.stagealarm.show.dto.ShowInfoDto;
-import com.example.stagealarm.show.entity.ShowInfo;
+import com.example.stagealarm.show.dto.*;
+import com.example.stagealarm.show.service.ShowCommentsService;
 import com.example.stagealarm.show.service.ShowInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/shows")
 @RequiredArgsConstructor
 public class ShowInfoController {
     private final ShowInfoService showInfoService;
+    private final ShowCommentsService showCommentsService;
 
     @GetMapping
-    public String readAll(Model model) {
-        List<ShowInfo> showInfos = showInfoService.readAll();
-        model.addAttribute("shows", showInfos);
+    public ResponseEntity<List<ShowInfoResponseDto>> readAll() {
+        List<ShowInfoResponseDto> showInfoResponseDtos = showInfoService.readAll();
 
-        return "content/shows";
+        return ResponseEntity.ok().body(showInfoResponseDtos);
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody ShowInfoDto dto, MultipartFile file) {
-        showInfoService.create(dto, file);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ShowInfoResponseDto> create(@RequestBody ShowInfoRequestDto dto, MultipartFile file) {
+        ShowInfoResponseDto showInfoResponseDto = showInfoService.create(dto, file);
+        Long id = showInfoResponseDto.getId();
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
+
+        return ResponseEntity.created(location).body(showInfoResponseDto);
     }
 
+    // 게시글 및 댓글 읽기
     @GetMapping("/{id}")
-    public void readOne(@PathVariable("id")Long id, Model model) {
-        ShowInfo showInfo = showInfoService.readOne(id);
-        model.addAttribute("show", showInfo);
+    public ResponseEntity<ShowResponseDto> readOne(@PathVariable("id") Long id) {
+        ShowInfoResponseDto showInfoResponseDto = showInfoService.readOne(id);
+        List<ShowCommentsResponseDto> showCommentsResponseDtos = showCommentsService.readAll(id);
+
+        ShowResponseDto showResponseDto = new ShowResponseDto(showInfoResponseDto, showCommentsResponseDtos);
+        return ResponseEntity.ok().body(showResponseDto);
     }
 
+    // 댓글 작성
+    @PostMapping("/{id}")
+    public ResponseEntity<ShowCommentsResponseDto> writeComments(@PathVariable("id") Long id, @RequestBody ShowCommentsRequestDto dto) {
+        ShowCommentsResponseDto commentsResponseDto = showCommentsService.write(id, dto);
+        return ResponseEntity.ok().body(commentsResponseDto);
+    }
+
+    // 게시글 업데이트
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable("id") Long id, @RequestBody ShowInfoDto dto) {
+    public ResponseEntity<Void> update(@PathVariable("id") Long id, @RequestBody ShowInfoRequestDto dto) {
         showInfoService.update(id, dto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
+    // 게시글 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         showInfoService.delete(id);
