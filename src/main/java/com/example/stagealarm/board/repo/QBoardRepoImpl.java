@@ -29,7 +29,7 @@ public class QBoardRepoImpl implements QBoardRepo {
       .selectFrom(board)
       .where(
         titleContains(params.getTitle()),
-        categoryEquals(params.getCategory())
+        categoryEquals(params.getCategoryId())
       )
       .orderBy(board.createdAt.desc())
       .offset(pageable.getOffset())
@@ -49,7 +49,7 @@ public class QBoardRepoImpl implements QBoardRepo {
       .selectFrom(board)
       .where(
         contentContains(params.getContent()),
-        categoryEquals(params.getCategory())
+        categoryEquals(params.getCategoryId())
       )
       .orderBy(board.createdAt.desc())
       .offset(pageable.getOffset())
@@ -72,7 +72,7 @@ public class QBoardRepoImpl implements QBoardRepo {
     return content == null ? null : board.content.containsIgnoreCase(content);
   }
 
-  private BooleanExpression categoryEquals(String categoryName) {
-    return categoryName == null ? null : board.category.category.eq(categoryName);
+  private BooleanExpression categoryEquals(Long categoryId) {
+    return categoryId == null ? null : board.category.id.eq(categoryId);
   }
 }

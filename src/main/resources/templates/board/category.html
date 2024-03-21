@@ -16,7 +16,7 @@
     <div>
       <div class="board-container">
         <div class="board-header">
-          <span>[[${board}]] 게시판</span>
+          <span>게시판</span>
           <div class="view-options">
             <button id="dateSort">작성일 순</button>
             <button id="viewSort">조회 순</button>
@@ -33,11 +33,11 @@
           </thead>
           <tbody>
           <!-- 게시글 목록 -->
-            <tr th:each="row: ${rows}">
-              <td th:href="@{/boards/deatail/{boardId}(boardId=${row.id})}" th:text="${row.title}">제목</td>
-              <td th:text="${row.writer}">작성자</td>
-              <td th:text="${row.date}">작성일</td>
-              <td th:text="${row.views}">조회</td>
+            <tr th:each="">
+              <td th:href="" th:text="">제목</td>
+              <td th:text="">작성자</td>
+              <td th:text="">작성일</td>
+              <td th:text="">조회</td>
             </tr>
           </tbody>
         </table>

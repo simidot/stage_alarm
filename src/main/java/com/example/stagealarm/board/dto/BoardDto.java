@@ -16,7 +16,7 @@ public class BoardDto {
   private Long views;
   private Long userId;
   private String loginId;
-  private Category category;
+  private Long categoryId;
 
 
   public static BoardDto fromEntity(Board entity) {
@@ -28,7 +28,7 @@ public class BoardDto {
       entity.getViews(),
       entity.getUserEntity().getId(),
       entity.getUserEntity().getLoginId(),
-      entity.getCategory()
+      entity.getCategory().getId()
     );
   }
 }

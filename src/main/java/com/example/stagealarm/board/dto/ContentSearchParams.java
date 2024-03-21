@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class ContentSearchParams {
   public String content;
-  public String category;
+  public Long categoryId;
 }

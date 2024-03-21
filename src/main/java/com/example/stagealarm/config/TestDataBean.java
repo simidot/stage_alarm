@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TestDataBean {
 
-    public TestDataBean(
+/*    public TestDataBean(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder
     ){
@@ -28,5 +28,5 @@ public class TestDataBean {
                 .authorities("ROLE_USER")
                 .build());
 
-    }
+    }*/
 }
