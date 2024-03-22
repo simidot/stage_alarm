@@ -53,7 +53,12 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    // 로그인 아이디가 가입한지 확인하는 메서드
+    // 해당 이메일로 가입한 아이디가 있나 조회
+    public boolean existsByEmail(String email){
+        return userRepository.existsByEmail(email);
+    }
+
+    // 해당 로그인 아이디로 가입한 아이디가 있나 확인하는 메서드
     public boolean userExists(String loginId) {
         return userRepository.existsByLoginId(loginId);
     }
@@ -121,7 +126,6 @@ public class UserService implements UserDetailsService {
 
         UserEntity userEntity = searchByLoginId(dto.getLoginId());
 
-        userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
         userEntity.setEmail(dto.getEmail());
         userEntity.setGender(dto.getGender());
         userEntity.setPhone(dto.getPhone());

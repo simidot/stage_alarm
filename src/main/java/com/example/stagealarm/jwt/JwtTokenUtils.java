@@ -6,12 +6,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 // JWT 자체와 관련된 기능을 만드는 곳
 @Slf4j
@@ -50,10 +52,11 @@ public class JwtTokenUtils {
                 .setExpiration(Date.from(now.plusSeconds(60 * 60 * 24 * 7)));
 
 
-        /*jwtClaims.put("isAccountExpired", !userDetails.isAccountNonExpired());*/
-        // 일반적인 JWT 외의 정보를 포함하고 싶다면
-        // Map.put 사용 가능
-        /*jwtClaims.put("test", "claim");*/
+        String authorities = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        jwtClaims.put("roles", authorities);
 
         // 최종적으로 JWT를 발급한다.
         return Jwts.builder()

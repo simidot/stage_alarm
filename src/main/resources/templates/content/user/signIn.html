@@ -40,8 +40,7 @@
                             <hr>
                             <div class="d-flex justify-content-between mt-3">
                                 <a href="/user/signup" style="text-decoration: underline; color: black;">회원가입</a>
-                                <a href="/oauth2/authorization/kakao" className="text-warning mt-3 d-block"
-                                   style="text-decoration: underline; color: #ffc107;">
+                                <a href="/oauth2/authorization/kakao" style="text-decoration: underline; color: #ffc107;">
                                     카카오 로그인 <img th:src="@{/images/kakao.png}" alt="Kakao Logo"
                                                  style="height: 24px; margin-right: 8px;"></a>
                             </div>
@@ -91,6 +90,7 @@
                     error: function(xhr, status, error) {
                         // 로그인 실패 시 로직
                         console.log("로그인 실패", xhr.responseText);
+                        alert("아이디나 비밀번호가 일치하지 않습니다.")
                     }
                 });
             });

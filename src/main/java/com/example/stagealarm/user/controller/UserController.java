@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -54,7 +53,7 @@ public class UserController {
     }
 
     // 나의 정보 수정
-    @PutMapping
+    @PatchMapping
     public UserDto update(
             @RequestBody
             UserDto dto
@@ -104,4 +103,24 @@ public class UserController {
         response.put("isAuthenticated", isAuthenticated);
         return ResponseEntity.ok(response);
     }
+
+    // 회원가입시 이메일 중복 체크 로직
+    @PostMapping("/email-check")
+    public boolean checkEmail(
+            @RequestParam("email")
+            String email
+    ){
+        return userService.existsByEmail(email);
+    }
+
+    // 회원가입시 로그인 아이디 중복 체크 로직
+    @PostMapping("/loginId-check")
+    public boolean checkLoginId(
+            @RequestParam("loginId")
+            String loginId
+    ){
+        return userService.userExists(loginId);
+    }
+
+
 }
