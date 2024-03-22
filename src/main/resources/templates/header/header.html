@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:fragment="headerFragment">
 
 <head>
@@ -16,19 +15,11 @@
         <div><h1>STAGE ALARM</h1></div>
 
         <div>
-            <!--로그인 했을 때 -->
-            <div th:if="${#authorization.expression('isAuthenticated()')}" class="dropdown" >
-                <img th:src="@{/images/user.png}" alt="Login" width="30px" height="30px" onclick="toggleDropdown('authenticatedDropdownContent')">
-                <div id="authenticatedDropdownContent" class="dropdownContent header-sub-menu">
-                    <a href="/#!">mypage</a>
-                    <a href="/#!">logout</a>
-                </div>
-            </div>
-            <!-- Spring Security로 인증되지 않은 경우에만 보이는 드롭다운 메뉴 -->
-            <div th:if="${#authorization.expression('not isAuthenticated()')}" class="dropdown" >
-                <img th:src="@{/images/user.png}" alt="Login" width="30px" height="30px" onclick="toggleDropdown('unauthenticatedDropdownContent')">
-                <div id="unauthenticatedDropdownContent" class="dropdownContent header-sub-menu">
-                    <a href="/user/login">login</a>
+            <!-- AJAX로 동적 처리할 드롭다운 메뉴 -->
+            <div class="dropdown" >
+                <img src="/images/user.png" alt="Login" width="30px" height="30px" id="loginDropdownToggle">
+                <div id="dropdownContent" class="dropdownContent header-sub-menu" style="display: none;">
+                    <!-- 메뉴 아이템은 AJAX 요청을 통해 동적으로 삽입됩니다 -->
                 </div>
             </div>
         </div>
@@ -36,5 +27,46 @@
 </div>
 
 
+<script>
+    $(document).ready(function() {
+        $('#loginDropdownToggle').click(function() {
+            checkAuthenticationStatus();
+        });
+
+        function checkAuthenticationStatus() {
+            // 토큰 가져오기
+            let actualToken = null;
+            if(localStorage.getItem("jwtToken")){
+                const jwtTokenString = localStorage.getItem("jwtToken"); // localStorage 에서 문자열 형태로 토큰 가져오기
+                const jwtTokenObject = JSON.parse(jwtTokenString); // 문자열을 객체로 변환
+                actualToken = jwtTokenObject.token; // "token" 키에 해당하는 값(실제 JWT 토큰) 접근
+            }
+
+            $.ajax({
+                url: '/user/auth/status',
+
+                type: 'GET',
+                beforeSend: function(xhr) {
+                    // actualToken 이 존재할 때만 Authorization 헤더 설정
+                    if (actualToken) {
+                        xhr.setRequestHeader("Authorization", "Bearer " + actualToken);
+                    }
+                },
+                success: function(response) {
+                    let menuHtml = '';
+                    if (response.isAuthenticated) {
+                        menuHtml = '<a href="/userInfo">mypage</a><a href="/user/logout">logout</a>';
+                    } else {
+                        menuHtml = '<a href="/user/login">login</a>';
+                    }
+                    $('#dropdownContent').html(menuHtml).toggle();
+                },
+                error: function(error) {
+                    console.log('Error fetching user authentication status:', error);
+                }
+            });
+        }
+    });
+</script>
 
 </html>

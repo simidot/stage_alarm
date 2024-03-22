@@ -5,13 +5,12 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
 @Builder
 @AllArgsConstructor
-public class ShowInfoDto {
+public class ShowInfoRequestDto {
     private LocalDate date;
     private LocalTime startTime;
     private Integer hours;

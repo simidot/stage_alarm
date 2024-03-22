@@ -6,13 +6,9 @@ import com.example.stagealarm.jwt.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
@@ -21,8 +17,6 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 public class WebSecurityConfig {
 
     private final JwtTokenUtils jwtTokenUtils;
-    // 구현체는 UserService
-    private final UserDetailsService service;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -40,7 +34,7 @@ public class WebSecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .addFilterBefore(
-                        new JwtTokenFilter(jwtTokenUtils, service),
+                        new JwtTokenFilter(jwtTokenUtils),
                         AuthorizationFilter.class
                 );
 

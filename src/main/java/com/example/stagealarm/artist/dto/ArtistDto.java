@@ -19,6 +19,8 @@ public class ArtistDto {
     private Integer age;
     private String gender;
     private String profileImg;
+    private Long likes;
+    private Boolean isLiked;
 
     public static ArtistDto fromEntity(Artist artist){
         return ArtistDto.builder()
@@ -28,6 +30,20 @@ public class ArtistDto {
                 .age(artist.getAge())
                 .gender(artist.getGender())
                 .profileImg(artist.getProfileImg())
+                .likes((long) artist.getLikes().size())
+                .build();
+    }
+
+    public static ArtistDto fromEntityWithLikeStatus(Artist artist, boolean isLiked) {
+        return ArtistDto.builder()
+                .id(artist.getId())
+                .createdAt(artist.getCreatedAt())
+                .name(artist.getName())
+                .age(artist.getAge())
+                .gender(artist.getGender())
+                .profileImg(artist.getProfileImg())
+                .likes((long) artist.getLikes().size())
+                .isLiked(isLiked)
                 .build();
     }
 }
