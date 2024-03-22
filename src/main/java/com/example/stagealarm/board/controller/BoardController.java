@@ -36,7 +36,7 @@ public class BoardController {
   @GetMapping("/{categoryId}")
   public Page<BoardDto> readAll(
     @PathVariable("categoryId") Long categoryId,
-    @RequestParam(value = "sort", defaultValue = "desc") String sortParam,
+    @RequestParam(value = "sortParam", defaultValue = "desc") String sortParam,
     Pageable pageable
   ) {
     return categoryService.readAll(categoryId, sortParam, pageable);

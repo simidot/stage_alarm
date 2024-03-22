@@ -52,6 +52,9 @@ public class CategoryService {
       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     // Sort
+    if (sortParam.equals("desc"))
+      pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
+
     if (sortParam.equals("asc"))
       pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").ascending());
 
