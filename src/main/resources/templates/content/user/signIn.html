@@ -79,13 +79,20 @@
                     contentType: "application/json",
 
                     data: JSON.stringify(formData),
-                    success: function(token) {
+                    success: function(data) {
                         // 로그인 성공 시 로직 (예: 페이지 리다이렉트)
+                        const token = data.token;
                         console.log("로그인 성공", token);
-                        // jwt 토큰을 프론트에서 저장함
-                        localStorage.setItem("jwtToken", JSON.stringify(token));
-                        location
-                            .href = '/hello';
+
+                        // 토큰 값이 정상적으로 반환되었는지 확인
+                        if (token) {
+                            // jwt 토큰을 프론트에서 저장함
+                            localStorage.setItem("jwtToken", token);
+                            location.href = '/hello';
+                        } else {
+                            console.log("토큰이 반환되지 않았습니다.");
+                            // 토큰 값이 없는 경우에 대한 처리 로직을 추가할 수 있습니다.
+                        }
                     },
                     error: function(xhr, status, error) {
                         // 로그인 실패 시 로직
