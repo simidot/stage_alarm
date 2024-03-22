@@ -5,10 +5,11 @@ import com.example.stagealarm.user.entity.UserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.OneToMany;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Builder
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardComment extends BaseEntity {
+  @Setter
   private String content;
   private Integer depth; //todo: enum도 괜찮음. 구현에서 정하기
 
@@ -25,4 +27,11 @@ public class BoardComment extends BaseEntity {
   private Board board;
   @ManyToOne(fetch = FetchType.LAZY)
   private BoardComment parentComment;
+
+  @OneToMany(mappedBy = "parentComment", fetch = FetchType.LAZY)
+  private List<BoardComment> childComments = new ArrayList<>();
+
+  public static BoardComment.BoardCommentBuilder customBuilder() {
+    return builder().childComments(new ArrayList<>());
+  }
 }

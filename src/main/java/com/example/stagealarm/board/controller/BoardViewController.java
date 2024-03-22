@@ -8,11 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/boards")
-@RequiredArgsConstructor
-public class BoardViewController {
-  private final BoardService boardService;
-  private final CategoryService categoryService;
 
+public class BoardViewController {
 }

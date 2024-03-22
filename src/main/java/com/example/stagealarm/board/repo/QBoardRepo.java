@@ -7,6 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface QBoardRepo {
+
+//  Page<Board> findAllByCategoryId(Long categoryId, Pageable pageable);
+
   // 게시판 제목 검색
   Page<Board> searchTitle(TitleSearchParams params, Pageable pageable);
 

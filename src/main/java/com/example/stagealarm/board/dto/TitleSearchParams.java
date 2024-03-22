@@ -9,5 +9,5 @@ import lombok.ToString;
 @ToString
 public class TitleSearchParams {
   public String title;
-  private String category;
+  private Long categoryId;
 }
