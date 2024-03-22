@@ -31,6 +31,7 @@ public class ArtistDto {
                 .gender(artist.getGender())
                 .profileImg(artist.getProfileImg())
                 .likes((long) artist.getLikes().size())
+                .isLiked(false)
                 .build();
     }
 
