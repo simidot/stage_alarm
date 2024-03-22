@@ -1,10 +1,14 @@
 package com.example.stagealarm.user.entity;
 
 import com.example.stagealarm.BaseEntity;
+import com.example.stagealarm.artist.entity.ArtistLike;
 import com.example.stagealarm.user.dto.UserDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -30,6 +34,9 @@ public class UserEntity extends BaseEntity {
   private String address;
   @Setter
   private String authorities;
+
+  @OneToMany(mappedBy = "userEntity")
+  private List<ArtistLike> likeList;
 
   // authorities 빌더에서 값을 정하지 않음
   public static UserEntity fromDto(UserDto dto){
