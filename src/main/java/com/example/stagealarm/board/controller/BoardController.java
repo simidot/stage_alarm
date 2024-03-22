@@ -1,6 +1,7 @@
 package com.example.stagealarm.board.controller;
 
 import com.example.stagealarm.board.dto.BoardDto;
+import com.example.stagealarm.board.dto.BoardListDto;
 import com.example.stagealarm.board.dto.ContentSearchParams;
 import com.example.stagealarm.board.dto.TitleSearchParams;
 import com.example.stagealarm.board.service.BoardService;
@@ -32,9 +33,9 @@ public class BoardController {
 
   // Read
   // read All + Sort
-  // note test 완료(이미지는 미완, Sort 기능은 아직 확인 안함)
+  // note test 완료(이미지는 미완, 생성일 기준 정렬 확인, 조회수 기준 정렬 미완)
   @GetMapping("/{categoryId}")
-  public Page<BoardDto> readAll(
+  public Page<BoardListDto> readAll(
     @PathVariable("categoryId") Long categoryId,
     @RequestParam(value = "sortParam", defaultValue = "desc") String sortParam,
     Pageable pageable

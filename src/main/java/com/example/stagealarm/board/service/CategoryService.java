@@ -1,6 +1,7 @@
 package com.example.stagealarm.board.service;
 
 import com.example.stagealarm.board.dto.BoardDto;
+import com.example.stagealarm.board.dto.BoardListDto;
 import com.example.stagealarm.board.entity.Board;
 import com.example.stagealarm.board.entity.Category;
 import com.example.stagealarm.board.repo.BoardRepository;
@@ -46,7 +47,7 @@ public class CategoryService {
 
   // Read
   // read All
-  public Page<BoardDto> readAll(Long categoryId, String sortParam, Pageable pageable) {
+  public Page<BoardListDto> readAll(Long categoryId, String sortParam, Pageable pageable) {
     // Category 불러오기
     Category targetCategory = categoryRepository.findById(categoryId)
       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -54,14 +55,13 @@ public class CategoryService {
     // Sort
     if (sortParam.equals("desc"))
       pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
-
     if (sortParam.equals("asc"))
       pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").ascending());
 
     Page<Board> boardPage
       = boardRepository.findAllByCategory(targetCategory, pageable);
 
-    return boardPage.map(BoardDto::fromEntity);
+    return boardPage.map(BoardListDto::fromEntity);
   }
 
   // 어떤 게시판인지 반환
