@@ -2,7 +2,7 @@ package com.example.stagealarm.show.dto;
 
 import com.example.stagealarm.show.entity.ShowComments;
 import com.example.stagealarm.show.entity.ShowInfo;
-import com.example.stagealarm.user.UserEntity;
+import com.example.stagealarm.user.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

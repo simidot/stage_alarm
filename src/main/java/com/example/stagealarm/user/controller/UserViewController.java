@@ -28,5 +28,17 @@ public class UserViewController {
         return "content/user/logout";
     }
 
+    // 회원가입
+    @GetMapping("/user/signup")
+    public String signup() {
+        return "content/user/signup";
+    }
+
+    // 회원정보 수정
+    @GetMapping("/user/update")
+    public String update(){
+        return "content/user/update";
+    }
+
 
 }

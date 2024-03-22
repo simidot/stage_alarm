@@ -1,5 +1,7 @@
 package com.example.stagealarm.jwt;
 
+import com.example.stagealarm.user.dto.CustomUserDetails;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,8 +12,6 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -19,15 +19,11 @@ import java.io.IOException;
 @Slf4j
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final JwtTokenUtils jwtTokenUtils;
-    // 사용자 정보를 찾기위한 UserDetailsService (구현체는 UserService)
-    private final UserDetailsService service;
 
     public JwtTokenFilter(
-            JwtTokenUtils jwtTokenUtils,
-            UserDetailsService service
+            JwtTokenUtils jwtTokenUtils
     ) {
         this.jwtTokenUtils = jwtTokenUtils;
-        this.service = service;
     }
 
     @Override
@@ -47,18 +43,24 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 // 4. 유효하다면 해당 토큰을 바탕으로 사용자 정보를 SecurityContext에 등록
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
                 // 사용자 정보 회수
-                String username = jwtTokenUtils
-                        .parseClaims(token)
-                        .getSubject();
+                Claims jwtClaims = jwtTokenUtils
+                        .parseClaims(token);
 
-                UserDetails userDetails = service.loadUserByUsername(username);
+                String loginId = jwtClaims.getSubject();
+                String authorities = jwtClaims.get("roles", String.class);
+
+                CustomUserDetails customUserDetails = CustomUserDetails.builder()
+                        .loginId(loginId)
+                        .authorities(authorities)
+                        .build();
+
 
                 // 인증 정보 생성
                 AbstractAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                                userDetails,
+                                customUserDetails,
                                 token,
-                                userDetails.getAuthorities()
+                                customUserDetails.getAuthorities()
                         );
                 // 인증 정보 등록
                 context.setAuthentication(authentication);

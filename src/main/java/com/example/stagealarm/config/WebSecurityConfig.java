@@ -22,7 +22,6 @@ public class WebSecurityConfig {
 
     private final JwtTokenUtils jwtTokenUtils;
     // 구현체는 UserService
-    private final UserDetailsService service;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -32,6 +31,8 @@ public class WebSecurityConfig {
                 // csrf 보안 헤제
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/user")
+                        .hasRole("ADMIN")
                         .anyRequest()
                         .permitAll()
                 )
@@ -40,7 +41,7 @@ public class WebSecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .addFilterBefore(
-                        new JwtTokenFilter(jwtTokenUtils, service),
+                        new JwtTokenFilter(jwtTokenUtils),
                         AuthorizationFilter.class
                 );
 
