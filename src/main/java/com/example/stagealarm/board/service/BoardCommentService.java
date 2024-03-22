@@ -26,33 +26,33 @@ public class BoardCommentService {
 
   // Create
     // Comment: 댓글 생성
-  public BoardCommentDto writeComment(BoardCommentDto dto) {
+  public BoardCommentDto writeComment(Long boardId, BoardCommentDto dto) {
     // 유저 정보 가져오기
-    UserEntity targetUser = (UserEntity) auth.getAuth().getPrincipal();
+    UserEntity targetUser = auth.getUserEntity();
 
     // Board 정보 가져오기
-    Board targetBoard = boardRepository.findById(dto.getBoardId())
+    Board targetBoard = boardRepository.findById(boardId)
       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     // 댓글 생성
-    BoardComment newComment = BoardComment.builder()
+    BoardComment newComment = BoardComment.customBuilder()
       .content(dto.getContent())
       .depth(0)
       .userEntity(targetUser)
       .board(targetBoard)
-      .build();
+      .build(); // 여기서 customBuilder를 사용
 
     // 저장 및 반환
     return BoardCommentDto.fromEntity(boardCommentRepository.save(newComment));
   }
 
     // Reply Comment: 대댓글 생성
-  public BoardCommentDto writeReplyComment(Long commentId, BoardCommentDto dto) {
+  public BoardCommentDto writeReplyComment(Long boardId, Long commentId, BoardCommentDto dto) {
     // 유저 정보 가져오기
-    UserEntity targetUser = (UserEntity) auth.getAuth().getPrincipal();
+    UserEntity targetUser = auth.getUserEntity();
 
     // Board 정보 가져오기
-    Board targetBoard = boardRepository.findById(dto.getBoardId())
+    Board targetBoard = boardRepository.findById(boardId)
       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     // 댓글 정보 가져오기
@@ -60,7 +60,7 @@ public class BoardCommentService {
       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     // 대댓글 생성
-    BoardComment newReplyComment = BoardComment.builder()
+    BoardComment newReplyComment = BoardComment.customBuilder()
       .content(dto.getContent())
       .depth(1)
       .userEntity(targetUser)
@@ -69,7 +69,7 @@ public class BoardCommentService {
       .build();
 
     // 저장 및 반환
-    return BoardCommentDto.fromEntity(boardCommentRepository.save(newReplyComment));
+    return BoardCommentDto.fromEntityWithChildren(boardCommentRepository.save(newReplyComment));
   }
 
   // Read
@@ -85,7 +85,7 @@ public class BoardCommentService {
   // Update
   public BoardCommentDto rewriteComment(Long commentId, BoardCommentDto dto) {
     // 유저 정보 가져오기
-    UserEntity targetUser = (UserEntity) auth.getAuth().getPrincipal();
+    UserEntity targetUser = auth.getUserEntity();
 
     // 댓글 정보 가져오기
     BoardComment targetComment = boardCommentRepository.findById(commentId)
@@ -105,7 +105,7 @@ public class BoardCommentService {
   // Delete
   public void deleteComment(Long commentId) {
     // 유저 정보 가져오기
-    UserEntity targetUser = (UserEntity) auth.getAuth().getPrincipal();
+    UserEntity targetUser = auth.getUserEntity();
 
     // 댓글 정보 가져오기
     BoardComment targetComment = boardCommentRepository.findById(commentId)

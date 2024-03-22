@@ -46,16 +46,17 @@ public class CategoryService {
 
   // Read
   // read All
-  public Page<BoardDto> readAll(String category, String sortParam, Pageable pageable) {
-    // categoryId 산출
-    Long categoryId = makeCategoryId(category);
+  public Page<BoardDto> readAll(Long categoryId, String sortParam, Pageable pageable) {
+    // Category 불러오기
+    Category targetCategory = categoryRepository.findById(categoryId)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     // Sort
     if (sortParam.equals("asc"))
       pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").ascending());
 
     Page<Board> boardPage
-      = boardRepository.findAllByCategoryId(categoryId, pageable);
+      = boardRepository.findAllByCategory(targetCategory, pageable);
 
     return boardPage.map(BoardDto::fromEntity);
   }

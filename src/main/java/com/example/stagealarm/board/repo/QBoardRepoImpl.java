@@ -23,6 +23,9 @@ public class QBoardRepoImpl implements QBoardRepo {
   private final JPAQueryFactory queryFactory;
   private final QBoard board = new QBoard("b");
 
+/*  @Override
+  public Page<Board>*/
+
   @Override
   public Page<Board> searchTitle(TitleSearchParams params, Pageable pageable) {
     List<Board> boardList = queryFactory

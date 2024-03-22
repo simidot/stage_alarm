@@ -32,14 +32,14 @@ public class BoardController {
 
   // Read
   // read All + Sort
-  // note test 완료(이미지는 미완)
-  @GetMapping("/{category}")
+  // note test 완료(이미지는 미완, Sort 기능은 아직 확인 안함)
+  @GetMapping("/{categoryId}")
   public Page<BoardDto> readAll(
-    @PathVariable("category") String category,
+    @PathVariable("categoryId") Long categoryId,
     @RequestParam(value = "sort", defaultValue = "desc") String sortParam,
     Pageable pageable
   ) {
-    return  categoryService.readAll(category, sortParam, pageable);
+    return categoryService.readAll(categoryId, sortParam, pageable);
   }
 
   // read One
@@ -72,7 +72,7 @@ public class BoardController {
 
   // Search
     // title
-    // note test 완료
+  // note test 완료
   @GetMapping("/title")
   public Page<BoardDto> searchTitle(
     TitleSearchParams params,

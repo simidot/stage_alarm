@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -32,22 +33,23 @@ public class BoardService {
 
 
   // Create
+  @Transactional
   public BoardDto createBoard(BoardDto dto) {
     try {
       // 유저 정보 가져오기
-      UserEntity user = auth.getUserEntity();
+      UserEntity targetUser = auth.getUserEntity();
 
       // 카테고리 정보 가져오기
       Category targetCategory = categoryRepository.findById(dto.getCategoryId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
       // 생성
-      Board newBoard = Board.builder()
+      Board newBoard = Board.customBuilder()
         .title(dto.getTitle())
         .content(dto.getContent())
         .activate(ActivateEnum.ACTIVATE)
         .views(0L)
-        .userEntity(user)
+        .userEntity(targetUser)
         .category(targetCategory)
         .build();
 
@@ -81,10 +83,10 @@ public class BoardService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
       // 수정 요청자 정보 가져오기
-      UserEntity user = auth.getUserEntity();
+      UserEntity targetUser = auth.getUserEntity();
 
       // 권한 확인
-      if (!user.getId().equals(targetBoard.getUserEntity().getId()))
+      if (!targetUser.getId().equals(targetBoard.getUserEntity().getId()))
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
       // 카테고리 정보 가져오기
@@ -112,10 +114,10 @@ public class BoardService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
       // 삭제 요청자 정보 가져오기
-      UserEntity user = auth.getUserEntity();
+      UserEntity targetUser = auth.getUserEntity();
 
       // 권한 확인
-      if (!user.getId().equals(targetBoard.getUserEntity().getId()))
+      if (!targetUser.getId().equals(targetBoard.getUserEntity().getId()))
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
       // 삭제

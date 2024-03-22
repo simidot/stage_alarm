@@ -5,7 +5,11 @@ import com.example.stagealarm.user.entity.UserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Builder
@@ -23,4 +27,11 @@ public class BoardComment extends BaseEntity {
   private Board board;
   @ManyToOne(fetch = FetchType.LAZY)
   private BoardComment parentComment;
+
+  @OneToMany(mappedBy = "parentComment", fetch = FetchType.LAZY)
+  private List<BoardComment> childComments = new ArrayList<>();
+
+  public static BoardComment.BoardCommentBuilder customBuilder() {
+    return builder().childComments(new ArrayList<>());
+  }
 }
