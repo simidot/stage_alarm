@@ -11,4 +11,5 @@ import lombok.*;
 public class ArtistLikeDto {
     private Long userId;
     private Long artistId;
+    private Long likes;
 }

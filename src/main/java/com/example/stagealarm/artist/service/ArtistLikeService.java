@@ -3,8 +3,11 @@ package com.example.stagealarm.artist.service;
 import com.example.stagealarm.artist.entity.Artist;
 import com.example.stagealarm.artist.entity.ArtistLike;
 import com.example.stagealarm.artist.dto.ArtistLikeDto;
+import com.example.stagealarm.artist.entity.QArtistLike;
 import com.example.stagealarm.artist.repo.ArtistLikeRepository;
 import com.example.stagealarm.artist.repo.ArtistRepository;
+import com.example.stagealarm.artist.repo.QArtistLikeRepo;
+import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.user.entity.UserEntity;
 import com.example.stagealarm.user.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,36 +22,49 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class ArtistLikeService {
     private final ArtistLikeRepository artistLikeRepository;
+    private final QArtistLikeRepo qArtistLikeRepo;
     private final UserRepository userRepository;
     private final ArtistRepository artistRepository;
 
     @Transactional
-    public void insertLike(ArtistLikeDto dto) {
-        UserEntity userEntity = userRepository.findById(dto.getUserId())
+    public ArtistLikeDto artistLike(Long artistId) {
+//        UserEntity user = auth.getUserEntity();
+        // todo: auth 적용하여 바꾸기
+        Long userId = 2L;
+
+        UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found"));
-        Artist artist = artistRepository.findById(dto.getArtistId())
+
+        Artist artist = artistRepository.findById(artistId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "artist not found"));
 
-        // 이미 좋아요 되어있으면 에러 반환
-        if (artistLikeRepository.findByUserEntityAndArtist(userEntity, artist).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "user already liked artist");
+        ArtistLikeDto resultDto = new ArtistLikeDto();
+        // 좋아요가 이미 있을 시에는 좋아요 취소 (해당 데이터 삭제)
+        if (userEntity.getLikeList().stream()
+                .anyMatch(like -> like.getArtist().equals(artist))) {
+            ArtistLike artistLike = artistLikeRepository.findByUserEntityAndArtist(userEntity, artist)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "artist-like not found"));
+            artistLikeRepository.delete(artistLike);
+            artist.getLikes().remove(artistLike); //아티스트에서도 좋아요 엔티티 삭제
+        } else { // 없을시에는 좋아요 엔티티 생성
+            ArtistLike artistLike = ArtistLike.builder()
+                    .userEntity(userEntity)
+                    .artist(artist)
+                    .build();
+            artistLike.addArtist(artist); //아티스트에서도 좋아요 엔티티 추가
+
+            artistLikeRepository.save(artistLike);
+            resultDto.setUserId(userEntity.getId());
+            resultDto.setArtistId(artist.getId());
         }
+        artistRepository.save(artist);
+        log.info(String.valueOf(artist.getLikes().size()));
 
-        ArtistLike like = ArtistLike.builder()
-                .userEntity(userEntity)
-                .artist(artist)
-                .build();
-        artistLikeRepository.save(like);
+        resultDto.setLikes((long) artist.getLikes().size());
+        log.info("likes: "+ resultDto.getLikes());
+        return resultDto;
     }
-
-    @Transactional
-    public void deleteLike(ArtistLikeDto dto) {
-        UserEntity userEntity = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found"));
-        Artist artist = artistRepository.findById(dto.getArtistId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "artist not found"));
-        ArtistLike like = artistLikeRepository.findByUserEntityAndArtist(userEntity, artist)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "like not found"));
-        artistLikeRepository.delete(like);
+    public Long countLikes(Long artistId) {
+        return qArtistLikeRepo.getLikesCount(artistId);
     }
 }
