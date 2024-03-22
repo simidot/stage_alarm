@@ -4,6 +4,8 @@ import com.example.stagealarm.show.dto.*;
 import com.example.stagealarm.show.service.ShowCommentsService;
 import com.example.stagealarm.show.service.ShowInfoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,15 +15,15 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/shows")
+@RequestMapping("/show")
 @RequiredArgsConstructor
 public class ShowInfoController {
     private final ShowInfoService showInfoService;
     private final ShowCommentsService showCommentsService;
 
     @GetMapping
-    public ResponseEntity<List<ShowInfoResponseDto>> readAll() {
-        List<ShowInfoResponseDto> showInfoResponseDtos = showInfoService.readAll();
+    public ResponseEntity<Page<ShowInfoResponseDto>> readAll(@RequestParam(required = false) String title, Pageable pageable, Sortable sortable) {
+        Page<ShowInfoResponseDto> showInfoResponseDtos = showInfoService.readAll(title, pageable, sortable);
 
         return ResponseEntity.ok().body(showInfoResponseDtos);
     }

@@ -3,11 +3,13 @@ package com.example.stagealarm.show.entity;
 import com.example.stagealarm.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -39,4 +41,7 @@ public class ShowInfo extends BaseEntity {
   @Column(nullable = false)
   @Setter
   private String price;
+
+  @OneToMany(mappedBy = "showInfo")
+  private List<ShowLike> showLikes;
 }
