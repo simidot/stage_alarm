@@ -11,4 +11,5 @@ import lombok.*;
 public class GenreSubscribeDto {
     private Long userId;
     private Long genreId;
+    private Long subscribes;
 }
