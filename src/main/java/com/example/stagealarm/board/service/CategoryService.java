@@ -53,10 +53,21 @@ public class CategoryService {
       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     // Sort
-    if (sortParam.equals("desc"))
-      pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
-    if (sortParam.equals("asc"))
-      pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").ascending());
+    // switch
+    switch (sortParam) {
+      case "dateD":
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
+        break;
+      case "dateA":
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").ascending());
+        break;
+      case "viewD":
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("views").descending());
+        break;
+      case "viewA":
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("views").ascending());
+        break;
+    }
 
     Page<Board> boardPage
       = boardRepository.findAllByCategory(targetCategory, pageable);

@@ -33,11 +33,11 @@ public class BoardController {
 
   // Read
   // read All + Sort
-  // note test 완료(이미지는 미완, 생성일 기준 정렬 확인, 조회수 기준 정렬 미완)
+  // note test 완료(이미지는 미완)
   @GetMapping("/{categoryId}")
   public Page<BoardListDto> readAll(
     @PathVariable("categoryId") Long categoryId,
-    @RequestParam(value = "sortParam", defaultValue = "desc") String sortParam,
+    @RequestParam(value = "sortParam", defaultValue = "dateD") String sortParam, // Front에서 dateD, dateA, viewD, viewA를 건네준다.
     Pageable pageable
   ) {
     return categoryService.readAll(categoryId, sortParam, pageable);
