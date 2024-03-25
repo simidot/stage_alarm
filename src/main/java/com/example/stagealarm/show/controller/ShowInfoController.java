@@ -24,12 +24,11 @@ public class ShowInfoController {
     @GetMapping
     public ResponseEntity<Page<ShowInfoResponseDto>> readAll(@RequestParam(required = false) String title, Pageable pageable, Sortable sortable) {
         Page<ShowInfoResponseDto> showInfoResponseDtos = showInfoService.readAll(title, pageable, sortable);
-
         return ResponseEntity.ok().body(showInfoResponseDtos);
     }
 
     @PostMapping
-    public ResponseEntity<ShowInfoResponseDto> create(@RequestBody ShowInfoRequestDto dto, MultipartFile file) {
+    public ResponseEntity<ShowInfoResponseDto> create(@RequestPart("dto") ShowInfoRequestDto dto, @RequestPart("file") MultipartFile file) {
         ShowInfoResponseDto showInfoResponseDto = showInfoService.create(dto, file);
         Long id = showInfoResponseDto.getId();
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()

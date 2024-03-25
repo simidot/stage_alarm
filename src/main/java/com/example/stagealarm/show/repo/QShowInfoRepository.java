@@ -81,7 +81,7 @@ public class QShowInfoRepository {
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
-                .select(showInfo.count()) // SQL 상으로는 count(member.id)와 동일
+                .select(showInfo.count())
                 .from(showInfo);
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
