@@ -7,6 +7,6 @@ import com.querydsl.core.types.OrderSpecifier;
 public class OrderByNull extends OrderSpecifier {
     public static final OrderByNull DEFAULT = new OrderByNull();
     private OrderByNull() {
-        super(Order.ASC, NullExpression.DEFAULT, NullHandling.Default);
+        super(Order.DESC, NullExpression.DEFAULT, NullHandling.Default);
     }
 }
