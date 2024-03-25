@@ -11,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 
 @Slf4j
@@ -23,17 +26,19 @@ public class BoardController {
 
   // Create
   // todo 이미지 넣기
-  // note test 완료(이미지는 미완)
+  // note test 완료
   @PostMapping
   public BoardDto write(
-   @RequestBody BoardDto dto
+//   @RequestBody BoardDto dto
+    @RequestBody List<MultipartFile> files,
+    @RequestPart BoardDto dto
   ) {
-    return boardService.createBoard(dto);
+    return boardService.createBoard(files, dto);
   }
 
   // Read
   // read All + Sort
-  // note test 완료(이미지는 미완)
+  // note test 완료
   @GetMapping("/{categoryId}")
   public Page<BoardListDto> readAll(
     @PathVariable("categoryId") Long categoryId,
@@ -44,7 +49,7 @@ public class BoardController {
   }
 
   // read One
-  // note test 완료(이미지는 미완)
+  // note test 완료
   @GetMapping("/detail/{boardId}")
   public BoardDto readOne(
     @PathVariable("boardId") Long boardId

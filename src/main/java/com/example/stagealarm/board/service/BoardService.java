@@ -1,5 +1,6 @@
 package com.example.stagealarm.board.service;
 
+import com.example.stagealarm.awsS3.S3FileService;
 import com.example.stagealarm.board.dto.BoardDto;
 import com.example.stagealarm.board.dto.ContentSearchParams;
 import com.example.stagealarm.board.dto.TitleSearchParams;
@@ -10,6 +11,8 @@ import com.example.stagealarm.board.repo.BoardRepository;
 import com.example.stagealarm.board.repo.CategoryRepository;
 import com.example.stagealarm.board.repo.QBoardRepo;
 import com.example.stagealarm.facade.AuthenticationFacade;
+import com.example.stagealarm.image.entity.Image;
+import com.example.stagealarm.image.repo.ImageRepository;
 import com.example.stagealarm.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +23,11 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -30,11 +37,16 @@ public class BoardService {
   private final AuthenticationFacade auth;
   private final CategoryRepository categoryRepository;
   private final QBoardRepo qBoardRepo;
+  private final S3FileService s3FileService;
+  private final ImageRepository imageRepository;
 
 
   // Create
   @Transactional
-  public BoardDto createBoard(BoardDto dto) {
+  public BoardDto createBoard(
+    List<MultipartFile> files,
+    BoardDto dto
+  ) {
     try {
       // 유저 정보 가져오기
       UserEntity targetUser = auth.getUserEntity();
@@ -52,6 +64,30 @@ public class BoardService {
         .userEntity(targetUser)
         .category(targetCategory)
         .build();
+
+      // 이미지가 있다면
+      if (files != null) {
+        List<String> uploadedUrls = s3FileService.uploadIntoS3("/boardImg", files);
+
+        // Image Entity 생성 및 임시 저장을 위한 리스트
+        List<Image> imageToSave = new ArrayList<>();
+
+        // Image Entity 생성 및 Board Entity와 연결
+        for (String url : uploadedUrls) {
+          Image targetImage = Image.builder()
+            .imgUrl(url)
+            .build();
+
+          // addImage 메서드를 사용하여 Board Entity에 Image Entity 연결
+          newBoard.addImage(targetImage);
+
+          // 임시 저장 리스트에 추가
+          imageToSave.add(targetImage);
+
+          // Entity 저장
+          imageRepository.saveAll(imageToSave);
+        }
+      }
 
       // 저장
       return BoardDto.fromEntity(boardRepository.save(newBoard));
