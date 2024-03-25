@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TestDataBean {
 
-/*    public TestDataBean(
+    public TestDataBean(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder
     ){
@@ -24,9 +24,9 @@ public class TestDataBean {
         userRepository.save(UserEntity.builder()
                 .loginId("user")
                 .password(passwordEncoder.encode("password"))
-                .email("hhhjs0133@naver.com")
+                .email("hhhjs0133@naver.com123")
                 .authorities("ROLE_USER")
                 .build());
 
-    }*/
+    }
 }
