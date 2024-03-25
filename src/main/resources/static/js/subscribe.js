@@ -25,10 +25,6 @@ $(document).ready(function () {
                 const $artistCard = $('[data-artist-id="' + artist.id + '"]');
                 const $likeImage = $artistCard.find('.like-btn');
 
-
-                // 좋아요 상태에 따라 이미지 업데이트
-                // const $likeBtn = $('[data-artist-id="' + artist.id + '"] .like-btn');
-                // const $likeImage = $likeBtn.find('img');
                 console.log("좋아요했나요...?", artist.isLiked);
 
                 if (artist.isLiked) {
@@ -59,10 +55,13 @@ $(document).ready(function () {
                         const updatedLikes = data.likes;
                         console.log(updatedLikes);
 
-                        // 해당 아티스트 카드를 찾아서 좋아요 수 없데이트
+                        // 해당 아티스트 카드를 찾아서 좋아요 수 업데이트
                         const $artistCard = $likeImage.closest('.artist-card');
                         $artistCard.find('.likes-count').text(updatedLikes);
-                        },
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX 요청 실패: ", status, error);
+                    },
                 })
             });
         },
@@ -81,23 +80,41 @@ $(document).ready(function () {
 
             $.each(data, function(index, genre) {
                 const filledTemplate = genreTemplate.replace(/{{genre.name}}/g, genre.name)
-                    .replace(/{{genre.id}}/g, genre.id);
+                    .replace(/{{genre.id}}/g, genre.id)
+                    .replace(/{{buttonText}}/g, genre.isSubscribed ? '구독중' : '구독'); // 버튼 텍스트 설정
+
                 $genreList.append('<div class = "w-100"></div>');
 
                 $genreList.append(filledTemplate);
+            });
+
+            // 장르 구독 버튼 클릭 이벤트 처리
+            $('.subscribe-btn').click(function () {
+                const genreId = $(this).data('genre-id');
+                const $genreBtn = $(this);
+
+                const buttonText = $genreBtn.text();
+
+                if (buttonText==='구독') {
+                    $genreBtn.text('구독중');
+                } else {
+                    $genreBtn.text('구독');
+                }
+                console.log('장르 구독 클릭 - 장르 ID:', genreId);
+                $.ajax({
+                    url: "/genre/"+genreId+"/subscribe",
+                    type: "POST",
+                    contentType: "application/json",
+                    success: function (data) {
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX 요청 실패: ", status, error);
+                    },
+                })
             });
         },
         error: function (xhr, status, error) {
             console.error("AJAX 요청 실패:", status, error);
         }
-    });
-    // 장르 구독 버튼 클릭 이벤트 처리
-    $(document).on('click', '.subscribe-btn', function () {
-        const genreId = $(this).data('id');
-        $.ajax({
-            url: "/genre"
-        })
-        // 여기에 장르 구독 기능을 추가할 수 있습니다.
-        console.log('장르 구독 클릭 - 장르 ID:', genreId);
     });
 });
