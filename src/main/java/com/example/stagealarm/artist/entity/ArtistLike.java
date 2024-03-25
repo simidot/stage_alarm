@@ -22,4 +22,9 @@ public class ArtistLike extends BaseEntity {
   @Setter
   private UserEntity userEntity;
 
+  public void addArtist(Artist artist) {
+    this.setArtist(artist);
+    artist.getLikes().add(this);
+  }
+
 }

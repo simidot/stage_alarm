@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+</head>
+<body>
+
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2" style="flex: 1;">
+        <!-- 회원정보 수정 폼 시작 -->
+        <div class="py-5 text-center">
+            <h2>회원정보 수정</h2>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 order-md-1">
+                <h4 class="mb-3">회원 정보 입력</h4>
+                <form id="signupForm" novalidate>
+
+                    <div class="mb-3">
+                        <label for="loginId">아이디</label>
+                        <input type="text" class="form-control" id="loginId" name="loginId" required readonly>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email">이메일</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                        <button id="checkEmail" class="btn btn-secondary mt-2">이메일 중복 검사</button>
+                        <div id="emailFeedback" class="feedback"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="gender">성별</label>
+                        <select class="form-control" id="gender" name="gender">
+                            <option value="">선택하세요</option>
+                            <option value="M">남성</option>
+                            <option value="F">여성</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone">전화번호</label>
+                        <input type="text" class="form-control" id="phone" name="phone" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="address">주소</label>
+                        <input type="text" class="form-control" id="address" name="address" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="profileImg">프로필 이미지 URL</label>
+                        <input type="text" class="form-control" id="profileImg" name="profileImg">
+                    </div>
+
+                    <hr class="mb-4">
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">회원정보 수정</button>
+                </form>
+            </div>
+        </div>
+        <!-- 회원정보 수정 폼 끝 -->
+    </div>
+</main>
+
+<script>
+    $(document).ready(function() {
+        // 사용자 정보 불러오기
+        $.ajax({
+            url: "/user", // 사용자 정보를 불러오는 서버의 API 엔드포인트
+            type: "GET",
+            dataType: "json",
+            success: function(user) {
+                // 서버로부터 받은 사용자 정보를 입력 필드에 설정
+                $('#loginId').val(user.loginId);
+                $('#email').val(user.email);
+                $('#gender').val(user.gender);
+                $('#phone').val(user.phone);
+                $('#address').val(user.address);
+                $('#profileImg').val(user.profileImg);
+                // 비밀번호 필드는 보안상 비워두거나, 변경만 가능하게 할 수 있습니다.
+            },
+            error: function(xhr, textStatus, error) {
+                console.error("Error: " + textStatus + ": " + error);
+                // 오류 처리 로직
+            }
+        });
+
+        let checkedEmail = $('#email').val();
+
+        $('#checkEmail').on('click', function(e) {
+            e.preventDefault();
+            let email = $('#email').val();
+            if (!email) {
+                $('#emailFeedback').css('color', 'red').text('이메일을 입력하세요.');
+                return;
+            }
+            // 서버에 이메일 중복 검사 요청
+            $.ajax({
+                type: "POST",
+                url: "/user/email-check",
+                data: { "email": email },
+                success: function(res) {
+                    if (!res) {
+                        $('#email').css('border-color', 'green');
+                        $('#emailFeedback').css('color', 'green').text('사용 가능한 이메일입니다.');
+                        checkedEmail = email
+                    } else {
+                        $('#email').css('border-color', 'red');
+                        $('#emailFeedback').css('color', 'red').text('이미 사용 중인 이메일입니다.');
+                        checkedEmail = null;
+                    }
+                }
+            });
+        });
+
+
+        $('#signupForm').on('submit', function(e) {
+            e.preventDefault();
+            // 필수 입력 미입력시 제출 방지
+
+            if (checkedEmail === null){
+                alert('이메일 중복검사를 받아주세요');
+                $('#email').css('border-color', 'red');
+                return false;
+            }
+
+            // 폼데이터 제이슨으로
+            const formData = {
+                loginId: $('#loginId').val(),
+                email: checkedEmail,
+                gender: $('#gender').val(),
+                phone: $('#phone').val(),
+                address: $('#address').val(),
+                profileImg: $('#profileImg').val()
+            };
+
+            $.ajax({
+                type: 'PATCH',
+                url: '/user',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    console.log('회원정보 수정성공:', response);
+                    alert('회원정보 수정이 완료되었습니다.');
+                    location.href = '/hello'; // 회원가입 완료 후 이동할 페이지
+                },
+                error: function(xhr, status, error) {
+                    console.log('회원정보 수정 실패:', xhr.responseText);
+                    alert('회원정보 수정이 실패하였습니다. 다시 시도해주세요.');
+                }
+            });
+        });
+
+    });
+</script>
+
+</body>
+</html>

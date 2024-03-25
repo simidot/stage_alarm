@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:layout="  http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/defaultLayout}"
       layout:fragment="content">
 <head>
@@ -11,31 +11,17 @@
 <main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
     <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
         <div id="profile"></div>
+        <button id="editProfileBtn" class="btn btn-primary">회원정보 수정하기</button>
         <br>
     </div>
 </main>
 
 <script>
     $(document).ready(function() {
-        // 토큰 가져오기
-        let actualToken = null;
-        if(localStorage.getItem("jwtToken")){
-            const jwtTokenString = localStorage.getItem("jwtToken"); // localStorage 에서 문자열 형태로 토큰 가져오기
-            const jwtTokenObject = JSON.parse(jwtTokenString); // 문자열을 객체로 변환
-            actualToken = jwtTokenObject.token; // "token" 키에 해당하는 값(실제 JWT 토큰) 접근
-        }
-
         $.ajax({
             url: "/user", // '나의 정보 조회' 엔드포인트
             type: "GET",
             dataType: "json",
-            beforeSend: function(xhr) {
-                // actualToken 이 존재할 때만 Authorization 헤더 설정
-                if (actualToken) {
-                    xhr.setRequestHeader("Authorization", "Bearer " + actualToken);
-                }
-            },
-
             success: function(user) {
                 // 사용자 정보를 화면에 표시
                 $('#profile').html(`
@@ -58,6 +44,12 @@
                     console.error("Error: " + textStatus + ": " + error);
                 }
             }
+        });
+
+        // 회원정보 수정하기 버튼 클릭 이벤트
+        $('#editProfileBtn').click(function() {
+            // 회원 정보 수정 페이지로 이동하거나, 수정 모달 창 표시 로직 구현
+            location.href = '/user/update';
         });
     });
 </script>

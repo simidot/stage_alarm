@@ -6,6 +6,7 @@ import com.example.stagealarm.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -34,4 +35,11 @@ public class Board  extends BaseEntity {
 
   @OneToMany(cascade = CascadeType.ALL)
   private List<Image> imageList;
+
+  @OneToMany(mappedBy = "board")
+  private List<BoardComment> commentList = new ArrayList<>();
+
+  public static Board.BoardBuilder customBuilder() {
+    return builder().commentList(new ArrayList<>());
+  }
 }
