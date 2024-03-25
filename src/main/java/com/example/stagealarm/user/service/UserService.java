@@ -106,6 +106,13 @@ public class UserService implements UserDetailsService {
         return UserDto.fromEntity(userEntity);
     }
 
+    // 이메일 중복방지용
+    public UserEntity searchByEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+        );
+    }
+
     // 회원 수정
     @Transactional
     public UserDto update(UserDto dto) {
