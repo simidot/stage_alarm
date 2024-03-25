@@ -51,9 +51,7 @@ public class ShowInfoService {
 
     // 공연 정보 조회 (전체)
     public Page<ShowInfoResponseDto> readAll(String title, Pageable pageable, Sortable sortable) {
-        Page<ShowInfo> all = qShowInfoRepository.findAll(title, pageable, sortable);
-
-        return all.map(ShowInfoResponseDto::fromEntity);
+        return qShowInfoRepository.findAll(title, pageable, sortable);
     }
 
     // 공연 정보 조히 (단일)
