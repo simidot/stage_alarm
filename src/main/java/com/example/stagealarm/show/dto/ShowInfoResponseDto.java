@@ -24,7 +24,6 @@ public class ShowInfoResponseDto {
     private String ticketVendor;
     private String price;
     private Long totalLike;
-//    private LocalDateTime createAt;
 
     public static ShowInfoResponseDto fromEntity(ShowInfo showInfo) {
         return ShowInfoResponseDto.builder()
@@ -37,7 +36,6 @@ public class ShowInfoResponseDto {
                 .title(showInfo.getTitle())
                 .ticketVendor(showInfo.getTicketVendor())
                 .price(showInfo.getPrice())
-//                .createAt(showInfo.getCreatedAt())
                 .build();
     }
 }
