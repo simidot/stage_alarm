@@ -1,5 +1,5 @@
-    // Ajax로 아티스트 목록을 가져와서 테이블에 추가하는 코드 작성
-    $(document).ready(function () {
+// Ajax로 아티스트 목록을 가져와서 테이블에 추가하는 코드 작성
+$(document).ready(function () {
     $.ajax({
         url: "/artist",
         type: "GET",
@@ -22,27 +22,26 @@
                 }
                 $artistList.append(filledTemplate);
 
-                // 좋아요 상태에 따라 이미지 업데이트
-                const $likeBtn = $('[data-artist-id="' + artist.id + '"] .like-btn');
-                const $likeImage = $likeBtn.find('img');
-                if (artist.isLiked) {
-                    $likeImage.attr('src', '/images/like.png');
-                } else {
-                    $likeImage.attr('src', '/images/unlike.png');
-                }
+                const $artistCard = $('[data-artist-id="' + artist.id + '"]');
+                const $likeImage = $artistCard.find('.like-btn');
 
+                console.log("좋아요했나요...?", artist.isLiked);
+
+                if (artist.isLiked) {
+                    $likeImage.attr('src', 'images/like.png'); // 이미지 경로를 좋아요 이미지로 변경
+                } else {
+                    $likeImage.attr('src', 'images/unlike.png'); // 이미지 경로를 좋아요 해제 이미지로 변경
+                }
             });
-        // 좋아요 버튼 클릭 이벤트 처리
+            // 좋아요 버튼 클릭 이벤트 처리
             $('.like-btn').click(function() {
                 const artistId = $(this).data('artist-id');
-                const $likeBtn = $(this);
+                const $likeImage = $(this);
 
-                const $likeImage = $(this).find('img');
-
-                if ($likeImage.attr('src')==='/images/unlike.png'){
-                    $likeImage.attr('src', '/images/like.png');
+                if ($likeImage.attr('src')==='images/unlike.png'){
+                    $likeImage.attr('src', 'images/like.png');
                 }else {
-                    $likeImage.attr('src', '/images/unlike.png');
+                    $likeImage.attr('src', 'images/unlike.png');
                 }
 
                 // 여기에 좋아요 기능을 추가할 수 있습니다.
@@ -56,11 +55,12 @@
                         const updatedLikes = data.likes;
                         console.log(updatedLikes);
 
-                        // 해당 아티스트 카드를 찾아서 좋아요 수 없데이트
-                        const $artistCard = $likeBtn.closest('.artist-card');
+                        // 해당 아티스트 카드를 찾아서 좋아요 수 업데이트
+                        const $artistCard = $likeImage.closest('.artist-card');
                         $artistCard.find('.likes-count').text(updatedLikes);
-
-                        console.log('좋아요 추가됨 : ', data.artistId);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX 요청 실패: ", status, error);
                     },
                 })
             });
@@ -71,32 +71,50 @@
     });
 
     $.ajax({
-    url: "/genre",
-    type: "GET",
-    success: function(data) {
-    // 받아온 아티스트 목록을 표시
-    const $genreList = $('#genreList .row');
-    const genreTemplate = $('#genreCardTemplate').html();
+        url: "/genre",
+        type: "GET",
+        success: function(data) {
+            // 받아온 아티스트 목록을 표시
+            const $genreList = $('#genreList .row');
+            const genreTemplate = $('#genreCardTemplate').html();
 
-    $.each(data, function(index, genre) {
-    const filledTemplate = genreTemplate.replace(/{{genre.name}}/g, genre.name)
-    .replace(/{{genre.id}}/g, genre.id);
-    $genreList.append('<div class = "w-100"></div>');
+            $.each(data, function(index, genre) {
+                const filledTemplate = genreTemplate.replace(/{{genre.name}}/g, genre.name)
+                    .replace(/{{genre.id}}/g, genre.id)
+                    .replace(/{{buttonText}}/g, genre.isSubscribed ? '구독중' : '구독'); // 버튼 텍스트 설정
 
-    $genreList.append(filledTemplate);
-});
-},
-    error: function (xhr, status, error) {
-    console.error("AJAX 요청 실패:", status, error);
-}
-});
-    // 장르 구독 버튼 클릭 이벤트 처리
-    $(document).on('click', '.subscribe-btn', function () {
-    const genreId = $(this).data('id');
-    $.ajax({
-    url: "/genre"
-})
-    // 여기에 장르 구독 기능을 추가할 수 있습니다.
-    console.log('장르 구독 클릭 - 장르 ID:', genreId);
-});
+                $genreList.append('<div class = "w-100"></div>');
+
+                $genreList.append(filledTemplate);
+            });
+
+            // 장르 구독 버튼 클릭 이벤트 처리
+            $('.subscribe-btn').click(function () {
+                const genreId = $(this).data('genre-id');
+                const $genreBtn = $(this);
+
+                const buttonText = $genreBtn.text();
+
+                if (buttonText==='구독') {
+                    $genreBtn.text('구독중');
+                } else {
+                    $genreBtn.text('구독');
+                }
+                console.log('장르 구독 클릭 - 장르 ID:', genreId);
+                $.ajax({
+                    url: "/genre/"+genreId+"/subscribe",
+                    type: "POST",
+                    contentType: "application/json",
+                    success: function (data) {
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX 요청 실패: ", status, error);
+                    },
+                })
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("AJAX 요청 실패:", status, error);
+        }
+    });
 });

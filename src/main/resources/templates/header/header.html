@@ -34,24 +34,9 @@
         });
 
         function checkAuthenticationStatus() {
-            // 토큰 가져오기
-            let actualToken = null;
-            if(localStorage.getItem("jwtToken")){
-                const jwtTokenString = localStorage.getItem("jwtToken"); // localStorage 에서 문자열 형태로 토큰 가져오기
-                const jwtTokenObject = JSON.parse(jwtTokenString); // 문자열을 객체로 변환
-                actualToken = jwtTokenObject.token; // "token" 키에 해당하는 값(실제 JWT 토큰) 접근
-            }
-
             $.ajax({
                 url: '/user/auth/status',
-
                 type: 'GET',
-                beforeSend: function(xhr) {
-                    // actualToken 이 존재할 때만 Authorization 헤더 설정
-                    if (actualToken) {
-                        xhr.setRequestHeader("Authorization", "Bearer " + actualToken);
-                    }
-                },
                 success: function(response) {
                     let menuHtml = '';
                     if (response.isAuthenticated) {

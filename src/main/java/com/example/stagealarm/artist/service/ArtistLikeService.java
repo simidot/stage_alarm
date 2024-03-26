@@ -25,16 +25,14 @@ public class ArtistLikeService {
     private final QArtistLikeRepo qArtistLikeRepo;
     private final UserRepository userRepository;
     private final ArtistRepository artistRepository;
+    private final AuthenticationFacade facade;
 
     @Transactional
     public ArtistLikeDto artistLike(Long artistId) {
-//        UserEntity user = auth.getUserEntity();
-        // todo: auth 적용하여 바꾸기
-        Long userId = 2L;
-
+        //로그인한 계정 아이디로 유저 찾기
+        Long userId = facade.getUserEntity().getId();
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found"));
-
         Artist artist = artistRepository.findById(artistId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "artist not found"));
 

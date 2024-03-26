@@ -21,6 +21,7 @@ public class ShowInfoResponseDto {
     private String title;
     private String ticketVendor;
     private String price;
+    private Long totalLike;
 
     public static ShowInfoResponseDto fromEntity(ShowInfo showInfo) {
         return ShowInfoResponseDto.builder()

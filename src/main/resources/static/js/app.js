@@ -1,6 +1,6 @@
 // header 토글 js
 function toggleDropdown(dropdownId) {
-    var dropdownContent = document.getElementById(dropdownId);
+    const dropdownContent = document.getElementById(dropdownId);
 
     if (dropdownContent.style.display === "block" || dropdownContent.style.display === "") {
         dropdownContent.style.display = "none";
@@ -12,9 +12,9 @@ function toggleDropdown(dropdownId) {
 // 다른 곳을 클릭하면 토글 닫기
 window.onclick = function(event) {
     if (!event.target.matches('.dropdown button')) {
-        var dropdowns = document.getElementsByClassName("dropdown-content");
-        for (var i = 0; i < dropdowns.length; i++) {
-            var openDropdown = dropdowns[i];
+        const dropdowns = document.getElementsByClassName("dropdown-content");
+        for (const i = 0; i < dropdowns.length; i++) {
+            const openDropdown = dropdowns[i];
             if (openDropdown.style.display === "block") {
                 openDropdown.style.display = "none";
             }
@@ -38,3 +38,15 @@ function toggleShowSubMenu() {
     showSubMenu.style.display = (showSubMenu.style.display === 'none' || showSubMenu.style.display === '') ? 'block' : 'none';
 }
 
+
+
+// Ajax 전역 설정
+$.ajaxSetup({
+    beforeSend: function(xhr) {
+        const jwtToken = localStorage.getItem('jwtToken');
+
+        if (localStorage.getItem('jwtToken')) {
+            xhr.setRequestHeader('Authorization', `Bearer ${jwtToken}`);
+        }
+    }
+});

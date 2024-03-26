@@ -71,25 +71,11 @@
 
 <script>
     $(document).ready(function() {
-
-        let actualToken = null;
-        if(localStorage.getItem("jwtToken")){
-            const jwtTokenString = localStorage.getItem("jwtToken"); // localStorage 에서 문자열 형태로 토큰 가져오기
-            const jwtTokenObject = JSON.parse(jwtTokenString); // 문자열을 객체로 변환
-            actualToken = jwtTokenObject.token; // "token" 키에 해당하는 값(실제 JWT 토큰) 접근
-        }
-
         // 사용자 정보 불러오기
         $.ajax({
             url: "/user", // 사용자 정보를 불러오는 서버의 API 엔드포인트
             type: "GET",
             dataType: "json",
-            beforeSend: function(xhr) {
-                // actualToken 이 존재할 때만 Authorization 헤더 설정
-                if (actualToken) {
-                    xhr.setRequestHeader("Authorization", "Bearer " + actualToken);
-                }
-            },
             success: function(user) {
                 // 서버로부터 받은 사용자 정보를 입력 필드에 설정
                 $('#loginId').val(user.loginId);
@@ -160,12 +146,6 @@
                 url: '/user',
                 contentType: 'application/json',
                 data: JSON.stringify(formData),
-                beforeSend: function(xhr) {
-                    // actualToken 이 존재할 때만 Authorization 헤더 설정
-                    if (actualToken) {
-                        xhr.setRequestHeader("Authorization", "Bearer " + actualToken);
-                    }
-                },
                 success: function(response) {
                     console.log('회원정보 수정성공:', response);
                     alert('회원정보 수정이 완료되었습니다.');

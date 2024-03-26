@@ -1,5 +1,6 @@
 package com.example.stagealarm.genre.service;
 
+import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.genre.dto.GenreDto;
 import com.example.stagealarm.genre.entity.Genre;
 import com.example.stagealarm.genre.repo.GenreRepository;
@@ -18,6 +19,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GenreService {
     private final GenreRepository genreRepository;
+    private final AuthenticationFacade facade;
+
 
     // 장르 저장
     @Transactional
@@ -36,9 +39,24 @@ public class GenreService {
 
     // 모든 장르 조회
     public List<GenreDto> readAll() {
-        return genreRepository.findAll().stream()
-                .map(GenreDto::fromEntity)
-                .collect(Collectors.toList());
+        List<Genre> genres = genreRepository.findAll();
+
+        // 인증된 사용자라면 구독 정보를 함께 전달
+        if (facade.getAuth().isAuthenticated()) {
+            Long userId = facade.getUserEntity().getId();
+            return genres.stream()
+                    .map(genre -> {
+                        boolean isSubscribed = genre.getSubscribes().stream().anyMatch(
+                                subscribe -> subscribe.getUserEntity().getId().equals(userId)
+                        );
+                        return GenreDto.fromEntityWithSubscribeStatus(genre, isSubscribed);
+                    })
+                    .collect(Collectors.toList());
+        } else { //인증되지 않은 경우는 없이 전달
+            return genres.stream()
+                    .map(GenreDto::fromEntity)
+                    .collect(Collectors.toList());
+        }
     }
 
     // id로 장르 조회

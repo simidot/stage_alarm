@@ -4,6 +4,7 @@ import com.example.stagealarm.genre.dto.GenreSubscribeDto;
 import com.example.stagealarm.genre.service.GenreSubscribeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -14,10 +15,9 @@ public class GenreSubscribeController {
     private final GenreSubscribeService subscribeService;
 
     @PostMapping
-    public void subscribe(
-            @PathVariable("id") Long genreId,
-            @RequestBody GenreSubscribeDto dto
+    public ResponseEntity<GenreSubscribeDto> subscribe(
+            @PathVariable("id") Long genreId
     ) {
-        subscribeService.subscribeGenre(dto);
+        return ResponseEntity.ok(subscribeService.subscribeGenre(genreId));
     }
 }
