@@ -40,5 +40,17 @@ public class UserViewController {
         return "content/user/update";
     }
 
+    // 소셜 로그인
+    @GetMapping("/user/oauthClient")
+    public String oauthLogin(){
+        return "content/user/oauthClient";
+    }
+
+    // 소셜 로그인 중복 이메일 방지
+    @GetMapping("/user/emailDuplicate")
+    public String emailDuplicate() {
+        return "content/user/emailDuplicate";
+    }
+
 
 }
