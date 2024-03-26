@@ -20,12 +20,4 @@ public class ArtistLikeController {
     ) {
         return ResponseEntity.ok(likeService.artistLike(id));
     }
-
-//    @GetMapping
-//    public Long countLikes(
-//            @PathVariable("id") Long artistId
-//    ){
-//        return likeService.countLikes(artistId);
-//    }
-
 }
