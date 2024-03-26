@@ -3,6 +3,7 @@ package com.example.stagealarm.board.entity;
 import com.example.stagealarm.BaseEntity;
 import com.example.stagealarm.image.entity.Image;
 import com.example.stagealarm.user.entity.UserEntity;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,13 +34,23 @@ public class Board  extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   private UserEntity userEntity;
 
-  @OneToMany(cascade = CascadeType.ALL)
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JsonManagedReference
   private List<Image> imageList;
 
-  @OneToMany(mappedBy = "board")
+  @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
   private List<BoardComment> commentList = new ArrayList<>();
 
+  public void addImage(Image image) {
+    // 현재 Board 인스턴스에 Image 객체를 추가
+    this.imageList.add(image);
+    // Image 객체의 Board 참조를 현재 Board 인스턴스로 설정
+    image.setBoard(this);
+  }
+
   public static Board.BoardBuilder customBuilder() {
-    return builder().commentList(new ArrayList<>());
+    return builder()
+      .commentList(new ArrayList<>())
+      .imageList(new ArrayList<>());
   }
 }
