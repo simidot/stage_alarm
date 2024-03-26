@@ -19,7 +19,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.example.stagealarm.show.entity.QShowInfo.*;
 import static com.example.stagealarm.show.entity.QShowLike.*;
@@ -30,8 +32,8 @@ public class QShowInfoRepository {
     private final JPAQueryFactory queryFactory;
     public Page<ShowInfoResponseDto> findAll(String title,
                                              Pageable pageable,
-                                             Sortable sortable) {
-
+                                             Sortable sortable,
+                                             Long userId) {
         List<ShowInfoResponseDto> content  = queryFactory.select(
                 // Projections : 일부 컬럼만 가져오기 위함
                 // constructor : Dto의 생성자를 기준으로 select하기 위해
@@ -67,7 +69,8 @@ public class QShowInfoRepository {
                         showInfo.location,
                         showInfo.title,
                         showInfo.ticketVendor,
-                        showInfo.price
+                        showInfo.price,
+                        showInfo.createdAt
                 )
                 .orderBy(SortableUtility.of(
                         // 프론트에서 받아온 sort와 order
@@ -79,6 +82,22 @@ public class QShowInfoRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+
+        List<Long> likedShowIds = queryFactory.select(showLike.showInfo.id)
+                .from(showLike)
+                .where(showLike.userEntity.id.eq(userId))
+                .fetch();
+
+        Map<Long, Long> showLikeMap = new HashMap<>();
+        for (Long showId : likedShowIds) {
+            showLikeMap.put(showId, showId);
+        }
+
+        // list로 가져온 showInfo가 query문으로 가져온 좋아요가 눌러진 showInfo Map에 있냐 없나를 for문으로 확인
+        content.forEach(item -> {
+            item.setIsLiked(showLikeMap.containsKey(item.getId()));
+        });
+
 
         JPAQuery<Long> countQuery = queryFactory
                 .select(showInfo.count())
