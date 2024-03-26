@@ -5,10 +5,7 @@ import com.example.stagealarm.user.entity.UserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
@@ -17,6 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ShowLike extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY)
+  @Setter
   private ShowInfo showInfo;
   @ManyToOne(fetch = FetchType.LAZY)
   private UserEntity userEntity;
