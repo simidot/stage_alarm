@@ -49,6 +49,11 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="nickname">닉네임</label>
+                        <input type="text" class="form-control" id="nickname" name="nickname" required>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="gender">성별</label>
                         <select class="form-control" id="gender" name="gender">
                             <option value="">선택하세요</option>
@@ -177,6 +182,7 @@
                 loginId: checkedLoginId,
                 password: $('#password').val(),
                 email: checkedEmail,
+                nickname: $('#nickname').val(),
                 gender: $('#gender').val(),
                 phone: $('#phone').val(),
                 address: $('#address').val(),

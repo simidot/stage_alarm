@@ -2,6 +2,7 @@ package com.example.stagealarm.image.entity;
 
 import com.example.stagealarm.BaseEntity;
 import com.example.stagealarm.board.entity.Board;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,13 +19,7 @@ public class Image extends BaseEntity {
   private String imgUrl;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JsonBackReference
   @Setter
   private Board board;
-
-
-  // 연관관계 편의 메서드
-  public void addBoard(Board boardEntity) {
-    this.setBoard(boardEntity);
-    boardEntity.getImageList().add(this);
-  }
 }
