@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <title>main</title>
+</head>
+<body>
+
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4"
+      style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
+        <div class="d-flex justify-content-end my-5">
+            <button class="btn btn-outline-secondary rounded me-1">최신순</button>
+            <button class="btn btn-outline-secondary rounded">좋아요순</button>
+        </div>
+        <div id="showList" class="row row-cols-3 g-3 align-items-center justify-content-center text-center">
+            <!-- 여기에 아이템을 추가할 것입니다 -->
+        </div>
+
+        <nav aria-label="Page navigation example" class="mt-5 d-flex justify-content-center">
+            <ul class="pagination">
+
+            </ul>
+        </nav>
+    </div>
+</main>
+
+<script th:inline="javascript">
+    $(document).ready(function () {
+        // 여기에 코드를 작성하세요
+        $.ajax({
+            url: "/show",
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            data: {
+                size: 9,
+                page: 0,
+                sort: "like,createdAt",
+                order: "desc,desc"
+            },
+            success: function (data) {
+                const $showInfo = $('#showList');
+                const $pagination = $('.pagination');
+                const content = data.content;
+                const totalPages = data.totalPages;
+                $.each(content, function (index, showInfo) {
+                    const showHtml =
+                        '<div class="card" style="width: 18rem;">\n' +
+                        '<img src="https://via.placeholder.com/300\n" class="card-img-top" alt="축제 이미지">\n' +
+                        '<div class="card-body">\n' +
+                        '<h5 class="card-title"> ' + showInfo.title + '</h5>\n' +
+                        '<p class="card-text">' + showInfo.date + '</p>\n' +
+                        '<a href="shows/' + showInfo.id + '" class="btn btn-primary">상세보기</a>\n' +
+                        '</div>\n' +
+                        '</div>'
+
+                    $showInfo.append(showHtml);
+                })
+
+                for (let i = 0; i < totalPages; i++) {
+                    const pageNumber = i + 1;
+                    const $pageItem = $('<li class="page-item"><a class="page-link" href="#">' + pageNumber + '</a></li>');
+                    // 페이지 번호에 따라 다시 AJAX 요청 등을 할 수 있음
+                    $pageItem.click(function () {
+                        // 이전 데이터 삭제
+                        $showInfo.empty();
+                        let clickedPageNumber = $(this).text();
+                        $.ajax({
+                            url: "/show",
+                            type: "GET",
+                            contentType: 'application/json; charset=utf-8',
+                            data: {
+                                size: 9,
+                                page: clickedPageNumber - 1, // 페이지 번호는 1부터 시작하지만 실제 페이지 값은 0부터 시작하므로 1을 뺌
+                                sort: "like,createdAt",
+                                order: "desc,desc"
+                            },
+                            success: function (data) {
+                                const $showInfo = $('#showList');
+                                const content = data.content;
+                                $.each(content, function (index, showInfo) {
+                                    const showHtml =
+                                        '<div class="card" style="width: 18rem;">\n' +
+                                        '<img src="https://via.placeholder.com/300\n" class="card-img-top" alt="축제 이미지">\n' +
+                                        '<div class="card-body">\n' +
+                                        '<h5 class="card-title"> ' + showInfo.title + '</h5>\n' +
+                                        '<p class="card-text">' + showInfo.date + '</p>\n' +
+                                        '<a href="shows/' + showInfo.id + '" class="btn btn-primary">상세보기</a>\n' +
+                                        '</div>\n' +
+                                        '</div>'
+
+                                    $showInfo.append(showHtml);
+                                })
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("AJAX 요청 실패:", status, error);
+                            }
+                        });
+                    });
+                    $pagination.append($pageItem);
+                }
+
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX 요청 실패:", status, error);
+            }
+        });
+    })
+</script>
+
+</body>
+</html>
