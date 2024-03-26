@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,7 @@ public class OAuth2SuccessHandler
     private final JwtTokenUtils tokenUtils;
     // 사용자 정보 등록을 위해 UserService
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void onAuthenticationSuccess(
@@ -48,6 +50,7 @@ public class OAuth2SuccessHandler
         String username
                 = String.format("%s:%s", provider, email);
         String providerId = oAuth2User.getAttribute("id").toString();
+        String nickname = oAuth2User.getAttribute("nickname");
 
         // 이메일 중복 검사
         if (userService.existsByEmail(email)) {
@@ -66,7 +69,8 @@ public class OAuth2SuccessHandler
             userService.join(UserDto.builder()
                     .loginId(username)
                     .email(email)
-                    .password(providerId)
+                    .nickname(nickname)
+                    .password(passwordEncoder.encode(providerId))
                     .build());
         }
         log.info(username);

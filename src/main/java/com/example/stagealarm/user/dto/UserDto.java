@@ -17,6 +17,7 @@ public class UserDto {
 
     private String loginId;
     private String password;
+    private String nickname;
     private String email;
     private String gender;
     private String phone;
@@ -28,6 +29,7 @@ public class UserDto {
                 .id(userEntity.getId())
                 .createdAt(userEntity.getCreatedAt())
                 .loginId(userEntity.getLoginId())
+                .nickname(userEntity.getNickname())
                 .password(userEntity.getPassword())
                 .email(userEntity.getEmail())
                 .gender(userEntity.getGender())
