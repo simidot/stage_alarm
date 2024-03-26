@@ -3,6 +3,7 @@ package com.example.stagealarm.board.entity;
 import com.example.stagealarm.BaseEntity;
 import com.example.stagealarm.image.entity.Image;
 import com.example.stagealarm.user.entity.UserEntity;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,6 +35,7 @@ public class Board  extends BaseEntity {
   private UserEntity userEntity;
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JsonManagedReference
   private List<Image> imageList;
 
   @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)

@@ -19,10 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -83,12 +81,10 @@ public class BoardService {
 
           // 임시 저장 리스트에 추가
           imageToSave.add(targetImage);
-
-          // Entity 저장
-          imageRepository.saveAll(imageToSave);
         }
+        // Entity 저장
+        imageRepository.saveAll(imageToSave);
       }
-
       // 저장
       return BoardDto.fromEntity(boardRepository.save(newBoard));
     } catch (Exception e) {
@@ -112,37 +108,21 @@ public class BoardService {
   }
 
   // Update
-  public BoardDto updateBoard(Long boardId, BoardDto dto) {
-    try {
-      // 해당 board 가져오기
-      Board targetBoard = boardRepository.findById(boardId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+  @Transactional
+  public BoardDto reWriteBoard(
+    List<MultipartFile> files,
+    Long boardId,
+    BoardDto dto
+  ) {
+    BoardDto result = updateBoard(boardId, dto);
+    Boolean imageResult = updateImage(boardId, files);
+    log.info("S3 uploaded: {}", imageResult);
 
-      // 수정 요청자 정보 가져오기
-      UserEntity targetUser = auth.getUserEntity();
-
-      // 권한 확인
-      if (!targetUser.getId().equals(targetBoard.getUserEntity().getId()))
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-      // 카테고리 정보 가져오기
-      Category targetCategory = categoryRepository.findById(dto.getCategoryId())
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-      // 수정
-      targetBoard.setTitle(dto.getTitle());
-      targetBoard.setContent(dto.getContent());
-      targetBoard.setCategory(targetCategory);
-
-      // 저장 및 반환
-      return BoardDto.fromEntity(boardRepository.save(targetBoard));
-    } catch (Exception e) {
-      log.error("err: {}", e.getMessage());
-      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "updateBoard");
-    }
+    return result;
   }
 
   // Delete
+  @Transactional
   public void deleteBoard(Long boardId) {
     try {
       // 해당 board 가져오기
@@ -155,6 +135,19 @@ public class BoardService {
       // 권한 확인
       if (!targetUser.getId().equals(targetBoard.getUserEntity().getId()))
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+      // 이미지가 있다면 삭제 진행
+      if (!targetBoard.getImageList().isEmpty()) {
+        // Image 찾기
+        List<Image> targetImages = imageRepository.findAllByBoard_Id(boardId);
+
+        for (Image image : targetImages) {
+          String filename = image.getImgUrl().substring(image.getImgUrl().lastIndexOf("/") + 1);
+
+          s3FileService.deleteFile("/boardImg", filename);
+        }
+        imageRepository.deleteAll(targetImages);
+      }
 
       // 삭제
       boardRepository.deleteById(boardId);
@@ -171,8 +164,8 @@ public class BoardService {
     Pageable pageable
   ) {
     if (params.getTitle() == null && params.getCategoryId() == null)
-      // todo readAll pageable 후 수정 필요
-      return null;
+      return boardRepository.findAll(pageable).map(BoardDto::fromEntity);
+
     return qBoardRepo.searchTitle(params, pageable)
       .map(BoardDto::fromEntity);
   }
@@ -183,9 +176,100 @@ public class BoardService {
     Pageable pageable
   ) {
     if (params.getContent() == null && params.getCategoryId() == null)
-      // todo readAll pageable 후 수정 필요
-      return null;
+      return boardRepository.findAll(pageable).map(BoardDto::fromEntity);
+
     return qBoardRepo.searchContent(params, pageable)
       .map(BoardDto::fromEntity);
+  }
+
+  // Update - Board만 수정
+  public BoardDto updateBoard(
+      Long boardId,
+      BoardDto dto
+  ) {
+    try {
+      // 해당 board 가져오기
+      Board targetBoard = boardRepository.findById(boardId)
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+      // 수정 요청자 정보 가져오기
+      UserEntity targetUser = auth.getUserEntity();
+
+      // 권한 확인
+      if (!targetUser.getId().equals(targetBoard.getUserEntity().getId()))
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+      // 카테고리 정보 가져오기
+      Category targetCategory = categoryRepository.findById(dto.getCategoryId())
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+      // 수정
+      targetBoard.setTitle(dto.getTitle());
+      targetBoard.setContent(dto.getContent());
+      targetBoard.setCategory(targetCategory);
+
+      // 저장 및 반환
+      return BoardDto.fromEntity(boardRepository.save(targetBoard));
+    } catch (Exception e) {
+      log.error("err: {}", e.getMessage());
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "update board");
+    }
+  }
+
+  // Update - Image만 수정
+  public Boolean updateImage(
+      Long boardId,
+      List<MultipartFile> files
+  ) {
+    try {
+      // 해당 board 가져오기
+      Board targetBoard = boardRepository.findById(boardId)
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+      // 수정 요청자 정보 가져오기
+      UserEntity targetUser = auth.getUserEntity();
+
+      // 권한 확인
+      if (!targetUser.getId().equals(targetBoard.getUserEntity().getId()))
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+      List<Image> targetImages = imageRepository.findAllByBoard_Id(boardId);
+
+      // 기존 이미지가 있다면 삭제
+      if (!targetImages.isEmpty()) {
+        for (Image image : targetImages) {
+          // S3에서 이미지 파일 삭제
+          String filename = image.getImgUrl().substring(image.getImgUrl().lastIndexOf("/") + 1);
+          s3FileService.deleteFile("/boardImg", filename);
+        }
+
+        // 데이터베이스에서 이미지 항목 삭제
+        imageRepository.deleteAll(targetImages);
+        targetBoard.getImageList().clear(); // Board 엔티티의 이미지 리스트도 클리어
+      }
+
+      // 새로운 파일이 있으면 업로드 후 데이터베이스에 저장
+      if (files != null && !files.isEmpty()) {
+        List<String> uploadedUrls = s3FileService.uploadIntoS3("/boardImg", files);
+
+        List<Image> imageToSave = new ArrayList<>();
+        for (String url : uploadedUrls) {
+          Image newImage = Image.builder()
+              .imgUrl(url)
+              .build();
+          // Board와 Image 연결
+          targetBoard.addImage(newImage);
+          imageToSave.add(newImage);
+        }
+
+        // 데이터베이스에 이미지 정보 저장
+        imageRepository.saveAll(imageToSave);
+      }
+
+      return true;
+    } catch (Exception e) {
+      log.error("err: {}", e.getMessage());
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "update image");
+    }
   }
 }

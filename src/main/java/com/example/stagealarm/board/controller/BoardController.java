@@ -25,8 +25,6 @@ public class BoardController {
   private final CategoryService categoryService;
 
   // Create
-  // todo 이미지 넣기
-  // note test 완료
   @PostMapping
   public BoardDto write(
 //   @RequestBody BoardDto dto
@@ -38,7 +36,6 @@ public class BoardController {
 
   // Read
   // read All + Sort
-  // note test 완료
   @GetMapping("/{categoryId}")
   public Page<BoardListDto> readAll(
     @PathVariable("categoryId") Long categoryId,
@@ -49,7 +46,6 @@ public class BoardController {
   }
 
   // read One
-  // note test 완료
   @GetMapping("/detail/{boardId}")
   public BoardDto readOne(
     @PathVariable("boardId") Long boardId
@@ -58,17 +54,16 @@ public class BoardController {
   }
 
   // Update
-  // note test 완료(이미지는 미완)
   @PutMapping("/rewriting/{boardId}")
   public BoardDto rewrite(
     @PathVariable("boardId") Long boardId,
-    @RequestBody BoardDto dto
+    @RequestBody List<MultipartFile> files,
+    @RequestPart BoardDto dto
   ) {
-    return boardService.updateBoard(boardId, dto);
+    return boardService.reWriteBoard(files, boardId, dto);
   }
 
   // Delete
-  // note test 완료
   @DeleteMapping("/trash/{boardId}")
   public void erase(
     @PathVariable("boardId") Long boardId
@@ -78,7 +73,6 @@ public class BoardController {
 
   // Search
     // title
-  // note test 완료
   @GetMapping("/title")
   public Page<BoardDto> searchTitle(
     TitleSearchParams params,
@@ -89,7 +83,6 @@ public class BoardController {
   }
 
     // content
-    // note test 완료
   @GetMapping("/content")
   public Page<BoardDto> searchContent(
     ContentSearchParams params,

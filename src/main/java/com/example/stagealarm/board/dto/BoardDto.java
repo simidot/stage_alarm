@@ -25,24 +25,16 @@ public class BoardDto {
   private String loginId;
   private Long categoryId;
   private LocalDateTime createdAt;
-  private List<BoardCommentDto> comments;
-
-  private List<String> imageUrl;
+  private List<Image> imageList;
+  private List<BoardCommentDto> commentList;
 
   public static BoardDto fromEntity(Board entity) {
     List<BoardCommentDto> commentDtos = new ArrayList<>();
     if (!entity.getCommentList().isEmpty()) {
       for (BoardComment comment : entity.getCommentList()) {
+        // 댓글만 넣기
         if (comment.getDepth() == 0)
           commentDtos.add(convertToDto(comment));
-      }
-    }
-
-    // 이미지가 존재할 시, 해당 연관된 데이터를 모두 다 불러오기에 imageUrl만 따로 분리
-    List<String> imageUrl = new ArrayList<>();
-    if (!entity.getImageList().isEmpty()) {
-      for (Image image : entity.getImageList()) {
-        imageUrl.add(image.getImgUrl());
       }
     }
 
@@ -56,8 +48,8 @@ public class BoardDto {
       entity.getUserEntity().getLoginId(),
       entity.getCategory().getId(),
       entity.getCreatedAt(),
-      commentDtos,
-      imageUrl
+      entity.getImageList(),
+      commentDtos
     );
   }
 
