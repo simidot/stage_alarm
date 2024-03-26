@@ -26,6 +26,8 @@ public class UserEntity extends BaseEntity {
   @Setter
   private String email; //email로 가입여부 식별
   @Setter
+  private String nickname;
+  @Setter
   private String gender;
   @Setter
   private String phone;
@@ -35,6 +37,7 @@ public class UserEntity extends BaseEntity {
   private String address;
   @Setter
   private String authorities;
+
 
   @OneToMany(mappedBy = "userEntity")
   private List<ArtistLike> likeList;
@@ -48,6 +51,7 @@ public class UserEntity extends BaseEntity {
             .loginId(dto.getLoginId())
             .password(dto.getPassword())
             .email(dto.getEmail())
+            .nickname(dto.getNickname())
             .gender(dto.getGender())
             .phone(dto.getPhone())
             .profileImg(dto.getProfileImg())
