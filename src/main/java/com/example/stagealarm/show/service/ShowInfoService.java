@@ -36,7 +36,6 @@ public class ShowInfoService {
     private final QShowInfoRepository qShowInfoRepository;
     private final S3FileService s3FileService;
     private final AuthenticationFacade facade;
-
     private final ArtistRepository artistRepository;
     private final GenreRepository genreRepository;
     private final ShowGenreRepo showGenreRepo;
