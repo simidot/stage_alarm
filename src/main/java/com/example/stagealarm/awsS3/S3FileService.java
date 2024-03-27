@@ -78,6 +78,46 @@ public class S3FileService {
         return imgUrlList;
     }
 
+    @Transactional
+    public String uploadIntoS3(String folder, MultipartFile multipartFile) {
+        log.info("uploadIntoS3 tx start");
+        String imgUrlList = "";
+
+        if (Objects.requireNonNull(multipartFile.getContentType()).contains("image")) {
+
+            String filename = createFilename(multipartFile.getOriginalFilename());
+            String fileFormat = multipartFile.getContentType().substring(multipartFile.getContentType().lastIndexOf("/") + 1);
+            log.info("fileFormat: : " + fileFormat);
+            if (folder.equals("/profileImg")) {
+                multipartFile = resizeImage(filename, fileFormat, multipartFile, 500);
+            } else if (folder.equals("/artistImg")) {
+                multipartFile = resizeImage(filename, fileFormat, multipartFile, 750);
+            }
+
+            // 리사이징 후 S3에 업로드
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(multipartFile.getSize());
+            metadata.setContentType(multipartFile.getContentType());
+            log.info("contentType: " + multipartFile.getContentType());
+
+            try (InputStream inputStream = multipartFile.getInputStream()) {
+                amazonS3.putObject(
+                    new PutObjectRequest(bucket + folder,
+                        filename,
+                        inputStream,
+                        metadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead)
+                );
+                // 성공적 업로드시 imgUrlList에 추가
+                imgUrlList = amazonS3.getUrl(bucket + folder, filename).toString();
+            } catch (IOException e) {
+                log.warn(e.getMessage() + " : 이미지 업로드에 실패하였습니다. ");
+            }
+        }
+        log.info("uploadIntoS3 tx end");
+        return imgUrlList;
+    }
+
     private String createFilename(String filename) {
 //        return UUID.randomUUID().toString();
         return UUID.randomUUID().toString().concat(getFileExtension(filename));
