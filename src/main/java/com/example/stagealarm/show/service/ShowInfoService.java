@@ -1,12 +1,14 @@
 package com.example.stagealarm.show.service;
 
 import com.example.stagealarm.awsS3.S3FileService;
+import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.show.dto.ShowInfoRequestDto;
 import com.example.stagealarm.show.dto.ShowInfoResponseDto;
 import com.example.stagealarm.show.dto.Sortable;
 import com.example.stagealarm.show.entity.ShowInfo;
 import com.example.stagealarm.show.repo.QShowInfoRepository;
 import com.example.stagealarm.show.repo.ShowInfoRepository;
+import com.example.stagealarm.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +27,7 @@ public class ShowInfoService {
     private final ShowInfoRepository showInfoRepository;
     private final QShowInfoRepository qShowInfoRepository;
     private final S3FileService s3FileService;
+    private final AuthenticationFacade facade;
 
     // 공연 정보 등록
     @Transactional
@@ -51,7 +54,10 @@ public class ShowInfoService {
 
     // 공연 정보 조회 (전체)
     public Page<ShowInfoResponseDto> readAll(String title, Pageable pageable, Sortable sortable) {
-        return qShowInfoRepository.findAll(title, pageable, sortable);
+        UserEntity userEntity = facade.getUserEntity();
+        Long userId = userEntity.getId();
+
+        return qShowInfoRepository.findAll(title, pageable, sortable, userId);
     }
 
     // 공연 정보 조히 (단일)
