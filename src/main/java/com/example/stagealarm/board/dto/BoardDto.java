@@ -4,6 +4,7 @@ import com.example.stagealarm.board.entity.ActivateEnum;
 import com.example.stagealarm.board.entity.Board;
 import com.example.stagealarm.board.entity.BoardComment;
 import com.example.stagealarm.board.entity.Category;
+import com.example.stagealarm.image.entity.Image;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -24,12 +25,14 @@ public class BoardDto {
   private String loginId;
   private Long categoryId;
   private LocalDateTime createdAt;
-  private List<BoardCommentDto> comments;
+  private List<Image> imageList;
+  private List<BoardCommentDto> commentList;
 
   public static BoardDto fromEntity(Board entity) {
     List<BoardCommentDto> commentDtos = new ArrayList<>();
     if (!entity.getCommentList().isEmpty()) {
       for (BoardComment comment : entity.getCommentList()) {
+        // 댓글만 넣기
         if (comment.getDepth() == 0)
           commentDtos.add(convertToDto(comment));
       }
@@ -45,6 +48,7 @@ public class BoardDto {
       entity.getUserEntity().getLoginId(),
       entity.getCategory().getId(),
       entity.getCreatedAt(),
+      entity.getImageList(),
       commentDtos
     );
   }

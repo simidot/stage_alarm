@@ -74,6 +74,7 @@ public class UserService implements UserDetailsService {
                 .loginId(dto.getLoginId())
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .email(dto.getEmail())
+                .nickname(dto.getNickname())
                 .gender(dto.getGender())
                 .phone(dto.getPhone())
                 .profileImg(dto.getProfileImg())
@@ -133,7 +134,7 @@ public class UserService implements UserDetailsService {
 
         UserEntity userEntity = searchByLoginId(dto.getLoginId());
 
-        userEntity.setEmail(dto.getEmail());
+        userEntity.setNickname(dto.getNickname());
         userEntity.setGender(dto.getGender());
         userEntity.setPhone(dto.getPhone());
         userEntity.setProfileImg(dto.getProfileImg());

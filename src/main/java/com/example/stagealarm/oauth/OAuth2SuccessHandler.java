@@ -4,12 +4,14 @@ import com.example.stagealarm.jwt.JwtTokenUtils;
 import com.example.stagealarm.user.dto.UserDto;
 import com.example.stagealarm.user.service.UserService;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -30,6 +32,7 @@ public class OAuth2SuccessHandler
     private final JwtTokenUtils tokenUtils;
     // 사용자 정보 등록을 위해 UserService
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void onAuthenticationSuccess(
@@ -47,6 +50,7 @@ public class OAuth2SuccessHandler
         String username
                 = String.format("%s:%s", provider, email);
         String providerId = oAuth2User.getAttribute("id").toString();
+        String nickname = oAuth2User.getAttribute("nickname");
 
         // 이메일 중복 검사
         if (userService.existsByEmail(email)) {
@@ -65,18 +69,33 @@ public class OAuth2SuccessHandler
             userService.join(UserDto.builder()
                     .loginId(username)
                     .email(email)
-                    .password(providerId)
+                    .nickname(nickname)
+                    .password(passwordEncoder.encode(providerId))
                     .build());
         }
         log.info(username);
+
+
 
         // 데이터베이스에서 사용자 계정 회수
         UserDetails details
                 = userService.loadUserByUsername(username);
         // JWT 생성
         String jwt = tokenUtils.generateToken(details);
-        // oauthClient 는 JWT 를 처리할 클라이언트측 페이지를 연결해줆
-        String redirectUrl = "http://localhost:8080/user/oauthClient?token=" + jwt;
+
+        // 쿠키에 JWT 토큰 저장
+        Cookie jwtCookie = new Cookie("auth_token", jwt); // "auth_token"은 쿠키의 이름입니다.
+
+        // 쿠키 설정 (옵션)
+        jwtCookie.setHttpOnly(false); // JavaScript를 통한 접근 방지 false -> 프론트에서 바로 꺼내고 지울용도임
+        jwtCookie.setSecure(true); // HTTPS를 통해서만 쿠키를 전송
+        jwtCookie.setPath("/"); // 사이트 전역에서 쿠키 접근 가능
+
+        // 응답에 쿠키 추가
+        response.addCookie(jwtCookie);
+        // oauthClient 는 JWT 를 처리할 클라이언트측 페이지를 연결해줌
+        String redirectUrl = "http://localhost:8080/user/oauthClient";
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
+        // 토큰을 -> 쿠키 -> 리다이렉트
     }
 }

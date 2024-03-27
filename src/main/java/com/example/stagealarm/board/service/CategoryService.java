@@ -1,6 +1,5 @@
 package com.example.stagealarm.board.service;
 
-import com.example.stagealarm.board.dto.BoardDto;
 import com.example.stagealarm.board.dto.BoardListDto;
 import com.example.stagealarm.board.entity.Board;
 import com.example.stagealarm.board.entity.Category;
@@ -29,11 +28,13 @@ public class CategoryService {
     this.categoryRepository = categoryRepository;
     this.boardRepository = boardRepository;
 
-    // Category 생성 (공연 후기, 아티스트, 자유, 동행)
-    createCategory("공연 후기");
-    createCategory("아티스트");
-    createCategory("자유");
-    createCategory("동행");
+    if (categoryRepository.findAll().isEmpty()) {
+      // Category 생성 (공연 후기, 아티스트, 자유, 동행)
+      createCategory("공연 후기");
+      createCategory("아티스트");
+      createCategory("자유");
+      createCategory("동행");
+    }
   }
 
   // Create
@@ -53,10 +54,21 @@ public class CategoryService {
       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     // Sort
-    if (sortParam.equals("desc"))
-      pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
-    if (sortParam.equals("asc"))
-      pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").ascending());
+    // switch
+    switch (sortParam) {
+      case "dateD":
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
+        break;
+      case "dateA":
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").ascending());
+        break;
+      case "viewD":
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("views").descending());
+        break;
+      case "viewA":
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("views").ascending());
+        break;
+    }
 
     Page<Board> boardPage
       = boardRepository.findAllByCategory(targetCategory, pageable);
