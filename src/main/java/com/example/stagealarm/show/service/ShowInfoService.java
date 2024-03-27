@@ -136,7 +136,8 @@ public class ShowInfoService {
                             showInfo.getTitle(),
                             showInfo.getDate(),
                             endDate,
-                            randomColor
+                            randomColor,
+                            "shows/" + showInfo.getId()
                     );
                 })
                 .collect(Collectors.toList());

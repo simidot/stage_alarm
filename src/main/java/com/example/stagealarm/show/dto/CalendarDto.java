@@ -18,4 +18,5 @@ public class CalendarDto {
     private LocalDate start;
     private LocalDate end;
     private String color;
+    private String url;
 }
