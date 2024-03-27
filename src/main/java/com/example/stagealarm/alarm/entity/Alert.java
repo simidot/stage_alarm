@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Alarm extends BaseEntity {
+public class Alert extends BaseEntity {
   private String message;
 }
