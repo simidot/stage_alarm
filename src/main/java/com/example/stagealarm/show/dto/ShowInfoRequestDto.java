@@ -19,4 +19,7 @@ public class ShowInfoRequestDto {
     private String title;
     private String ticketVendor;
     private String price;
+
+    private Long artistId; // 아티스트도 어떻게 받아와야할지?
+    private Long genreId; //프론트 입력창에서 장르를 선택 가능하도록..?하고 받아옴
 }
