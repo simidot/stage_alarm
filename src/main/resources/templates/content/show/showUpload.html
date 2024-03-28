@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <title>showInfo upload</title>
+<body>
+
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
+        <div>
+            <h2 class="titles mb-3 mt-4 text-center">SHOW INFO UPDATE</h2>
+            <hr> <!--구분선 넣기 -->
+            <div class="form-group mt-3">
+                <div class="bold-label text-center mb-4" style="font-size: 20px;">공연 정보 입력</div>
+                <div class="light-label"> 공연 정보를 입력해주세요. </div>
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="title"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">공연명</div>
+                            <input type="text" class="form-control" id="title" name="title" maxlength="50"
+                                   placeholder="공연명">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="place"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">공연 장소</div>
+                            <input type="text" class="form-control" id="place" name="place" maxlength="50"
+                                   placeholder="공연 장소">
+                        </div>
+                    </div>
+<!--                todo : 날짜 선택 -->
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="place"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">공연 날짜</div>
+                            <input type="text" class="form-control" id=date name="date" placeholder="공연 날짜">
+                        </div>
+                    </div>
+<!--                    todo: 24시간중에 선택-->
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="startTime"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">공연 시작 시간</div>
+                            <input type="text" class="form-control" id=startTime name="startTime" maxlength="50"
+                                   placeholder="공연 시작 시간">
+                        </div>
+                    </div>
+<!--                    todo: 0~24까지 중 선택-->
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="hours"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">예상 공연 시간</div>
+                            <input type="text" class="form-control" id=hours name="hours" maxlength="50"
+                                   placeholder="예상 공연 시간">
+                        </div>
+                    </div>
+<!--                   todo:  직접 입력-->
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="duration"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">공연 진행 기간</div>
+                            <input type="text" class="form-control" id=duration name="duration" maxlength="50"
+                                   placeholder="공연 진행 기간 (시간으로 설정해주시길 바랍니다.)">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="ticketVendor"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">티켓 예매 링크</div>
+                            <input type="text" class="form-control" id=ticketVendor name="ticketVendor" maxlength="300"
+                                   placeholder="티켓 예매 링크">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="price"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">공연 가격</div>
+                            <input type="text" class="form-control" id=price name="price" placeholder="공연 가격">
+                        </div>
+                    </div>
+<!--                    todo: 이미지 첨부 첨부는 파일 한개만 가능!!!! 미리보기 추가 -->
+                    <div class="col-md-8 mb-3">
+                        <label for="posterImage" class="form-label">공연 포스터 이미지 추가</label>
+                        <input class="form-control" type="file" id="posterImage" name="posterImage" accept="image/*" placeholder="공연 포스터">
+                        <div id="imageContainer"></div>
+                    </div>
+                </div>
+                <div class="border mt-5 mb-5"></div> <!--구분선 넣기 -->
+                <div class="light-label"> 출연 아티스트 정보를 입력해주세요. </div>
+
+
+                <div class="border mt-5 mb-5"></div> <!--구분선 넣기 -->
+                <div class="light-label"> 해당 공연의 장르를 선택해주세요. </div>
+            </div>
+                <div class="border mt-5 mb-5"></div> <!--구분선 넣기 -->
+
+        </div>
+    </div>
+</main>
+
+</body>
+<script>
+    $("#posterImage").on("change", function(){
+        const fileInput = $("#posterImage")[0];
+        const files = fileInput.files;
+        const reg = /(.*?)\.(jpg|bmp|jpeg|png|JPG|BMP|JPEG|PNG)$/;
+        const maxSize = 5 * 1024 * 1024;
+
+        // var file = event.target.files[0];
+        const imageContainer = $("#imageContainer");
+        imageContainer.empty();
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+            // reader.readAsDataURL(file);
+
+            reader.onload = (function (file) {
+                return function (e) {
+                    // 미리보기 이미지의 크기 조절
+                    var img = $("<img>").attr("src", e.target.result).css({
+                        "max-width": "200px",
+                        "max-height": "200px",
+                        "margin": "5px"  // 이미지 간격을 조절하기 위한 스타일
+                    });
+                    // 이미지를 이미지 컨테이너에 추가
+                    imageContainer.append(img);
+                };
+            })(file);
+
+            if (!file.name.match(reg)) {
+                alert("이미지 파일만 업로드 가능합니다. ");
+                fileInput.value = "";
+                return;
+            } else if (file.size >= maxSize) {
+                alert("파일 사이즈는 5MB까지 가능합니다. ");
+                fileInput.value = "";
+                return;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+</html>
