@@ -1,5 +1,7 @@
 package com.example.stagealarm.show.service;
 
+import com.example.stagealarm.alarm.service.AlertService;
+import com.example.stagealarm.alarm.service.EmailAlertService;
 import com.example.stagealarm.artist.entity.Artist;
 import com.example.stagealarm.artist.repo.ArtistRepository;
 import com.example.stagealarm.awsS3.S3FileService;
@@ -17,7 +19,10 @@ import com.example.stagealarm.show.repo.ShowArtistRepo;
 import com.example.stagealarm.show.repo.ShowGenreRepo;
 import com.example.stagealarm.show.repo.ShowInfoRepository;
 import com.example.stagealarm.user.entity.UserEntity;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -27,10 +32,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class ShowInfoService {
     private final ShowInfoRepository showInfoRepository;
     private final QShowInfoRepository qShowInfoRepository;
@@ -40,13 +47,14 @@ public class ShowInfoService {
     private final GenreRepository genreRepository;
     private final ShowGenreRepo showGenreRepo;
     private final ShowArtistRepo showArtistRepo;
-
+    private final AlertService alertService;
 
     // 공연 정보 등록
     @Transactional
     public ShowInfoResponseDto create(ShowInfoRequestDto dto, MultipartFile file) {
         // 공연 기본정보 + 아티스트 정보 + 장르 정보 + 이미지 파일
 
+        // 1) 공연 기본정보 저장 (ShowInfo)
         ShowInfo showInfo = ShowInfo.builder()
             .date(dto.getDate())
             .startTime(dto.getStartTime())
@@ -60,21 +68,37 @@ public class ShowInfoService {
             .price(dto.getPrice())
             .build();
 
-        // 검색된 아티스트/장르 찾아서 show와 artist/genre 연결지어주는 엔티티 객체 생성 후 저장
-        Artist artist = artistRepository.findById(dto.getArtistId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Genre genre = genreRepository.findById(dto.getGenreId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        ShowArtist newShowArtist = ShowArtist.builder()
-            .artist(artist)
-            .showInfo(showInfo)
-            .build();
-        ShowGenre newShowGenre = ShowGenre.builder()
-            .genre(genre)
-            .showInfo(showInfo)
-            .build();
-
         ShowInfo saved = showInfoRepository.save(showInfo);
-        showArtistRepo.save(newShowArtist);
-        showGenreRepo.save(newShowGenre);
+
+        if (dto.getArtistIds() != null) {
+            // 검색된 아티스트/장르 찾아서 show와 artist/genre 연결지어주는 엔티티 객체 생성 후 저장
+            List<ShowArtist> showArtists = dto.getArtistIds().stream()
+                .map(artistId -> {
+                    Artist artist = artistRepository.findById(artistId)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                    return showArtistRepo.save(ShowArtist.builder()
+                        .artist(artist)
+                        .showInfo(saved)
+                        .build());
+                }).toList();
+
+        }
+
+        if (dto.getGenreIds() != null) {
+            List<ShowGenre> showGenres = dto.getGenreIds().stream()
+                .map(genreId -> {
+                    Genre genre = genreRepository.findById(genreId)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                    return showGenreRepo.save(ShowGenre.builder()
+                        .genre(genre)
+                        .showInfo(saved)
+                        .build());
+                }).toList();
+//            for (ShowGenre showGenre : showGenres) {
+//                showGenre.setShowInfo(saved);
+//            }
+        }
+        alertService.createAlert(saved.getId());
         return ShowInfoResponseDto.fromEntity(saved);
     }
 
