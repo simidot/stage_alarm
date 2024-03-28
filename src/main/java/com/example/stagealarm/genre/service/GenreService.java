@@ -30,10 +30,7 @@ public class GenreService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Genre already exists");
         }
 
-        Genre genre = Genre.builder()
-                .name(dto.getName())
-                .build();
-        genreRepository.save(genre);
+        Genre genre = genreRepository.save(Genre.fromDto(dto));
         return GenreDto.fromEntity(genre);
     }
 

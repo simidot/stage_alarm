@@ -29,6 +29,9 @@ public class Artist extends BaseEntity {
   @OneToMany(mappedBy = "artist")
   private List<ArtistLike> likes = new ArrayList<>(); //좋아요 개수
 
+  @OneToMany(mappedBy = "artist")
+  private List<ArtistSubscribe> subscribes = new ArrayList<>();
+
   public static Artist fromDto(ArtistDto artistDto){
     return Artist.builder()
             .name(artistDto.getName())
