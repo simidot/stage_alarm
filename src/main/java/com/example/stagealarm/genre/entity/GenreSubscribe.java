@@ -18,6 +18,6 @@ import lombok.NoArgsConstructor;
 public class GenreSubscribe extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   private Genre genre;
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   private UserEntity userEntity;
 }

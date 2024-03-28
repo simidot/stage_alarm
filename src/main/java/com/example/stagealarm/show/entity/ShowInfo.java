@@ -46,6 +46,13 @@ public class ShowInfo extends BaseEntity {
     @OneToMany(mappedBy = "showInfo")
     private List<ShowLike> showLikes;
 
+    @OneToMany(mappedBy = "showInfo")
+    private List<ShowGenre> showGenres;
+
+    @OneToMany(mappedBy = "showInfo")
+    private List<ShowArtist> showArtists;
+
+
     // 연관관계 편의 메서드 - 좋아요 수 테스트 용으로 만드는 거라 배포할땐 지우면 되요!
     public void addLike(ShowLike like) {
         if (showLikes == null) showLikes = new ArrayList<>();
