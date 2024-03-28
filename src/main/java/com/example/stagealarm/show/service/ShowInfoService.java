@@ -74,7 +74,7 @@ public class ShowInfoService {
             // 검색된 아티스트/장르 찾아서 show와 artist/genre 연결지어주는 엔티티 객체 생성 후 저장
             List<ShowArtist> showArtists = dto.getArtistIds().stream()
                 .map(artistId -> {
-                    Artist artist = artistRepository.findById(artistId)
+                    Artist artist = artistRepository.findById(Long.valueOf(artistId))
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
                     return showArtistRepo.save(ShowArtist.builder()
                         .artist(artist)
@@ -87,17 +87,18 @@ public class ShowInfoService {
         if (dto.getGenreIds() != null) {
             List<ShowGenre> showGenres = dto.getGenreIds().stream()
                 .map(genreId -> {
-                    Genre genre = genreRepository.findById(genreId)
+                    Genre genre = genreRepository.findById(Long.valueOf(genreId))
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
                     return showGenreRepo.save(ShowGenre.builder()
                         .genre(genre)
                         .showInfo(saved)
                         .build());
                 }).toList();
-//            for (ShowGenre showGenre : showGenres) {
-//                showGenre.setShowInfo(saved);
-//            }
+            for (ShowGenre showGenre : showGenres) {
+                saved.addShowGenres(showGenre);
+            }
         }
+        showInfoRepository.save(saved);
         alertService.createAlert(saved.getId());
         return ShowInfoResponseDto.fromEntity(saved);
     }

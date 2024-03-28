@@ -44,13 +44,13 @@ public class ShowInfo extends BaseEntity {
     private String price;
 
     @OneToMany(mappedBy = "showInfo")
-    private List<ShowLike> showLikes;
+    private List<ShowLike> showLikes = new ArrayList<>();
 
     @OneToMany(mappedBy = "showInfo")
-    private List<ShowGenre> showGenres;
+    private List<ShowGenre> showGenres = new ArrayList<>();
 
     @OneToMany(mappedBy = "showInfo")
-    private List<ShowArtist> showArtists;
+    private List<ShowArtist> showArtists = new ArrayList<>();
 
 
     // 연관관계 편의 메서드 - 좋아요 수 테스트 용으로 만드는 거라 배포할땐 지우면 되요!
@@ -58,5 +58,12 @@ public class ShowInfo extends BaseEntity {
         if (showLikes == null) showLikes = new ArrayList<>();
         like.setShowInfo(this);
         showLikes.add(like);
+    }
+
+    public void addShowGenres(ShowGenre showGenre) {
+        if (showGenres != null) {
+            showGenre.setShowInfo(this);
+            showGenres.add(showGenre);
+        }
     }
 }

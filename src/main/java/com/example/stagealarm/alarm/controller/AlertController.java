@@ -20,9 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AlertController {
     private final EmailAlertService alertService;
-    private final AlertRepository alertRepository;
-    private final GenreSubscribeRepo genreSubscribeRepo;
-    private final ShowInfoRepository showInfoRepository;
 
     @PostMapping("/alert/send/{showInfoId}")
     public void sendAlert(@PathVariable("showInfoId") Long showInfoId) throws MessagingException {

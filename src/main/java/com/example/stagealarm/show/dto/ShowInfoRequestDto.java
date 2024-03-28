@@ -23,7 +23,7 @@ public class ShowInfoRequestDto {
     private String price;
 
     @Builder.Default
-    private List<Long> artistIds = new ArrayList<>(); // 아티스트는 여러명일 가능성
+    private List<Integer> artistIds = new ArrayList<>(); // 아티스트는 여러명일 가능성
     @Builder.Default
-    private List<Long> genreIds = new ArrayList<>(); // 공연의 장르는 한가지로 결정.
+    private List<Integer> genreIds = new ArrayList<>(); // 공연의 장르는 한가지로 결정.
 }
