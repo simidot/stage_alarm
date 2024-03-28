@@ -40,7 +40,6 @@ public class ArtistController {
         return artistService.searchById(id);
     }
 
-
     // 아티스트 수정
     @PutMapping("/{id}")
     public ArtistDto updateArtist(
@@ -52,7 +51,6 @@ public class ArtistController {
         return artistService.update(id, dto);
     }
 
-
     // 아티스트 삭제
     @DeleteMapping("/{id}")
     public void deleteArtist(
@@ -62,8 +60,4 @@ public class ArtistController {
     {
         artistService.deleteById(id);
     }
-
-
-
-
 }

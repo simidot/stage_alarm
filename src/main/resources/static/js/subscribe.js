@@ -14,7 +14,8 @@ $(document).ready(function () {
                     .replace(/{{artist.age}}/g, artist.age)
                     .replace(/{{artist.gender}}/g, artist.gender)
                     .replace(/{{artist.id}}/g, artist.id)
-                    .replace(/{{artist.artistLike}}/g, artist.likes);
+                    .replace(/{{artist.artistLike}}/g, artist.likes)
+                    .replace(/{{buttonText}}/g, artist.isSubscribed ? '구독중' : '구독');
 
                 // 가로로 3개씩 채우기
                 if (index % 3 === 0) {
@@ -64,6 +65,31 @@ $(document).ready(function () {
                     },
                 })
             });
+
+            // 아티스트 구독 버튼 클릭 이벤트 처리
+            $('.artist-subscribe-btn').click(function () {
+                const artistId = $(this).data('artist-id');
+                const $subscribeBtn = $(this);
+
+                const buttonText = $subscribeBtn.text();
+
+                if (buttonText==='구독') {
+                    $subscribeBtn.text('구독중');
+                } else {
+                    $subscribeBtn.text('구독');
+                }
+                console.log('아티스트 구독 클릭 - 장르 ID:', artistId);
+                $.ajax({
+                    url: "/artist/"+artistId+"/subscribe",
+                    type: "POST",
+                    contentType: "application/json",
+                    success: function (data) {
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX 요청 실패: ", status, error);
+                    },
+                })
+            });
         },
         error: function (xhr, status, error) {
             console.error("AJAX 요청 실패:", status, error);
@@ -74,7 +100,7 @@ $(document).ready(function () {
         url: "/genre",
         type: "GET",
         success: function(data) {
-            // 받아온 아티스트 목록을 표시
+            // 받아온 장르 목록을 표시
             const $genreList = $('#genreList .row');
             const genreTemplate = $('#genreCardTemplate').html();
 
@@ -89,7 +115,7 @@ $(document).ready(function () {
             });
 
             // 장르 구독 버튼 클릭 이벤트 처리
-            $('.subscribe-btn').click(function () {
+            $('.genre-subscribe-btn').click(function () {
                 const genreId = $(this).data('genre-id');
                 const $genreBtn = $(this);
 
