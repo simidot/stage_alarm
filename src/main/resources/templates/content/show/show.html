@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <title>main</title>
+<body>
+
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4"
+      style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
+        <div class="showInfo"></div>
+        <div class="comments"></div>
+    </div>
+</main>
+<script>
+    $(document).ready(function () {
+        var path = window.location.pathname;
+        // 경로에서 id 값을 추출
+        var id = path.split('/').pop();
+        $.ajax({
+            url: "/show/" + id,
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                const $showInfo = $('.showInfo');
+                const $comments = $('.comments')
+
+                const showInfo = data.showInfoResponseDto;
+                const comments = data.showCommentsResponseDtos;
+
+                const totalLike = showInfo.totalLike != null ? showInfo.totalLike : 0;
+
+                const showHtml =
+                    '<div class="card mb-3">\n' +
+                    '  <img src="https://via.placeholder.com/800x500" class="card-img-top" alt="축제 이미지">\n' +
+                    '  <div class="card-body">\n' +
+                    '    <h5 class="card-title">' + showInfo.title + '</h5>\n' +
+                    '    <p class="card-text">날짜: ' + showInfo.date + '</p>\n' +
+                    '    <p class="card-text">위치: ' + showInfo.location + '</p>\n' +
+                    '    <p class="card-text">시작시간: ' + showInfo.startTime + '</p>\n' +
+                    '    <p class="card-text">예매처: ' + showInfo.ticketVendor + '</p>\n' +
+                    '    <p class="card-text"><small class="text-body-secondary">좋아요 : ' + totalLike + '</small></p>\n' +
+                    '  </div>\n' +
+                    '</div>';
+
+
+                $showInfo.append(showHtml);
+
+                const commentsHtml = comments.map(comment => {
+                    return `
+        <div class="comment">
+            <p class="comment-content">${comment.content}</p>
+            // <p class="comment-user">${comment.userEntity.username}</p>
+        </div>
+    `;
+                }).join('');
+
+                $comments.append(commentsHtml)
+            },
+            error: function () {
+                console.error("Ajax 요청 실패")
+            }
+        })
+    })
+</script>
+</body>
+</html>

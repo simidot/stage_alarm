@@ -1,5 +1,6 @@
 package com.example.stagealarm.show.service;
 
+import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.show.dto.ShowCommentsRequestDto;
 import com.example.stagealarm.show.dto.ShowCommentsResponseDto;
 import com.example.stagealarm.show.dto.ShowCommentsUpdateDto;
@@ -7,6 +8,7 @@ import com.example.stagealarm.show.entity.ShowComments;
 import com.example.stagealarm.show.entity.ShowInfo;
 import com.example.stagealarm.show.repo.ShowCommentsRepository;
 import com.example.stagealarm.show.repo.ShowInfoRepository;
+import com.example.stagealarm.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,16 +24,18 @@ import java.util.stream.Collectors;
 public class ShowCommentsService {
     private final ShowCommentsRepository showCommentsRepository;
     private final ShowInfoRepository showInfoRepository;
+    private final AuthenticationFacade facade;
 
     // 댓글 작성
     public ShowCommentsResponseDto write(Long showInfoId, ShowCommentsRequestDto dto) {
         // 어떤 공연정보인지 확인
         ShowInfo showInfo = showInfoRepository.findById(showInfoId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        UserEntity userEntity = facade.getUserEntity();
 
         ShowComments showComments = ShowComments.builder()
                 .content(dto.getContent())
                 // 작성자가 누구인지 확인하는 로직 추가 필요
-                // .userEntity()
+                .userEntity(userEntity)
                 .showInfo(showInfo)
                 .build();
 

@@ -11,7 +11,7 @@ public class TestDataBean {
     public TestDataBean(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder
-    ){
+    ) {
 
         userRepository.save(UserEntity.builder()
                 .loginId("admin")
@@ -25,6 +25,7 @@ public class TestDataBean {
                 .loginId("user")
                 .password(passwordEncoder.encode("password"))
                 .email("hhhjs0133@naver.com123")
+                .nickname("일반 사용자1")
                 .authorities("ROLE_USER")
                 .build());
 
