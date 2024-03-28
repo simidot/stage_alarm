@@ -8,6 +8,7 @@ import com.example.stagealarm.awsS3.S3FileService;
 import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.genre.entity.Genre;
 import com.example.stagealarm.genre.repo.GenreRepository;
+import com.example.stagealarm.show.dto.CalendarDto;
 import com.example.stagealarm.show.dto.ShowInfoRequestDto;
 import com.example.stagealarm.show.dto.ShowInfoResponseDto;
 import com.example.stagealarm.show.dto.Sortable;
@@ -31,7 +32,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.awt.*;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,17 +60,17 @@ public class ShowInfoService {
 
         // 1) 공연 기본정보 저장 (ShowInfo)
         ShowInfo showInfo = ShowInfo.builder()
-            .date(dto.getDate())
-            .startTime(dto.getStartTime())
-            .hours(dto.getHours())
-            .duration(dto.getDuration())
-            .location(dto.getLocation())
-            .title(dto.getTitle())
-            .ticketVendor(dto.getTicketVendor())
-            // s3service
-            .posterImage(s3FileService.uploadIntoS3("/showInfoImg", file))
-            .price(dto.getPrice())
-            .build();
+                .date(dto.getDate())
+                .startTime(dto.getStartTime())
+                .hours(dto.getHours())
+                .duration(dto.getDuration())
+                .location(dto.getLocation())
+                .title(dto.getTitle())
+                .ticketVendor(dto.getTicketVendor())
+                // s3service
+                .posterImage(s3FileService.uploadIntoS3("/showInfoImg", file))
+                .price(dto.getPrice())
+                .build();
 
         ShowInfo saved = showInfoRepository.save(showInfo);
 
@@ -143,4 +147,35 @@ public class ShowInfoService {
         showInfoRepository.deleteById(id);
     }
 
+    // 캘린더 생성용 공연정보 조회
+    public List<CalendarDto> calendar() {
+        List<ShowInfo> showInfos = showInfoRepository.findAll();
+        // 공연정보에서 날짜와 기간을 가져와 start와 end, title을 dto로 넘김
+        List<CalendarDto> calendarEvents = showInfos.stream()
+                .map(showInfo -> {
+                    LocalDate endDate = showInfo.getDate().plusDays(showInfo.getDuration());
+                    String randomColor = getRandomHexColor(); // Hex 색상값으로 변경
+                    return new CalendarDto(
+                            showInfo.getTitle(),
+                            showInfo.getDate(),
+                            endDate,
+                            randomColor,
+                            "shows/" + showInfo.getId()
+                    );
+                })
+                .collect(Collectors.toList());
+
+        return calendarEvents;
+    }
+
+    // 랜덤 RGB 색상을 Hex로 변환하는 메서드
+    private String getRandomHexColor() {
+        Random random = new Random();
+        int red = random.nextInt(256); // 0부터 255 사이의 값
+        int green = random.nextInt(256);
+        int blue = random.nextInt(256);
+
+        // RGB 값을 Hex로 변환하여 반환
+        return String.format("#%02X%02X%02X", red, green, blue);
+    }
 }

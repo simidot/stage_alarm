@@ -69,4 +69,11 @@ public class ShowInfoController {
         showInfoService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/calendar")
+    public ResponseEntity<List<CalendarDto>> calendar() {
+        List<CalendarDto> calendar = showInfoService.calendar();
+
+        return ResponseEntity.ok().body(calendar);
+    }
 }
