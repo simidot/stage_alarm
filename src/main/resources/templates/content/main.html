@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <title>main</title>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+<body>
+
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
+        <div id="calendar"></div>
+    </div>
+</main>
+
+<script>
+    $(document).ready(function() {
+        // AJAX 요청으로 서버에서 일정 정보 가져오기
+        $.ajax({
+            url: "/show/calendar",
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                // 받아온 데이터를 캘린더에 표시
+                displayCalendar(data);
+            },
+            error: function () {
+                console.error("Failed to fetch showInfos data");
+            }
+        });
+
+        // 캘린더에 일정 정보 표시하는 함수
+        function displayCalendar(showInfos) {
+            // 캘린더 엘리먼트 가져오기
+            var calendarEl = document.getElementById('calendar');
+            // FullCalendar 객체 생성
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                // 초기 뷰 설정
+                initialView: 'dayGridMonth',
+                // 서버에서 받아온 일정 정보 설정
+                events: showInfos
+            });
+            // 캘린더 렌더링
+            calendar.render();
+        }
+    });
+</script>
+</body>
+</html>

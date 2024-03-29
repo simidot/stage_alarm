@@ -1,5 +1,8 @@
 package com.example.stagealarm.show.dto;
 
+import com.example.stagealarm.artist.dto.ArtistDto;
+import com.example.stagealarm.genre.dto.GenreDto;
+import com.example.stagealarm.show.entity.ShowGenre;
 import com.example.stagealarm.show.entity.ShowInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +11,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -26,6 +30,9 @@ public class ShowInfoResponseDto {
     @Setter
     private Boolean isLiked;
 
+    private List<ArtistDto> artists;
+    private List<GenreDto> genres;
+
     public ShowInfoResponseDto(Long id, LocalDate date, LocalTime startTime, Integer hours, Integer duration,
                                String location, String title, String ticketVendor, String price, Long totalLike) {
         this.id = id;
@@ -42,15 +49,15 @@ public class ShowInfoResponseDto {
 
     public static ShowInfoResponseDto fromEntity(ShowInfo showInfo) {
         return ShowInfoResponseDto.builder()
-                .id(showInfo.getId())
-                .date(showInfo.getDate())
-                .startTime(showInfo.getStartTime())
-                .hours(showInfo.getHours())
-                .duration(showInfo.getDuration())
-                .location(showInfo.getLocation())
-                .title(showInfo.getTitle())
-                .ticketVendor(showInfo.getTicketVendor())
-                .price(showInfo.getPrice())
-                .build();
+            .id(showInfo.getId())
+            .date(showInfo.getDate())
+            .startTime(showInfo.getStartTime())
+            .hours(showInfo.getHours())
+            .duration(showInfo.getDuration())
+            .location(showInfo.getLocation())
+            .title(showInfo.getTitle())
+            .ticketVendor(showInfo.getTicketVendor())
+            .price(showInfo.getPrice())
+            .build();
     }
 }

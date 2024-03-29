@@ -5,10 +5,7 @@ import com.example.stagealarm.genre.entity.Genre;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
@@ -19,5 +16,6 @@ public class ShowGenre extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   private Genre genre;
   @ManyToOne(fetch = FetchType.LAZY)
+  @Setter
   private ShowInfo showInfo;
 }

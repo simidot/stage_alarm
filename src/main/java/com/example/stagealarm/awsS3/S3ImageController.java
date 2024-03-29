@@ -13,11 +13,6 @@ import java.util.List;
 public class S3ImageController {
     private final S3FileService s3FileService;
 
-    @GetMapping
-    public String hello() {
-        return "content/hello";
-    }
-
     @PostMapping("/image")
     public ResponseEntity<String> imgUpload(
             @RequestBody List<MultipartFile> files) {
