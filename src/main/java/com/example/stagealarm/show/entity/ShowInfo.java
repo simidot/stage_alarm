@@ -66,4 +66,11 @@ public class ShowInfo extends BaseEntity {
             showGenres.add(showGenre);
         }
     }
+
+    public void addShowArtists(ShowArtist showArtist) {
+        if (showArtists != null) {
+            showArtist.setShowInfo(this);
+            showArtists.add(showArtist);
+        }
+    }
 }
