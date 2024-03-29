@@ -5,6 +5,7 @@ import com.example.stagealarm.jwt.JwtRequestDto;
 import com.example.stagealarm.jwt.JwtResponseDto;
 import com.example.stagealarm.user.dto.UserDto;
 import com.example.stagealarm.user.service.UserService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,8 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
     private final AuthenticationFacade facade;
+
+
 
     // 로그인 하기
     @PostMapping("/login")
@@ -111,6 +114,26 @@ public class UserController {
             String email
     ){
         return userService.existsByEmail(email);
+    }
+
+    // 회원가입시 이메일 전송
+    @PostMapping("/email-send")
+    public void checkEmailAuth(
+            @RequestParam("email")
+            String email
+    ) throws MessagingException {
+        userService.sendEmail(email);
+    }
+
+    // 이메일 인증번호 확인
+    @PostMapping("/email-auth")
+    public ResponseEntity<String> checkEmail(
+            @RequestParam("email")
+            String email,
+            @RequestParam("code")
+            String code
+    ){
+        return userService.checkEmailCode(email, code);
     }
 
     // 회원가입시 로그인 아이디 중복 체크 로직
