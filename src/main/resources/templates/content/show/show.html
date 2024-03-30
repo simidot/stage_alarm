@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <title>main</title>
+<body>
+
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4"
+      style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2" style="flex: 1;">
+        <div class="showInfo"></div>
+        <div style="height: 4px; width: 100%" class="bg-dark my-3"></div>
+        <div class="border-2 border-dark">
+            <form id="commentForm" class="d-flex align-items-center">
+                <div class="form-group flex-grow-1">
+                     <textarea class="form-control form-control-lg" id="commentContent" rows="3" required
+                               placeholder="댓글을 입력하세요..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg align-self-stretch">댓글 작성</button>
+            </form>
+        </div>
+        <div style="height: 2px; width: 100%" class="bg-secondary bg-opacity-25 my-3"></div>
+        <div class="comments"></div>
+    </div>
+</main>
+
+<script>
+    $(document).ready(function () {
+        // 댓글 추가하는 함수
+        function addComment(comment) {
+            const $comments = $('.comments');
+            const loginUserId = comment.loginUserId;
+            const commentUserId = comment.userResponseDto.userId;
+            let showButtons = loginUserId === commentUserId;
+
+            const commentHtml = `
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="">
+                        <p class="card-text comment-user">작성자: ${comment.userResponseDto.nickname}</p>
+                        <p class="card-text comment-content">${comment.content}</p>
+                    </div>
+                    <div class="btn-group">
+                            ${showButtons ? `
+                                <button type="button" class="btn btn-sm btn-outline-secondary">수정</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary">삭제</button>
+                            ` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>`;
+            $comments.prepend(commentHtml);
+        }
+
+        $(document).ready(function () {
+            var path = window.location.pathname;
+            // 경로에서 id 값을 추출
+            var id = path.split('/').pop();
+            $.ajax({
+                url: "/show/" + id,
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    const $showInfo = $('.showInfo');
+                    const $comments = $('.comments')
+
+                    const showInfo = data.showInfoResponseDto;
+                    const comments = data.showCommentsResponseDtos;
+
+                    // 좋아요가 없을 때 0을 출력
+                    const totalLike = showInfo.totalLike != null ? showInfo.totalLike : 0;
+
+                    // 게시글 상세정보
+                    const showHtml =
+                        '<div class="card mb-3">\n' +
+                        '  <img src="https://via.placeholder.com/800x500" class="card-img-top" alt="축제 이미지">\n' +
+                        '  <div class="card-body">\n' +
+                        '    <h5 class="card-title">' + showInfo.title + '</h5>\n' +
+                        '    <p class="card-text">날짜: ' + showInfo.date + '</p>\n' +
+                        '    <p class="card-text">위치: ' + showInfo.location + '</p>\n' +
+                        '    <p class="card-text">시작시간: ' + showInfo.startTime + '</p>\n' +
+                        '    <p class="card-text">예매처: ' + showInfo.ticketVendor + '</p>\n' +
+                        '    <p class="card-text"><small class="text-body-secondary">좋아요 : ' + totalLike + '</small></p>\n' +
+                        '  </div>\n' +
+                        '</div>';
+
+                    $showInfo.append(showHtml);
+
+                    // 댓글
+                    const commentsHtml = comments.map(comment => {
+                        const loginUserId = comment.loginUserId;
+                        const commentUserId = comment.userResponseDto.userId;
+                        let showButtons = loginUserId === commentUserId;
+
+                        return `
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="card-text comment-user">작성자: ${comment.userResponseDto.nickname}</p>
+                        <p class="card-text comment-content">${comment.content}</p>
+                    </div>
+                    <div class="btn-group">
+                        ${showButtons ? `
+                            <button type="button" class="btn btn-sm btn-outline-secondary">수정</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary">삭제</button>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>`;
+                    }).join('');
+
+                    $comments.append(commentsHtml);
+
+                },
+                error: function () {
+                    console.error("Ajax 요청 실패")
+                }
+            })
+
+            // 댓글 작성
+            $("#commentForm").submit(function (event) {
+                event.preventDefault();
+
+                var commentContent = $("#commentContent").val();
+
+                var commentData = {
+                    content: commentContent
+                };
+
+                // 비로그인 유저가 댓글 작성 시도할 때
+                const token = localStorage.getItem("jwtToken");
+                if (token === null) {
+                    alert("댓글을 작성하려면 로그인이 필요합니다.")
+                } else {
+                    $.ajax({
+                        type: "POST",
+                        url: "/show/" + id,
+                        contentType: "application/json",
+                        data: JSON.stringify(commentData),
+                        success: function (response) {
+                            // 비로그인 유저가 댓글 작성하려할 때
+                            addComment(response);
+                            // textarea를 비음
+                            $("#commentContent").val('');
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("댓글 전송 중 오류가 발생했습니다.", error);
+                        }
+                    });
+                }
+            });
+        });
+    })
+</script>
+</body>
+</html>

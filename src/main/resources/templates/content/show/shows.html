@@ -49,10 +49,9 @@
             } else {
                 sendAjaxRequest(inputValue, 0);
             }
-
-            // Ajax 요청 보내기
         });
 
+        // 제목 검색결과
         function sendAjaxRequest(title, pageNumber) {
             $.ajax({
                 url: "/show",
@@ -119,6 +118,7 @@
             fetchData("like, createdAt", "desc, desc", 0);
         });
 
+        // 기본 로딩 화면
         function fetchData(sort, order, page) {
             $.ajax({
                 url: "/show",

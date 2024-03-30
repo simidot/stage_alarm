@@ -1,8 +1,10 @@
 package com.example.stagealarm.show.controller;
 
+import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.show.dto.*;
 import com.example.stagealarm.show.service.ShowCommentsService;
 import com.example.stagealarm.show.service.ShowInfoService;
+import com.example.stagealarm.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
