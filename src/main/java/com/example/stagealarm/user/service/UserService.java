@@ -1,5 +1,6 @@
 package com.example.stagealarm.user.service;
 
+import com.example.stagealarm.alarm.service.EmailAuthService;
 import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.jwt.JwtRequestDto;
 import com.example.stagealarm.jwt.JwtResponseDto;
@@ -8,9 +9,13 @@ import com.example.stagealarm.user.entity.UserEntity;
 import com.example.stagealarm.user.dto.CustomUserDetails;
 import com.example.stagealarm.user.dto.UserDto;
 import com.example.stagealarm.user.repo.UserRepository;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,6 +38,8 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtils jwtTokenUtils;
     private final AuthenticationFacade authFacade;
+    private final EmailAuthService emailAlertService;
+    private final StringRedisTemplate redisTemplate;
 
     // Security 위한 메서드 구현
     @Override
@@ -187,5 +196,40 @@ public class UserService implements UserDetailsService {
         response.setToken(jwt);
 
         return response;
+    }
+
+    // 인증번호 보내는 로직
+    public void sendEmail(String email) throws MessagingException {
+        ValueOperations<String, String> operations = redisTemplate.opsForValue();
+        Random random = new Random();
+        String code = String.valueOf(1000000 + random.nextInt(9000000));
+        // 레디스에 인증 코드 저장 및 만료 시간 5분으로 설정
+        operations.set(email, code, 5, TimeUnit.MINUTES);
+
+        emailAlertService.
+                sendMail(email,
+                        "스테이지알람 이메일 인증 코드입니다",
+                        "귀하의 인증 코드는: " + code + " 입니다.");
+    }
+
+    // 인증 로직
+    public ResponseEntity<String> checkEmailCode(String email, String code) {
+        log.info("email auth start");
+        ValueOperations<String, String> operations = redisTemplate.opsForValue();
+        String original = operations.get(email);
+
+        if(original == null){
+            // 이메일 주소에 해당하는 코드가 존재하지 않을 경우, 클라이언트에게 Not Found 응답을 반환
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email not found");
+        }
+
+        if(!original.equals(code)){
+            // 코드와 인증번호가 맞지 않을경우
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid code");
+        }
+
+        //
+        return ResponseEntity.ok("Code verified successfully");
+
     }
 }
