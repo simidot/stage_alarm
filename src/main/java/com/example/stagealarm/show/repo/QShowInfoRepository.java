@@ -25,11 +25,12 @@ import static com.example.stagealarm.show.entity.QShowLike.*;
 @RequiredArgsConstructor
 public class QShowInfoRepository {
     private final JPAQueryFactory queryFactory;
+
     public Page<ShowInfoResponseDto> findAll(String title,
                                              Pageable pageable,
                                              Sortable sortable,
                                              Long userId) {
-        List<ShowInfoResponseDto> content  = queryFactory.select(
+        List<ShowInfoResponseDto> content = queryFactory.select(
                         // Projections : 일부 컬럼만 가져오기 위함
                         // constructor : Dto의 생성자를 기준으로 select하기 위해
                         Projections.constructor(
@@ -77,20 +78,7 @@ public class QShowInfoRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        List<Long> likedShowIds = queryFactory.select(showLike.showInfo.id)
-                .from(showLike)
-                .where(showLike.userEntity.id.eq(userId))
-                .fetch();
-
-        Map<Long, Long> showLikeMap = new HashMap<>();
-        for (Long showId : likedShowIds) {
-            showLikeMap.put(showId, showId);
-        }
-
-        // list로 가져온 showInfo가 query문으로 가져온 좋아요가 눌러진 showInfo Map에 있냐 없나를 for문으로 확인
-        content.forEach(item -> {
-            item.setIsLiked(showLikeMap.containsKey(item.getId()));
-        });
+        handleIsliked(userId, content);
 
 
         JPAQuery<Long> countQuery = queryFactory
@@ -99,6 +87,29 @@ public class QShowInfoRepository {
                 .from(showInfo);
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    private void handleIsliked(Long userId, List<ShowInfoResponseDto> content) {
+        if (userId != null) {
+            List<Long> likedShowIds = queryFactory.select(showLike.showInfo.id)
+                    .from(showLike)
+                    .where(showLike.userEntity.id.eq(userId))
+                    .fetch();
+
+
+            Map<Long, Long> showLikeMap = new HashMap<>();
+            for (Long showId : likedShowIds) {
+                showLikeMap.put(showId, showId);
+            }
+            // list로 가져온 showInfo가 query문으로 가져온 좋아요가 눌러진 showInfo Map에 있냐 없나를 for문으로 확인
+            content.forEach(item -> {
+                item.setIsLiked(showLikeMap.containsKey(item.getId()));
+            });
+        } else {
+            content.forEach(item -> {
+                item.setIsLiked(false);
+            });
+        }
     }
 
 
