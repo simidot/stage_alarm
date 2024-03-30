@@ -38,27 +38,45 @@ public class ShowCommentsService {
                 .userEntity(userEntity)
                 .showInfo(showInfo)
                 .build();
-
+        Long id = userEntity == null ? null : userEntity.getId();
         ShowComments save = showCommentsRepository.save(showComments);
-        return ShowCommentsResponseDto.fromEntity(save);
+        return ShowCommentsResponseDto.fromEntity(save, id);
 
     }
 
     // 댓글 보기
     @Transactional(readOnly = true)
     public List<ShowCommentsResponseDto> readAll(Long showInfoId) {
+        UserEntity userEntity = facade.getUserEntity();
+        Long id = userEntity == null ? null : userEntity.getId();
+
         List<ShowComments> byShowInfoId = showCommentsRepository.findByShowInfoId(showInfoId);
-        return byShowInfoId.stream().map(ShowCommentsResponseDto::fromEntity).collect(Collectors.toList());
+        return byShowInfoId.stream().map(comment -> ShowCommentsResponseDto.fromEntity(comment, id)).collect(Collectors.toList());
     }
 
     // 댓글 업데이트(내용만 수정 가능)
     public void update(Long id, ShowCommentsUpdateDto dto) {
         ShowComments showComments = showCommentsRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        UserEntity userEntity = facade.getUserEntity();
+
+        // 로그인 유저와 댓글작성한 유저가 일치하지 않으면 예외처리
+        if (!userEntity.equals(showComments.getUserEntity())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
         showComments.setContent(dto.getContent());
     }
 
-    // 댓글 삭제(삭제 전략 미정)
+    // 댓글 삭제(db에서도 삭제)
     public void delete(Long id) {
+        ShowComments showComments = showCommentsRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        UserEntity userEntity = facade.getUserEntity();
+
+        // 로그인 유저와 댓글작성한 유저가 일치하지 않으면 예외처리
+        if (!userEntity.equals(showComments.getUserEntity())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
         showCommentsRepository.deleteById(id);
     }
 }

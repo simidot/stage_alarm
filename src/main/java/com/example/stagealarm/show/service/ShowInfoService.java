@@ -111,7 +111,7 @@ public class ShowInfoService {
     // 공연 정보 조회 (전체)
     public Page<ShowInfoResponseDto> readAll(String title, Pageable pageable, Sortable sortable) {
         UserEntity userEntity = facade.getUserEntity();
-        Long userId = userEntity.getId();
+        Long userId = userEntity == null ? null : userEntity.getId();
 
         return qShowInfoRepository.findAll(title, pageable, sortable, userId);
     }
