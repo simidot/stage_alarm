@@ -85,6 +85,9 @@ public class ShowInfoService {
                         .showInfo(saved)
                         .build());
                 }).toList();
+            for (ShowArtist showArtist : showArtists) {
+                saved.addShowArtists(showArtist);
+            }
 
         }
 

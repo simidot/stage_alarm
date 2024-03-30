@@ -7,10 +7,7 @@ import com.example.stagealarm.show.entity.ShowInfo;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
@@ -19,7 +16,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Alert extends BaseEntity {
   private String title;
+  @Setter
   private String message;
+
+  private String userNickname;
+  private String userEmail;
 
   @ManyToOne(fetch = FetchType.LAZY)
   private ShowInfo showInfo;
@@ -28,5 +29,6 @@ public class Alert extends BaseEntity {
   private ArtistSubscribe artistSubscribe;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @Setter
   private GenreSubscribe genreSubscribe;
 }
