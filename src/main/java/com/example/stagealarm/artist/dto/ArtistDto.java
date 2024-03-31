@@ -4,6 +4,7 @@ import com.example.stagealarm.artist.entity.Artist;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,6 +24,7 @@ public class ArtistDto {
     private Boolean isLiked;
     private Long subscribes;
     private Boolean isSubscribed;
+    private List<String> genres;
 
     public static ArtistDto fromEntity(Artist artist){
         return ArtistDto.builder()
@@ -34,6 +36,7 @@ public class ArtistDto {
                 .profileImg(artist.getProfileImg())
                 .likes((long) artist.getLikes().size())
                 .isLiked(false)
+                .genres(artist.getGenresString(artist.getGenres()))
                 .build();
     }
 

@@ -14,6 +14,7 @@
         <div>
             <h2 class="titles mb-3 mt-4 text-center">SHOW INFO UPDATE</h2>
             <hr> <!--구분선 넣기 -->
+<!--            <form action="/show" method="post">-->
             <div class="form-group mt-3">
                 <div class="bold-label text-center mb-4" style="font-size: 20px;">공연 정보 입력</div>
                 <div class="light-label"> 공연 정보를 입력해주세요. </div>
@@ -39,7 +40,7 @@
                         <label class="visually-hidden" for="place"></label>
                         <div class="input-group">
                             <div class="input-group-text">공연 날짜</div>
-                            <input type="text" class="form-control" id=date name="date" placeholder="공연 날짜">
+                            <input type="date" class="form-control" id=date name="date" placeholder="공연 날짜">
                         </div>
                     </div>
 <!--                    todo: 24시간중에 선택-->
@@ -47,7 +48,7 @@
                         <label class="visually-hidden" for="startTime"></label>
                         <div class="input-group">
                             <div class="input-group-text">공연 시작 시간</div>
-                            <input type="text" class="form-control" id=startTime name="startTime" maxlength="50"
+                            <input type="time" class="form-control" id=startTime name="startTime" maxlength="50"
                                    placeholder="공연 시작 시간">
                         </div>
                     </div>
@@ -55,8 +56,8 @@
                     <div class="col-md-8">
                         <label class="visually-hidden" for="hours"></label>
                         <div class="input-group">
-                            <div class="input-group-text">예상 공연 시간</div>
-                            <input type="text" class="form-control" id=hours name="hours" maxlength="50"
+                            <div class="input-group-text">예상 공연 시간 (분)</div>
+                            <input type="number" class="form-control" id=hours name="hours" min="0" max="1440"
                                    placeholder="예상 공연 시간">
                         </div>
                     </div>
@@ -64,9 +65,9 @@
                     <div class="col-md-8">
                         <label class="visually-hidden" for="duration"></label>
                         <div class="input-group">
-                            <div class="input-group-text">공연 진행 기간</div>
-                            <input type="text" class="form-control" id=duration name="duration" maxlength="50"
-                                   placeholder="공연 진행 기간 (시간으로 설정해주시길 바랍니다.)">
+                            <div class="input-group-text">공연 진행 기간 (시간)</div>
+                            <input type="number" class="form-control" id=duration name="duration" min="24" max="720"
+                                   placeholder="하루 진행시 24시간으로 설정해주시길 바랍니다.)">
                         </div>
                     </div>
                     <div class="col-md-8">
@@ -81,7 +82,7 @@
                         <label class="visually-hidden" for="price"></label>
                         <div class="input-group">
                             <div class="input-group-text">공연 가격</div>
-                            <input type="text" class="form-control" id=price name="price" placeholder="공연 가격">
+                            <input type="text" class="form-control" id=price name="price" placeholder="공연 가격" maxlength="500">
                         </div>
                     </div>
 <!--                    todo: 이미지 첨부 첨부는 파일 한개만 가능!!!! 미리보기 추가 -->
@@ -93,58 +94,73 @@
                 </div>
                 <div class="border mt-5 mb-5"></div> <!--구분선 넣기 -->
                 <div class="light-label"> 출연 아티스트 정보를 입력해주세요. </div>
+                <div class="container">
+                    <div class="row">
+                        <!-- 왼쪽: 선택한 아티스트 -->
+                        <div class="col-md-6">
+                            <div class="light-label">선택한 아티스트</div>
+                            <div id="selectedArtist">
+                                선택된 아티스트: <span id="selectedArtistName"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="light-label">전체 아티스트 리스트</div>
+                            <div id="artistList" style="height: 300px; overflow-y: auto;">
+                                <!-- 각 아티스트 요소에 artist.id를 hidden으로 추가 -->
+                                <!-- 선택 버튼에도 data-artist-id 속성을 추가하여 각 아티스트의 id를 저장 -->
+                                <div class="artist-item" style="display: flex; justify-content: space-between;">
+                                    <span>{{artist.name}}</span> <!-- 아티스트 이름 -->
+                                    <input type="hidden" class="artist-id" value="{{artist.id}}">
+                                    <button class="select-artist-btn" data-artist-id="{{artist.id}}" data-artist-genre="{{artist.genre.name}}" data-artist-name="{{artist.name}}">선택</button> <!-- 선택 버튼 -->
+                                </div>
+                            </div>
+                            <button id="addArtistBtn">아티스트 추가</button> <!-- 아티스트 추가 버튼 -->
+                            <div id="addArtistForm" style="display: none;">
+                                <label for="newArtistName"><input type="text" id="newArtistName" placeholder="새 아티스트 이름"></label>
+                                <button id="addNewArtistBtn">추가</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
 
                 <div class="border mt-5 mb-5"></div> <!--구분선 넣기 -->
                 <div class="light-label"> 해당 공연의 장르를 선택해주세요. </div>
-            </div>
+                <div class="container">
+                    <div class="row">
+                        <!-- 왼쪽: 선택한 장르 -->
+                        <div class="col-md-6">
+                            <div class="light-label">선택한 장르</div>
+                            <div id="selectedGenre">
+                                선택된 장르: <span id="selectedGenreName"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="light-label">전체 장르 리스트</div>
+                            <div id="genreList" style="height: 300px; overflow-y: auto;">
+                                <!-- 각 장르 요소에 genre.id를 hidden으로 추가 -->
+                                <!-- 선택 버튼에도 data-artist-id 속성을 추가하여 각 아티스트의 id를 저장 -->
+                                <div class="genre-item" style="display: flex; justify-content: space-between;">
+                                    <span>{{genre.name}}</span> <!-- 장르 이름 -->
+                                    <input type="hidden" class="genre-id" value="{{genre.id}}">
+                                    <button class="select-genre-btn" data-genre-id="{{genre.id}}" data-genre-name="{{genre.name}}">선택</button> <!-- 선택 버튼 -->
+                                </div>
+                            </div>
+                            <button id="addArtistGenreBtn">상위 아티스트 장르 추가</button> <!-- 아티스트 추가 버튼 -->
+                        </div>
+
+                    </div>
+                </div>
                 <div class="border mt-5 mb-5"></div> <!--구분선 넣기 -->
 
+<!--                <button type="submit" class="btn btn-dark">업로드</button>-->
+            </div>
+<!--            </form>-->
         </div>
     </div>
 </main>
 
+<script th:src="@{/js/showUpload.js}"></script>
+
 </body>
-<script>
-    $("#posterImage").on("change", function(){
-        const fileInput = $("#posterImage")[0];
-        const files = fileInput.files;
-        const reg = /(.*?)\.(jpg|bmp|jpeg|png|JPG|BMP|JPEG|PNG)$/;
-        const maxSize = 5 * 1024 * 1024;
-
-        // var file = event.target.files[0];
-        const imageContainer = $("#imageContainer");
-        imageContainer.empty();
-
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const reader = new FileReader();
-            // reader.readAsDataURL(file);
-
-            reader.onload = (function (file) {
-                return function (e) {
-                    // 미리보기 이미지의 크기 조절
-                    var img = $("<img>").attr("src", e.target.result).css({
-                        "max-width": "200px",
-                        "max-height": "200px",
-                        "margin": "5px"  // 이미지 간격을 조절하기 위한 스타일
-                    });
-                    // 이미지를 이미지 컨테이너에 추가
-                    imageContainer.append(img);
-                };
-            })(file);
-
-            if (!file.name.match(reg)) {
-                alert("이미지 파일만 업로드 가능합니다. ");
-                fileInput.value = "";
-                return;
-            } else if (file.size >= maxSize) {
-                alert("파일 사이즈는 5MB까지 가능합니다. ");
-                fileInput.value = "";
-                return;
-            }
-            reader.readAsDataURL(file);
-        }
-    });
-</script>
 </html>
