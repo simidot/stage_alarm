@@ -16,4 +16,9 @@ public class ShowInfoViewController {
     public String readOne() {
         return "content/show/show";
     }
+
+    @GetMapping("/showInfo")
+    public String create(){
+        return "content/show/showUpload";
+    }
 }

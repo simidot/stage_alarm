@@ -32,6 +32,9 @@ public class Artist extends BaseEntity {
   @OneToMany(mappedBy = "artist")
   private List<ArtistSubscribe> subscribes = new ArrayList<>();
 
+  @OneToMany(mappedBy = "artist")
+  private List<ArtistGenre> genres = new ArrayList<>();
+
   public static Artist fromDto(ArtistDto artistDto){
     return Artist.builder()
             .name(artistDto.getName())
@@ -39,6 +42,14 @@ public class Artist extends BaseEntity {
             .gender(artistDto.getGender())
             .profileImg(artistDto.getProfileImg())
             .build();
+  }
+
+  public List<String> getGenresString(List<ArtistGenre> artistGenres) {
+    List<String> genres = new ArrayList<>();
+    for (ArtistGenre artistGenre : artistGenres) {
+      genres.add(artistGenre.getGenre().getName());
+    }
+    return genres;
   }
 
 }
