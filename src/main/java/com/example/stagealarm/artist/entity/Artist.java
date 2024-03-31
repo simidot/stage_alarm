@@ -2,6 +2,7 @@ package com.example.stagealarm.artist.entity;
 
 import com.example.stagealarm.BaseEntity;
 import com.example.stagealarm.artist.dto.ArtistDto;
+import com.example.stagealarm.artist.dto.ArtistRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -35,20 +36,15 @@ public class Artist extends BaseEntity {
   @OneToMany(mappedBy = "artist")
   private List<ArtistGenre> genres = new ArrayList<>();
 
-  public static Artist fromDto(ArtistDto artistDto){
-    return Artist.builder()
-            .name(artistDto.getName())
-            .age(artistDto.getAge())
-            .gender(artistDto.getGender())
-            .profileImg(artistDto.getProfileImg())
-            .build();
-  }
 
   public List<String> getGenresString(List<ArtistGenre> artistGenres) {
     List<String> genres = new ArrayList<>();
-    for (ArtistGenre artistGenre : artistGenres) {
-      genres.add(artistGenre.getGenre().getName());
+    if (!artistGenres.isEmpty()) {
+      for (ArtistGenre artistGenre : artistGenres) {
+        genres.add(artistGenre.getGenre().getName());
+      }
     }
+
     return genres;
   }
 

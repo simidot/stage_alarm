@@ -14,6 +14,7 @@ $(document).ready(function () {
                     .replace(/{{artist.age}}/g, artist.age)
                     .replace(/{{artist.gender}}/g, artist.gender)
                     .replace(/{{artist.id}}/g, artist.id)
+                    .replace(/{{artist.genres}}/g, artist.genreIds)
                     .replace(/{{artist.artistLike}}/g, artist.likes)
                     .replace(/{{buttonText}}/g, artist.isSubscribed ? '구독중' : '구독');
 

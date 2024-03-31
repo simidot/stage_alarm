@@ -1,9 +1,16 @@
 package com.example.stagealarm.artist.service;
 
+import com.example.stagealarm.artist.dto.ArtistRequestDto;
+import com.example.stagealarm.artist.dto.ArtistResponseDto;
 import com.example.stagealarm.artist.entity.Artist;
 import com.example.stagealarm.artist.dto.ArtistDto;
+import com.example.stagealarm.artist.entity.ArtistGenre;
+import com.example.stagealarm.artist.repo.ArtistGenreRepo;
 import com.example.stagealarm.artist.repo.ArtistRepository;
+import com.example.stagealarm.awsS3.S3FileService;
 import com.example.stagealarm.facade.AuthenticationFacade;
+import com.example.stagealarm.genre.entity.Genre;
+import com.example.stagealarm.genre.repo.GenreRepository;
 import com.example.stagealarm.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +18,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,14 +31,39 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ArtistService {
     private final ArtistRepository artistRepository;
+    private final GenreRepository genreRepository;
+    private final ArtistGenreRepo artistGenreRepo;
     private final AuthenticationFacade facade;
+    private final S3FileService s3FileService;
 
 
     // 아티스트 저장
     @Transactional
-    public ArtistDto join(ArtistDto dto) {
-        Artist artist = artistRepository.save(Artist.fromDto(dto));
-        return ArtistDto.fromEntity(artist);
+    public ArtistResponseDto join(ArtistRequestDto dto, MultipartFile file) {
+        Artist artist = Artist.builder()
+            .name(dto.getName())
+            .age(dto.getAge())
+            .gender(dto.getGender())
+            .profileImg(s3FileService.uploadIntoS3("/artistImg", file))
+            .genres(new ArrayList<>())
+            .build();
+        artist = artistRepository.save(artist);
+
+        List<Long> genreIds = dto.getGenreIds();
+        Artist finalArtist = artist;
+        genreIds.stream()
+            .map(genreId -> genreRepository.findById(genreId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)))
+            .map(genre -> {
+                ArtistGenre artistGenre = ArtistGenre.builder()
+                    .genre(genre)
+                    .build();
+                artistGenre.addArtist(finalArtist); // addArtist 메서드를 사용하여 아티스트와의 연관 관계 설정
+                return artistGenre;
+            })
+            .forEach(artistGenreRepo::save);
+
+        return ArtistResponseDto.fromEntity(artist);
     }
 
     // 모든 아티스트 조회
@@ -44,7 +78,10 @@ public class ArtistService {
                         boolean isLiked = artist.getLikes().stream().anyMatch(
                                 like -> like.getUserEntity().getId().equals(userId)
                         );
-                        return ArtistDto.fromEntityWithLikeStatus(artist, isLiked);
+                        boolean isSubscribed = artist.getSubscribes().stream().anyMatch(
+                            subscribe -> subscribe.getUserEntity().getId().equals(userId)
+                        );
+                        return ArtistDto.fromEntityWithLikeStatusAndSubStatus(artist, isLiked, isSubscribed);
                     })
                     .collect(Collectors.toList());
         } else { // 인증되지 않은 경우는 없이 전달
@@ -60,6 +97,11 @@ public class ArtistService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
         ));
     }
+
+    public boolean artistExists(String artistName) {
+        return artistRepository.existsByName(artistName);
+    }
+
 
     // 아티스트 수정 로직
     @Transactional
