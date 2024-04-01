@@ -30,134 +30,176 @@
 
 <script>
     $(document).ready(function () {
-        // 댓글 추가하는 함수
+        var path = window.location.pathname;
+        var id = path.split('/').pop();
+
+        // 댓글 추가
         function addComment(comment) {
-            const $comments = $('.comments');
-            const loginUserId = comment.loginUserId;
-            const commentUserId = comment.userResponseDto.userId;
-            let showButtons = loginUserId === commentUserId;
+            const {id, loginUserId, userResponseDto: {userId, nickname}, content} = comment;
+            const showButtons = loginUserId === userId;
 
             const commentHtml = `
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div class="">
-                        <p class="card-text comment-user">작성자: ${comment.userResponseDto.nickname}</p>
-                        <p class="card-text comment-content">${comment.content}</p>
-                    </div>
-                    <div class="btn-group">
+            <div class="card mb-3" data-comment-id="${id}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="update-comment">
+                            <p class="card-text comment-user">작성자: ${nickname}</p>
+                            <p class="card-text comment-content">${content}</p>
+                        </div>
+                        <div class="btn-group">
                             ${showButtons ? `
-                                <button type="button" class="btn btn-sm btn-outline-secondary">수정</button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary">삭제</button>
+                                <button type="button" class="update btn btn-sm btn-outline-secondary">수정</button>
+                                <button type="button" class="delete btn btn-sm btn-outline-secondary">삭제</button>
                             ` : ''}
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>`;
-            $comments.prepend(commentHtml);
+            </div>`;
+            $('.comments').prepend(commentHtml);
+
+            // 댓글 개수 업데이트
+            // commentCount++;
+            // if (commentCount > maxComments) {
+            //     $('.comments .card:last-child').remove(); // 가장 오래된 댓글 삭제
+            //     commentCount--;
+            // }
         }
 
-        $(document).ready(function () {
-            var path = window.location.pathname;
-            // 경로에서 id 값을 추출
-            var id = path.split('/').pop();
+        // 상세정보 및 댓글 불러오기
+        function loadShowInfoComments() {
             $.ajax({
                 url: "/show/" + id,
                 type: "GET",
                 contentType: "application/json; charset=utf-8",
                 success: function (data) {
-                    const $showInfo = $('.showInfo');
-                    const $comments = $('.comments')
+                    const {showInfoResponseDto: showInfo, showCommentsResponseDtos: comments} = data;
+                    const totalLike = showInfo.totalLike || 0;
 
-                    const showInfo = data.showInfoResponseDto;
-                    const comments = data.showCommentsResponseDtos;
+                    const showHtml = `
+                    <div class="card mb-3" data-comment-id="${comments.id}">
+                        <img src="https://via.placeholder.com/800x500" class="card-img-top" alt="축제 이미지">
+                        <div class="card-body">
+                            <h5 class="card-title">${showInfo.title}</h5>
+                            <p class="card-text">날짜: ${showInfo.date}</p>
+                            <p class="card-text">위치: ${showInfo.location}</p>
+                            <p class="card-text">시작시간: ${showInfo.startTime}</p>
+                            <p class="card-text">예매처: ${showInfo.ticketVendor}</p>
+                            <p class="card-text"><small class="text-body-secondary">좋아요 : ${totalLike}</small></p>
+                        </div>
+                    </div>`;
+                    $('.showInfo').append(showHtml);
 
-                    // 좋아요가 없을 때 0을 출력
-                    const totalLike = showInfo.totalLike != null ? showInfo.totalLike : 0;
+                    comments.forEach(comment => {
+                        const {id, loginUserId, userResponseDto: {userId, nickname}, content} = comment;
+                        const showButtons = loginUserId === userId;
 
-                    // 게시글 상세정보
-                    const showHtml =
-                        '<div class="card mb-3">\n' +
-                        '  <img src="https://via.placeholder.com/800x500" class="card-img-top" alt="축제 이미지">\n' +
-                        '  <div class="card-body">\n' +
-                        '    <h5 class="card-title">' + showInfo.title + '</h5>\n' +
-                        '    <p class="card-text">날짜: ' + showInfo.date + '</p>\n' +
-                        '    <p class="card-text">위치: ' + showInfo.location + '</p>\n' +
-                        '    <p class="card-text">시작시간: ' + showInfo.startTime + '</p>\n' +
-                        '    <p class="card-text">예매처: ' + showInfo.ticketVendor + '</p>\n' +
-                        '    <p class="card-text"><small class="text-body-secondary">좋아요 : ' + totalLike + '</small></p>\n' +
-                        '  </div>\n' +
-                        '</div>';
-
-                    $showInfo.append(showHtml);
-
-                    // 댓글
-                    const commentsHtml = comments.map(comment => {
-                        const loginUserId = comment.loginUserId;
-                        const commentUserId = comment.userResponseDto.userId;
-                        let showButtons = loginUserId === commentUserId;
-
-                        return `
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <p class="card-text comment-user">작성자: ${comment.userResponseDto.nickname}</p>
-                        <p class="card-text comment-content">${comment.content}</p>
+                        const commentHtml = `
+                <div class="card mb-3" data-comment-id="${id}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <p class="card-text comment-user">작성자: ${nickname}</p>
+                                <p class="card-text comment-content">${content}</p>
+                            </div>
+                            <div class="btn-group">
+                                ${showButtons ? `
+                                    <button type="button" class="update btn btn-sm btn-outline-secondary">수정</button>
+                                    <button type="button" class="delete btn btn-sm btn-outline-secondary">삭제</button>
+                                ` : ''}
+                            </div>
+                        </div>
                     </div>
-                    <div class="btn-group">
-                        ${showButtons ? `
-                            <button type="button" class="btn btn-sm btn-outline-secondary">수정</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary">삭제</button>
-                        ` : ''}
-                    </div>
-                </div>
-            </div>
-        </div>`;
-                    }).join('');
-
-                    $comments.append(commentsHtml);
-
+                </div>`;
+                        $('.comments').append(commentHtml);
+                    });
                 },
                 error: function () {
                     console.error("Ajax 요청 실패")
                 }
-            })
+            });
+        }
 
-            // 댓글 작성
-            $("#commentForm").submit(function (event) {
-                event.preventDefault();
+        // 댓글 작성
+        $("#commentForm").submit(function (event) {
+            event.preventDefault();
 
-                var commentContent = $("#commentContent").val();
+            var commentContent = $("#commentContent").val();
+            var commentData = {content: commentContent};
 
-                var commentData = {
-                    content: commentContent
-                };
+            const token = localStorage.getItem("jwtToken");
+            if (token === null) {
+                alert("댓글을 작성하려면 로그인이 필요합니다.");
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/show/" + id,
+                    contentType: "application/json",
+                    data: JSON.stringify(commentData),
+                    success: function (response) {
+                        $("#commentContent").val('');
+                        addComment(response);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("댓글 전송 중 오류가 발생했습니다.", error);
+                    }
+                });
+            }
+        });
 
-                // 비로그인 유저가 댓글 작성 시도할 때
-                const token = localStorage.getItem("jwtToken");
-                if (token === null) {
-                    alert("댓글을 작성하려면 로그인이 필요합니다.")
-                } else {
-                    $.ajax({
-                        type: "POST",
-                        url: "/show/" + id,
-                        contentType: "application/json",
-                        data: JSON.stringify(commentData),
-                        success: function (response) {
-                            // 비로그인 유저가 댓글 작성하려할 때
-                            addComment(response);
-                            // textarea를 비음
-                            $("#commentContent").val('');
-                        },
-                        error: function (xhr, status, error) {
-                            console.error("댓글 전송 중 오류가 발생했습니다.", error);
-                        }
-                    });
+        // 댓글 업데이트
+        $('.comments').on('click', '.update', function () {
+            if ($(this).text() === "저장") {
+                var commentId = $(this).closest('.card').data('comment-id');
+                const newContent = $(this).closest('.card').find('.updateVal').val()
+                update(commentId, newContent);
+            } else {
+                var inputElement = $('<input>').attr({
+                    type: 'text',
+                    class: 'form-control w-100 mt-1 updateVal',
+                    placeholder: '수정할 내용을 입력해주세요',
+                });
+                var commentContentElement = $(this).closest('.card').find('.card-body');
+
+                commentContentElement.append(inputElement)
+
+                $(this).text("저장")
+            }
+        });
+
+        function update(commentId, newContent) {
+            $.ajax({
+                url: "/comments/" + commentId,
+                type: "PATCH",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({content: newContent}),
+                success: function () {
+                    window.location.reload();
+                },
+                error: function () {
+                    alert("댓글 수정에 실패했습니다.");
+                }
+            });
+        }
+
+        // 댓글 삭제
+        $('.comments').on('click', '.delete', function () {
+            var commentId = $(this).closest('.card').data('comment-id');
+            $.ajax({
+                url: "/comments/" + commentId,
+                type: "DELETE",
+                contentType: "application/json; charset=utf-8",
+                success: function () {
+                    window.location.reload();
+                },
+                error: function () {
+                    alert("댓글 삭제에 실패했습니다.");
                 }
             });
         });
-    })
+
+        // 초기 댓글 불러오기
+        loadShowInfoComments();
+    });
 </script>
 </body>
 </html>

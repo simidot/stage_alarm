@@ -1,11 +1,14 @@
 package com.example.stagealarm.show.controller;
 
+import com.example.stagealarm.show.dto.ShowCommentsResponseDto;
 import com.example.stagealarm.show.dto.ShowCommentsUpdateDto;
 import com.example.stagealarm.show.service.ShowCommentsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/comments")
