@@ -125,7 +125,7 @@
           <!-- 이미지 업로드 버튼 -->
           <label for="image-upload" class="image-upload-label">
             <i class="fas fa-plus"></i> <!-- 십자가 아이콘 (FontAwesome 사용 예시) -->
-            <input type="file" id="image-upload" style="display: none;" accept="image/*">
+            <input id="image-upload" type="file" accept="image/*" multiple onchange="handleFiles()">
           </label>
           <!-- 이미지 미리보기 영역 -->
           <div id="image-preview"></div>
@@ -141,14 +141,24 @@
 </body>
 <script th:inline="javascript">
   $(document).ready(function () {
-    // 이미지 추가 시, 이미지 미리보기 함수
-    document.getElementById('image-upload').addEventListener('change', function() {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const preview = document.getElementById('image-preview');
-        preview.insertAdjacentHTML('beforeend', `<img src="${e.target.result}" alt="Image preview">`);
-      };
-      reader.readAsDataURL(this.files[0]);
+    let imageFiles = []; // 이미지 파일들을 저장할 전역 배열
+
+    // 이미지 추가 시, 미리보기 및 배열에 저장
+    document.getElementById('image-upload').addEventListener('change', function(e) {
+      const files = e.target.files; // 선택된 파일들
+      if (files.length > 0) {
+        for (let i = 0; i < files.length; i++) {
+          imageFiles.push(files[i]); // 전역 배열에 파일 추가
+
+          // 이미지 미리보기 로직
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const preview = document.getElementById('image-preview');
+            preview.insertAdjacentHTML('beforeend', `<img src="${e.target.result}" alt="Image preview">`);
+          };
+          reader.readAsDataURL(files[i]);
+        }
+      }
     });
 
     // "등록" 버튼 클릭 이벤트
@@ -156,33 +166,36 @@
       e.preventDefault(); // 폼 전송 기본 이벤트 방지
 
       const formData = new FormData();
-      const files = $('#image-upload')[0].files; // 이미지 파일
       const title = $('#title-input').val(); // 제목
       const categoryId = $('#board-type').val();
       const content = $('.input-container').val(); // 내용
 
-      if(files.length > 0) {
-        formData.append('files', files[0]); // 이미지 파일 추가
+      // 이미지 파일들을 formData에 추가
+      if (imageFiles.length > 0) {
+        for (let i = 0; i < imageFiles.length; i++) {
+          formData.append('files', imageFiles[i]);
+        }
       }
+
       formData.append('dto', new Blob([JSON.stringify({
         "title": title,
         "categoryId": categoryId,
         "content": content
-      })], {type: "application/json"})); // 기타 데이터를 JSON 문자열로 변환하여 추가
+      })], {type: "application/json"}));
 
       // AJAX 요청
       $.ajax({
         url: '/board',
         type: 'POST',
-        data: formData, // 전송할 데이터
-        processData: false, // FormData를 사용할 때 false로 설정
-        contentType: false, // FormData를 사용할 때 false로 설정
+        data: formData,
+        processData: false,
+        contentType: false,
         success: function(response) {
-          window.location.href = `/boards/${response.categoryId}`;
+          // 성공 시 로직
+          window.location.href = `/boards/${categoryId}`
         },
         error: function(xhr, status, error) {
-          // 요청이 실패하거나 에러가 발생했을 때 실행될 코드
-          console.error('실패: ', error);
+          // 실패 시 로직
         }
       });
     });
