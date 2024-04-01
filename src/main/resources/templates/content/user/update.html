@@ -20,7 +20,7 @@
         </div>
 
         <div class="row">
-            <div class="col-md-12 order-md-1">
+            <div class="col-md-12 itemOrder-md-1">
                 <h4 class="mb-3">회원 정보 입력</h4>
                 <form id="signupForm" novalidate>
 
@@ -59,8 +59,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="profileImg">프로필 이미지 URL</label>
-                        <input type="text" class="form-control" id="profileImg" name="profileImg">
+                        <label for="profileImg">프로필 이미지 변경</label>
+                        <input class="form-control" type="file" id="profileImg" name="profileImg" accept="image/*" placeholder="유저 프로필">
+                        <div id="imageContainer"></div>
                     </div>
 
                     <hr class="mb-4">
@@ -73,7 +74,50 @@
 </main>
 
 <script>
+
+    $("#profileImg").on("change", function(){
+        const fileInput = $("#profileImg")[0];
+        const files = fileInput.files;
+        const reg = /(.*?)\.(jpg|bmp|jpeg|png|JPG|BMP|JPEG|PNG)$/;
+        const maxSize = 5 * 1024 * 1024;
+
+        // var file = event.target.files[0];
+        const imageContainer = $("#imageContainer");
+        imageContainer.empty();
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+            // reader.readAsDataURL(file);
+
+            reader.onload = (function (file) {
+                return function (e) {
+                    // 미리보기 이미지의 크기 조절
+                    var img = $("<img>").attr("src", e.target.result).css({
+                        "max-width": "200px",
+                        "max-height": "200px",
+                        "margin": "5px"  // 이미지 간격을 조절하기 위한 스타일
+                    });
+                    // 이미지를 이미지 컨테이너에 추가
+                    imageContainer.append(img);
+                };
+            })(file);
+
+            if (!file.name.match(reg)) {
+                alert("이미지 파일만 업로드 가능합니다. ");
+                fileInput.value = "";
+                return;
+            } else if (file.size >= maxSize) {
+                alert("파일 사이즈는 5MB까지 가능합니다. ");
+                fileInput.value = "";
+                return;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
     $(document).ready(function() {
+        let originalProfileImgUrl = null; // 원본 이미지 URL을 저장할 변수
         // 사용자 정보 불러오기
         $.ajax({
             url: "/user", // 사용자 정보를 불러오는 서버의 API 엔드포인트
@@ -87,7 +131,16 @@
                 $('#gender').val(user.gender);
                 $('#phone').val(user.phone);
                 $('#address').val(user.address);
-                $('#profileImg').val(user.profileImg);
+                // 이미지가 있다면 미리보기
+                if (user.profileImg) {
+                    originalProfileImgUrl = user.profileImg; // 원본 이미지 URL 저장
+                    var img = $("<img>").attr("src", user.profileImg).css({
+                        "max-width": "200px",
+                        "max-height": "200px",
+                        "margin": "5px"
+                    });
+                    $("#imageContainer").append(img);
+                }
                 // 비밀번호 필드는 보안상 비워두거나, 변경만 가능하게 할 수 있습니다.
             },
             error: function(xhr, textStatus, error) {
@@ -102,22 +155,40 @@
         $('#signupForm').on('submit', function(e) {
             e.preventDefault();
 
+            // FormData 객체 생성
+            const formData = new FormData();
+            // 프로필 이미지 파일 추가
+            const profileImgInput = document.getElementById('profileImg');
+            // 이미지가 수정되었는지 확인
+            if(profileImgInput.files.length > 0) {
+                // 이미지 파일이 존재하면, 파일 추가
+                formData.append('file', profileImgInput.files[0]);
+            } else if(originalProfileImgUrl) {
+                // 이미지 파일이 없고, 원본 이미지 URL이 있으면, 원본 이미지 URL을 formData에 추가
+                formData.append('originalProfileImgUrl', originalProfileImgUrl);
+            }
+
 
             // 폼데이터 제이슨으로
-            const formData = {
+            const userData = {
                 loginId: $('#loginId').val(),
                 nickname: $('#nickname').val(),
                 gender: $('#gender').val(),
                 phone: $('#phone').val(),
                 address: $('#address').val(),
                 profileImg: $('#profileImg').val()
+
             };
+
+            formData.append('dto', new Blob([JSON.stringify(userData)], { type: 'application/json' })
+            );
 
             $.ajax({
                 type: 'PATCH',
                 url: '/user',
-                contentType: 'application/json',
-                data: JSON.stringify(formData),
+                contentType: false, // contentType을 false로 설정하여 jQuery가 자동으로 multipart/form-data 형식으로 요청을 설정하도록 합니다.
+                processData: false,
+                data: formData,
                 success: function(response) {
                     console.log('회원정보 수정성공:', response);
                     alert('회원정보 수정이 완료되었습니다.');

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,10 +41,16 @@ public class UserController {
     // 회원 가입
     @PostMapping
     public UserDto signUp(
-            @RequestBody
-            UserDto dto
+            @RequestPart("dto") UserDto dto,
+            @RequestPart(name = "file", required = false) MultipartFile file
     ){
-        return userService.join(dto);
+        if (file != null && !file.isEmpty()) {
+            // 파일이 존재하면, 해당 파일과 함께 사용자 정보 업데이트 처리
+            return userService.join(dto, file);
+        } else {
+            // 파일이 없으면, 파일을 제외한 나머지 정보로 사용자 정보 업데이트 처리
+            return userService.joinWithoutFile(dto);
+        }
     }
 
 
@@ -58,10 +65,16 @@ public class UserController {
     // 나의 정보 수정
     @PatchMapping
     public UserDto update(
-            @RequestBody
-            UserDto dto
+            @RequestPart("dto") UserDto dto,
+            @RequestPart(name = "file", required = false) MultipartFile file
     ){
-        return userService.update(dto);
+        if (file != null && !file.isEmpty()) {
+            // 파일이 존재하면, 해당 파일과 함께 사용자 정보 업데이트 처리
+            return userService.update(dto, file);
+        } else {
+            // 파일이 없으면, 파일을 제외한 나머지 정보로 사용자 정보 업데이트 처리
+            return userService.updateWithoutFile(dto);
+        }
     }
 
     @DeleteMapping

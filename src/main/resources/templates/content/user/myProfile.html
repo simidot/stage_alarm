@@ -25,13 +25,13 @@
             success: function(user) {
                 // 사용자 정보를 화면에 표시
                 $('#profile').html(`
+                <img src="${user.profileImg}" alt="프로필 이미지" style="width: 200px; height: 200px;">
                 <p>로그인 ID: ${user.loginId}</p>
                 <p>이메일: ${user.email}</p>
                 <p>닉네임: ${user.nickname}</p>
                 <p>성별: ${user.gender}</p>
                 <p>전화번호: ${user.phone}</p>
                 <p>주소: ${user.address}</p>
-                <img src="${user.profileImg}" alt="프로필 이미지" style="width: 100px; height: 100px;">
             `);
             },
             error: function(xhr, textStatus, error) {

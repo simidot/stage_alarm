@@ -23,7 +23,7 @@
         </div>
 
         <div class="row">
-            <div class="col-md-12 order-md-1">
+            <div class="col-md-12 itemOrder-md-1">
                 <h4 class="mb-3">회원 정보 입력</h4>
                 <form id="signupForm" novalidate>
                     <div class="mb-3">
@@ -75,8 +75,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="profileImg">프로필 이미지 URL</label>
-                        <input type="text" class="form-control" id="profileImg" name="profileImg">
+                        <label for="profileImg">프로필 이미지 추가</label>
+                        <input class="form-control" type="file" id="profileImg" name="profileImg" accept="image/*" placeholder="유저 프로필">
+                        <div id="imageContainer"></div>
                     </div>
 
                     <hr class="mb-4">
@@ -111,7 +112,50 @@
 </div>
 
 <script>
+    $("#profileImg").on("change", function(){
+        const fileInput = $("#profileImg")[0];
+        const files = fileInput.files;
+        const reg = /(.*?)\.(jpg|bmp|jpeg|png|JPG|BMP|JPEG|PNG)$/;
+        const maxSize = 5 * 1024 * 1024;
+
+        // var file = event.target.files[0];
+        const imageContainer = $("#imageContainer");
+        imageContainer.empty();
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+            // reader.readAsDataURL(file);
+
+            reader.onload = (function (file) {
+                return function (e) {
+                    // 미리보기 이미지의 크기 조절
+                    var img = $("<img>").attr("src", e.target.result).css({
+                        "max-width": "200px",
+                        "max-height": "200px",
+                        "margin": "5px"  // 이미지 간격을 조절하기 위한 스타일
+                    });
+                    // 이미지를 이미지 컨테이너에 추가
+                    imageContainer.append(img);
+                };
+            })(file);
+
+            if (!file.name.match(reg)) {
+                alert("이미지 파일만 업로드 가능합니다. ");
+                fileInput.value = "";
+                return;
+            } else if (file.size >= maxSize) {
+                alert("파일 사이즈는 5MB까지 가능합니다. ");
+                fileInput.value = "";
+                return;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
     $(document).ready(function() {
+
+
 
         let checkedLoginId = null;
         let checkedEmail = null;
@@ -155,7 +199,7 @@
             // 서버에 이메일 중복 검사 요청
             $.ajax({
                 type: "POST",
-                url: "/user/email-check", // 실제 이메일 중복 검사를 처리하는 URL로 변경하세요.
+                url: "/user/email-check",
                 data: { "email": email },
                 success: function(res) {
                     if (!res) {
@@ -280,11 +324,15 @@
             }
 
 
+            // FormData 객체 생성
+            const formData = new FormData();
+            // 프로필 이미지 파일 추가
+            const profileImgInput = document.getElementById('profileImg');
+            formData.append('file', profileImgInput.files[0]);
 
 
-
-            // 폼데이터 제이슨으로
-            const formData = {
+            // 이미지외 다른 데이터
+            const userData = {
                 loginId: checkedLoginId,
                 password: $('#password').val(),
                 email: checkedEmail,
@@ -295,11 +343,15 @@
                 profileImg: $('#profileImg').val()
             };
 
+            formData.append('dto', new Blob([JSON.stringify(userData)], { type: 'application/json' })
+            );
+
             $.ajax({
                 type: 'POST',
                 url: '/user',
-                contentType: 'application/json',
-                data: JSON.stringify(formData),
+                contentType: false, // contentType을 false로 설정하여 jQuery가 자동으로 multipart/form-data 형식으로 요청을 설정하도록 합니다.
+                processData: false,
+                data: formData,
                 success: function(response) {
                     console.log('회원가입 성공:', response);
                     alert('회원가입이 완료되었습니다.');

@@ -66,12 +66,13 @@ public class OAuth2SuccessHandler
         // 처음으로 이 소셜 로그인으로 로그인을 시도했다.
         if (!userService.userExists(username)) {
             // 새 계정을 만들어야 한다.
-            userService.join(UserDto.builder()
+            userService.joinWithoutFile(UserDto.builder()
                     .loginId(username)
                     .email(email)
                     .nickname(nickname)
                     .password(passwordEncoder.encode(providerId))
                     .build());
+
         }
         log.info(username);
 
