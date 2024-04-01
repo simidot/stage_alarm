@@ -40,20 +40,7 @@ public class ArtistDto {
                 .build();
     }
 
-    public static ArtistDto fromEntityWithLikeStatus(Artist artist, boolean isLiked) {
-        return ArtistDto.builder()
-                .id(artist.getId())
-                .createdAt(artist.getCreatedAt())
-                .name(artist.getName())
-                .age(artist.getAge())
-                .gender(artist.getGender())
-                .profileImg(artist.getProfileImg())
-                .likes((long) artist.getLikes().size())
-                .isLiked(isLiked)
-                .build();
-    }
-
-    public static ArtistDto fromEntityWithSubscribeStatus(Artist artist, boolean isSubscribed) {
+    public static ArtistDto fromEntityWithLikeStatusAndSubStatus(Artist artist, boolean isLiked, boolean isSubscribed) {
         return ArtistDto.builder()
             .id(artist.getId())
             .createdAt(artist.getCreatedAt())
@@ -61,9 +48,11 @@ public class ArtistDto {
             .age(artist.getAge())
             .gender(artist.getGender())
             .profileImg(artist.getProfileImg())
-            .subscribes((long) artist.getSubscribes().size())
+            .likes((long) artist.getLikes().size())
+            .isLiked(isLiked)
             .isSubscribed(isSubscribed)
             .build();
     }
+
 
 }

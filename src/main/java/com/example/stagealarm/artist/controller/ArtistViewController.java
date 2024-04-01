@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ArtistViewController {
     @GetMapping("/artists")
     public String imageUpload() {
-        return "content/artist/artist";
+        return "content/artist/artistUpload";
     }
 }
