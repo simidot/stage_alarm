@@ -28,16 +28,18 @@ public class ArtistDto {
 
     public static ArtistDto fromEntity(Artist artist){
         return ArtistDto.builder()
-                .id(artist.getId())
-                .createdAt(artist.getCreatedAt())
-                .name(artist.getName())
-                .age(artist.getAge())
-                .gender(artist.getGender())
-                .profileImg(artist.getProfileImg())
-                .likes((long) artist.getLikes().size())
-                .isLiked(false)
-                .genres(artist.getGenresString(artist.getGenres()))
-                .build();
+            .id(artist.getId())
+            .createdAt(artist.getCreatedAt())
+            .name(artist.getName())
+            .age(artist.getAge())
+            .gender(artist.getGender())
+            .profileImg(artist.getProfileImg())
+            .likes((long) artist.getLikes().size())
+            .isLiked(false)
+            .subscribes((long) artist.getSubscribes().size())
+            .isSubscribed(false)
+            .genres(artist.getGenresString(artist.getGenres()))
+            .build();
     }
 
     public static ArtistDto fromEntityWithLikeStatusAndSubStatus(Artist artist, boolean isLiked, boolean isSubscribed) {
@@ -50,7 +52,9 @@ public class ArtistDto {
             .profileImg(artist.getProfileImg())
             .likes((long) artist.getLikes().size())
             .isLiked(isLiked)
+            .subscribes((long)artist.getSubscribes().size())
             .isSubscribed(isSubscribed)
+            .genres(artist.getGenresString(artist.getGenres()))
             .build();
     }
 

@@ -3,14 +3,16 @@ package com.example.stagealarm.artist.controller;
 import com.example.stagealarm.artist.dto.ArtistDto;
 import com.example.stagealarm.artist.dto.ArtistRequestDto;
 import com.example.stagealarm.artist.dto.ArtistResponseDto;
+import com.example.stagealarm.artist.dto.PaginationRequest;
 import com.example.stagealarm.artist.service.ArtistService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -27,16 +29,32 @@ public class ArtistController {
         @RequestPart("file")
         MultipartFile file
     ) {
-
         // 관리자 권한 일때
         return ResponseEntity.ok(artistService.join(dto, file));
     }
 
     // 모든 아티스트 조회
     @GetMapping
-    public List<ArtistDto> getAllArtist() {
-        return artistService.searchAll();
+    public Page<ArtistDto> getAllArtist(PaginationRequest paginationRequest) {
+        Pageable pageable = PageRequest.of(
+            paginationRequest.getPage(),
+            paginationRequest.getSize()
+        );
+        return artistService.searchAll(pageable);
     }
+
+    // 아티스트 검색
+    @GetMapping("/search")
+    public Page<ArtistDto> searchArtistName(
+        @RequestParam(name = "param") String param, PaginationRequest paginationRequest
+    ) {
+        Pageable pageable = PageRequest.of(
+            paginationRequest.getPage(),
+            paginationRequest.getSize()
+        );
+        return artistService.searchByArtistName(param, pageable);
+    }
+
 
     // 아티스트 조회
     @GetMapping("/{id}")
@@ -72,4 +90,5 @@ public class ArtistController {
     public boolean checkArtist(@RequestParam("artistName") String artistName) {
         return artistService.artistExists(artistName);
     }
+
 }

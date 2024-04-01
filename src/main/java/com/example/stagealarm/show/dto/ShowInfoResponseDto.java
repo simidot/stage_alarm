@@ -2,6 +2,7 @@ package com.example.stagealarm.show.dto;
 
 import com.example.stagealarm.artist.dto.ArtistDto;
 import com.example.stagealarm.genre.dto.GenreDto;
+import com.example.stagealarm.show.entity.ShowArtist;
 import com.example.stagealarm.show.entity.ShowGenre;
 import com.example.stagealarm.show.entity.ShowInfo;
 import lombok.AllArgsConstructor;
@@ -30,8 +31,8 @@ public class ShowInfoResponseDto {
     @Setter
     private Boolean isLiked;
 
-    private List<ArtistDto> artists;
-    private List<GenreDto> genres;
+    private List<ShowArtist> artists;
+    private List<ShowGenre> genres;
 
     public ShowInfoResponseDto(Long id, LocalDate date, LocalTime startTime, Integer hours, Integer duration,
                                String location, String title, String ticketVendor, String price, Long totalLike) {
@@ -57,6 +58,8 @@ public class ShowInfoResponseDto {
             .location(showInfo.getLocation())
             .title(showInfo.getTitle())
             .ticketVendor(showInfo.getTicketVendor())
+            .genres(showInfo.getShowGenres())
+            .artists(showInfo.getShowArtists())
             .price(showInfo.getPrice())
             .build();
     }
