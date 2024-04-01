@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+  <title>Category</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/js/board.js"></script>
+  <style>
+      table {
+          width: 100%;
+          margin: auto; /* 페이지 중앙에 테이블 정렬 */
+          border-collapse: collapse;
+          border-top: 2px solid green; /* 테이블 위에 초록색 밑줄 추가 */
+          border-bottom: 2px solid green; /* 테이블 아래에 초록색 밑줄 추가 */
+      }
+      th, td {
+          text-align: center;
+          padding: 8px;
+          border-bottom: 1px solid #ccc; /* 각 행 사이에 선 추가 */
+      }
+      thead {
+          border-bottom: 1px solid #ccc;
+      }
+      .sort-buttons {
+          text-align: center;
+          display: flex;
+          justify-content: flex-end;
+      }
+  </style>
+</head>
+<body>
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+  <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
+      <div>
+        <div>
+          <span><strong>[[${category}]]</strong></span>
+          <div class="sort-buttons" style="margin-bottom: 10px">
+            <button id="date-sort" style="margin-right: 2px">작성일 순</button>
+            <button id="views-sort">조회 순</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+          <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성일</th>
+            <th>조회</th>
+          </tr>
+          </thead>
+          <tbody class="boardList">
+          <!-- 게시글 목록을 동적으로 추가할 공간 -->
+          </tbody>
+        </table>
+      </div>
+    <button id="write-board" style="margin-top: 10px">글쓰기</button>
+    </div>
+  </main>
+
+<script th:inline="javascript">
+    const categoryId = getPathParam(2); // URL에서 categoryId 추출
+    let sortParam; // 정렬 파라미터 초기화
+
+    $(document).ready(function () {
+        // 데이터 로드 및 페이지에 렌더링하는 함수
+        function loadDataAndRender() {
+            let requestURL = `/board/${categoryId}`;
+            if (sortParam) {
+                requestURL += `?sortParam=${sortParam}`;
+
+                // URL에 쿼리스트링 추가
+                const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?sortParam=${sortParam}`;
+                window.history.pushState({path:newUrl}, '', newUrl);
+            }
+
+            $.ajax({
+                url: requestURL,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function(data) {
+                    const $boardList = $('.boardList');
+                    $boardList.empty(); // 기존 목록을 비웁니다.
+
+                    // 받아온 데이터로 게시글 목록 업데이트
+                    $.each(data.content, function(index, board) {
+                        const boardRow = `
+                    <tr>
+                        <td>${board.id}</td>
+                        <td><a href="/boards/view/${board.id}" class="boardTitle" style="color: black">${board.title}</a></td>
+                        <td>${board.writer}</td>
+                        <td>${board.createdAt}</td>
+                        <td>${board.views}</td>
+                    </tr>
+                `;
+                        $boardList.append(boardRow); // 생성한 행을 '.boardList'에 추가합니다.
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("요청 실패: ", status, error);
+                }
+            });
+        }
+
+        // 페이지 로드 시 기본 데이터 로드
+        loadDataAndRender();
+
+        // 작성일 순 정렬 버튼 클릭 이벤트
+        $('#date-sort').click(function () {
+            // 정렬 파라미터 토글
+            sortParam = sortParam === 'dateD' ? 'dateA' : 'dateD';
+            // 데이터 로드 및 렌더링
+            loadDataAndRender();
+        });
+
+        // 조회 순 정렬 버튼 클릭 이벤트
+        $('#views-sort').click(function () {
+            // 정렬 파라미터 토글
+            sortParam = sortParam === 'viewsD' ? 'viewsA' : 'viewsD';
+            // 데이터 로드 및 렌더링
+            loadDataAndRender();
+        });
+
+        // 글쓰기 버튼 클릭 이벤트
+        $('#write-board').click(function () {
+          window.location.href = '/boards/write';
+        })
+    });
+</script>
+</body>
+</html>

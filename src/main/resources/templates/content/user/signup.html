@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+</head>
+<body>
+
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2" style="flex: 1;">
+        <!-- 회원가입 폼 시작 -->
+        <div class="py-5 text-center">
+            <h2>회원가입</h2>
+            <p class="lead">서비스를 사용하려면 회원가입을 해주세요!</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 order-md-1">
+                <h4 class="mb-3">회원 정보 입력</h4>
+                <form id="signupForm" novalidate>
+                    <div class="mb-3">
+                        <label for="loginId">아이디</label>
+                        <input type="text" class="form-control" id="loginId" name="loginId" required>
+                        <button id="checkLoginId" class="btn btn-secondary mt-2">아이디 중복 검사</button>
+                        <div id="loginIdFeedback" class="feedback"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password">비밀번호</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="passwordConfirm">비밀번호 확인</label>
+                        <input type="password" class="form-control" id="passwordConfirm" name="passwordConfirm" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email">이메일</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                        <button id="checkEmail" class="btn btn-secondary mt-2">이메일 중복 검사</button>
+                        <div id="emailFeedback" class="feedback"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="nickname">닉네임</label>
+                        <input type="text" class="form-control" id="nickname" name="nickname" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="gender">성별</label>
+                        <select class="form-control" id="gender" name="gender">
+                            <option value="">선택하세요</option>
+                            <option value="M">남성</option>
+                            <option value="F">여성</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone">전화번호</label>
+                        <input type="text" class="form-control" id="phone" name="phone" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="address">주소</label>
+                        <input type="text" class="form-control" id="address" name="address" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="profileImg">프로필 이미지 URL</label>
+                        <input type="text" class="form-control" id="profileImg" name="profileImg">
+                    </div>
+
+                    <hr class="mb-4">
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">회원가입</button>
+                </form>
+            </div>
+        </div>
+        <!-- 회원가입 폼 끝 -->
+    </div>
+</main>
+
+<script>
+    $(document).ready(function() {
+
+        let checkedLoginId = null;
+        let checkedEmail = null;
+
+        $('#checkLoginId').on('click', function(e) {
+            e.preventDefault();
+            const loginId = $('#loginId').val();
+            if (!loginId) {
+                $('#loginIdFeedback').css('color', 'red').text('아이디를 입력하세요.');
+                return;
+            }
+            // 서버에 아이디 중복 검사 요청
+            // 예시 URL 및 결과 처리 로직, 실제 구현에 맞게 수정 필요
+            $.ajax({
+                type: "POST",
+                url: "/user/loginId-check",
+                data: { "loginId": loginId },
+                success: function(res) {
+                    if (!res) {
+                        $('#loginId').css('border-color', 'green');
+                        $('#loginIdFeedback').css('color', 'green').text('사용 가능한 아이디입니다.');
+                        checkedLoginId = $('#loginId').val()
+                    } else {
+                        $('#loginId').css('border-color', 'red');
+                        $('#loginIdFeedback').css('color', 'red').text('이미 사용 중인 아이디입니다.');
+                        checkedLoginId = null;
+                    }
+                }
+            });
+        });
+
+        $('#checkEmail').on('click', function(e) {
+            e.preventDefault();
+            const email = $('#email').val();
+            if (!email) {
+                $('#emailFeedback').css('color', 'red').text('이메일을 입력하세요.');
+                return;
+            }
+            // 서버에 이메일 중복 검사 요청
+            $.ajax({
+                type: "POST",
+                url: "/user/email-check",
+                data: { "email": email },
+                success: function(res) {
+                    if (!res) {
+                        $('#email').css('border-color', 'green');
+                        $('#emailFeedback').css('color', 'green').text('사용 가능한 이메일입니다.');
+                        checkedEmail = $('#email').val();
+                    } else {
+                        $('#email').css('border-color', 'red');
+                        $('#emailFeedback').css('color', 'red').text('이미 사용 중인 이메일입니다.');
+                        checkedEmail = null;
+                    }
+                }
+            });
+        });
+
+
+        $('#signupForm').on('submit', function(e) {
+            e.preventDefault();
+
+
+            // 필수 입력 미입력시 제출 방지
+            if(checkedLoginId === null){
+                alert('로그인 아이디 중복검사를 받아주세요')
+                $('#loginId').css('border-color', 'red');
+                return false;
+            }
+
+            else if (checkedEmail === null){
+                alert('이메일 중복검사를 받아주세요');
+                $('#email').css('border-color', 'red');
+                return false;
+            }
+            else if ($('#password').val() === '' || $('#password').val() !== $('#passwordConfirm').val()){
+                if($('#password').val() === ''){
+                    alert('비밀번호는 공백일수 없습니다');
+                }
+                else{
+                    alert('비밀번호와 비밀번호 확인이 일치하지 않습니다');
+                }
+                $('#password, #passwordConfirm').css('border-color', 'red');
+                return false;
+            }
+
+
+
+
+
+            // 폼데이터 제이슨으로
+            const formData = {
+                loginId: checkedLoginId,
+                password: $('#password').val(),
+                email: checkedEmail,
+                nickname: $('#nickname').val(),
+                gender: $('#gender').val(),
+                phone: $('#phone').val(),
+                address: $('#address').val(),
+                profileImg: $('#profileImg').val()
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/user',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    console.log('회원가입 성공:', response);
+                    alert('회원가입이 완료되었습니다.');
+                    location.href = '/user/login'; // 회원가입 완료 후 이동할 페이지
+                },
+                error: function(xhr, status, error) {
+                    console.log('회원가입 실패:', xhr.responseText);
+                    alert('회원가입에 실패하였습니다. 다시 시도해주세요.');
+                }
+            });
+        });
+
+        // 필수 입력 필드가 수정될 때 빨간색 테두리 제거
+        $('#loginId, #password, #email').on('input', function() {
+            if ($(this).val() !== '') {
+                $(this).css('border-color', '');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

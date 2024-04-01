@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+  <title>Write a Board</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<style>
+  .write-header-container {
+      display: flex;
+  }
+
+  .input-container {
+      resize: none;
+      width: 100%; /* textarea의 너비를 조정 */
+      margin-bottom: 10px;
+  }
+
+  .image-upload-label {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+  }
+
+  .image-upload-label i {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px; /* 십자가 아이콘 크기 */
+  }
+
+  #image-preview img {
+      width: 100px; /* 미리보기 이미지 크기 */
+      height: 100px;
+      border-radius: 10px;
+  }
+
+  .title-wrap {
+      display: flex; /* flexbox를 사용하여 내부 요소들을 가로로 정렬 */
+      gap: 20px; /* 버튼과 입력 필드 사이의 간격 */
+      padding: 10px; /* 박스 내부의 여백 */
+      border: 1px solid #ccc; /* 박스 주위의 경계선 */
+      border-radius: 5px; /* 박스의 모서리를 둥글게 */
+      align-items: center; /* 내부 요소들을 세로 중앙에 정렬 */
+      margin-bottom: 10px; /* 박스 아래 여백 */
+  }
+
+  .write-header-container {
+      display: flex;
+      justify-content: space-between; /* h3와 버튼을 양끝으로 분리 */
+  }
+
+  .input-container {
+      resize: none;
+      width: 100%; /* textarea의 너비를 조정 */
+      min-height: 500px;
+      margin-bottom: 10px;
+  }
+
+  .image-upload-label {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+  }
+
+  .image-upload-label i {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px; /* 십자가 아이콘 크기 */
+  }
+
+  #image-preview {
+      display: flex; /* Flex 컨테이너로 설정 */
+      flex-wrap: wrap; /* 이미지가 많아질 경우 다음 줄로 넘어가도록 */
+      gap: 10px; /* 이미지 사이의 간격 */
+  }
+
+  #image-preview img {
+      width: 100px; /* 미리보기 이미지 크기 */
+      height: 100px;
+      border-radius: 10px;
+  }
+
+  #title-input {
+      width: 500px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+  <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
+    <div>
+      <div class="write-header-container">
+        <h3><strong>글쓰기</strong></h3>
+        <div class="write-btn" style="float: right">
+          <button type="button" id="write-button">등록</button>
+        </div>
+      </div>
+      <div class="title-wrap">
+        <select id="board-type" name="category">
+          <option value="1">공연 후기</option>
+          <option value="2">아티스트</option>
+          <option value="3">자유</option>
+          <option value="4">동행</option>
+        </select>
+        <input id="title-input" type="text" placeholder="제목을 입력하세요.">
+      </div>
+      <div>
+        <div>
+          <!-- 이미지 업로드 버튼 -->
+          <label for="image-upload" class="image-upload-label">
+            <i class="fas fa-plus"></i> <!-- 십자가 아이콘 (FontAwesome 사용 예시) -->
+            <input type="file" id="image-upload" style="display: none;" accept="image/*">
+          </label>
+          <!-- 이미지 미리보기 영역 -->
+          <div id="image-preview"></div>
+        </div>
+      </div>
+      <div class="content-container">
+        <!-- 게시글 본문 쓰는 곳-->
+        <textarea class="input-container" placeholder="내용을 입력하세요."></textarea>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+<script th:inline="javascript">
+  $(document).ready(function () {
+    // 이미지 추가 시, 이미지 미리보기 함수
+    document.getElementById('image-upload').addEventListener('change', function() {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById('image-preview');
+        preview.insertAdjacentHTML('beforeend', `<img src="${e.target.result}" alt="Image preview">`);
+      };
+      reader.readAsDataURL(this.files[0]);
+    });
+
+    // "등록" 버튼 클릭 이벤트
+    $('#write-button').click(function (e) {
+      e.preventDefault(); // 폼 전송 기본 이벤트 방지
+
+      const formData = new FormData();
+      const files = $('#image-upload')[0].files; // 이미지 파일
+      const title = $('#title-input').val(); // 제목
+      const categoryId = $('#board-type').val();
+      const content = $('.input-container').val(); // 내용
+
+      if(files.length > 0) {
+        formData.append('files', files[0]); // 이미지 파일 추가
+      }
+      formData.append('dto', new Blob([JSON.stringify({
+        "title": title,
+        "categoryId": categoryId,
+        "content": content
+      })], {type: "application/json"})); // 기타 데이터를 JSON 문자열로 변환하여 추가
+
+      // AJAX 요청
+      $.ajax({
+        url: '/board',
+        type: 'POST',
+        data: formData, // 전송할 데이터
+        processData: false, // FormData를 사용할 때 false로 설정
+        contentType: false, // FormData를 사용할 때 false로 설정
+        success: function(response) {
+          window.location.href = `/boards/${response.categoryId}`;
+        },
+        error: function(xhr, status, error) {
+          // 요청이 실패하거나 에러가 발생했을 때 실행될 코드
+          console.error('실패: ', error);
+        }
+      });
+    });
+  });
+</script>
+</html>

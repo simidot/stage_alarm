@@ -1,0 +1,46 @@
+.board-container {
+    width: 90%;
+    margin: auto;
+}
+
+.board-header {
+     display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.view-options button {
+    margin-left: 10px;
+}
+
+.table-header {
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.write-btn {
+    float: right;
+    margin-top: 20px;
+}
+
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.search-box {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}

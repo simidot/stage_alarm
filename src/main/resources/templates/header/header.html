@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="headerFragment">
+
+<head>
+    <script th:src="@{/js/app.js}" defer></script>
+</head>
+
+<div class="header">
+    <nav class="navbar navbar-expand-lg navbar-light justify-content-between pt-3">
+        <div class = "logo ml-3">
+            <a class="logo" th:href="@{/main/}"><img class="logo" th:src="@{/images/logo.png}" alt="Logo"></a>
+        </div>
+
+        <div><h1>STAGE ALARM</h1></div>
+
+        <div>
+            <!-- AJAX로 동적 처리할 드롭다운 메뉴 -->
+            <div class="dropdown" >
+                <img src="/images/user.png" alt="Login" width="30px" height="30px" id="loginDropdownToggle">
+                <div id="dropdownContent" class="dropdownContent header-sub-menu" style="display: none;">
+                    <!-- 메뉴 아이템은 AJAX 요청을 통해 동적으로 삽입됩니다 -->
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+
+<script>
+    $(document).ready(function() {
+        $('#loginDropdownToggle').click(function() {
+            checkAuthenticationStatus();
+        });
+
+        function checkAuthenticationStatus() {
+            $.ajax({
+                url: '/user/auth/status',
+                type: 'GET',
+                success: function(response) {
+                    let menuHtml = '';
+                    if (response.isAuthenticated) {
+                        menuHtml = '<a href="/userInfo">mypage</a><a href="/user/logout">logout</a>';
+                    } else {
+                        menuHtml = '<a href="/user/login">login</a>';
+                    }
+                    $('#dropdownContent').html(menuHtml).toggle();
+                },
+                error: function(error) {
+                    console.log('Error fetching user authentication status:', error);
+                }
+            });
+        }
+    });
+</script>
+
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <title>main</title>
+<body>
+
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
+    </div>
+</main>
+
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // 쿠키에서 특정 이름의 값을 가져오는 함수
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // 쿠키의 이름을 찾으면 값을 반환
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // 'auth_token' 쿠키의 값을 localStorage에 저장
+        const jwtToken = getCookie('auth_token');
+        if (jwtToken) {
+            localStorage.setItem('jwtToken', jwtToken);
+            console.log('JWT saved to localStorage');
+
+            // 쿠키 삭제하기 위해 과거 시간 설정
+
+            // 필요한 로직 수행, 예: 홈페이지로 리다이렉션
+            location.href = '/hello';
+        } else {
+            console.log('No JWT token found in cookies');
+        }
+    });
+</script>
+</html>

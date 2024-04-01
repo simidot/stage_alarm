@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="  http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <title>main</title>
+<body>
+
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
+        <div id="profile"></div>
+        <button id="editProfileBtn" class="btn btn-primary">회원정보 수정하기</button>
+        <br>
+    </div>
+</main>
+
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: "/user", // '나의 정보 조회' 엔드포인트
+            type: "GET",
+            dataType: "json",
+            success: function(user) {
+                // 사용자 정보를 화면에 표시
+                $('#profile').html(`
+                <p>로그인 ID: ${user.loginId}</p>
+                <p>이메일: ${user.email}</p>
+                <p>닉네임: ${user.nickname}</p>
+                <p>성별: ${user.gender}</p>
+                <p>전화번호: ${user.phone}</p>
+                <p>주소: ${user.address}</p>
+                <img src="${user.profileImg}" alt="프로필 이미지" style="width: 100px; height: 100px;">
+            `);
+            },
+            error: function(xhr, textStatus, error) {
+                // 요청이 실패했을 때의 로직
+                if (xhr.status === 403) {
+                    // 권한 거부 응답을 처리
+                    alert("권한이 없습니다.");
+                    window.history.back(); // 사용자를 이전 페이지로 돌려보냄
+                } else {
+                    // 다른 종류의 오류 처리
+                    console.error("Error: " + textStatus + ": " + error);
+                }
+            }
+        });
+
+        // 회원정보 수정하기 버튼 클릭 이벤트
+        $('#editProfileBtn').click(function() {
+            // 회원 정보 수정 페이지로 이동하거나, 수정 모달 창 표시 로직 구현
+            location.href = '/user/update';
+        });
+    });
+</script>
+
+</body>
+</html>
