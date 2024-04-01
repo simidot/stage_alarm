@@ -90,14 +90,46 @@
 
                     // 페이지네이션 생성
                     const totalPages = data.totalPages;
-                    for (let i = 0; i < totalPages; i++) {
-                        const pageNumber = i + 1;
-                        const $pageItem = $('<li class="page-item"><a class="page-link" href="#">' + pageNumber + '</a></li>');
+                    const currentPage = data.pageable.pageNumber + 1;
+                    const pagesToShow = 9; // 한 번에 보여줄 페이지 번호 개수
+
+                    const startPage = Math.floor((currentPage - 1) / pagesToShow) * pagesToShow + 1;
+                    const endPage = Math.min(startPage + pagesToShow - 1, totalPages);
+
+                    const $prevPageItem = $('<li class="page-item"><a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&lt;</span></a></li>');
+                    $prevPageItem.click(function () {
+                        if (!$(this).hasClass('disabled')) {
+                            sendAjaxRequest(title, currentPage - 2);
+                        }
+                    });
+                    if (currentPage === 1) {
+                        $prevPageItem.addClass('disabled');
+                    }
+                    $pagination.append($prevPageItem);
+
+                    for (let i = startPage; i <= endPage; i++) {
+                        const $pageItem = $('<li class="page-item"><a class="page-link" href="#">' + i + '</a></li>');
+                        if (i === currentPage) {
+                            $pageItem.addClass('active');
+                        }
                         $pageItem.click(function () {
-                            sendAjaxRequest(title, i);
+                            if (!$(this).hasClass('active')) {
+                                sendAjaxRequest(title, i - 1);
+                            }
                         });
                         $pagination.append($pageItem);
                     }
+
+                    const $nextPageItem = $('<li class="page-item"><a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&gt;</span></a></li>');
+                    $nextPageItem.click(function () {
+                        if (!$(this).hasClass('disabled')) {
+                            sendAjaxRequest(title, currentPage);
+                        }
+                    });
+                    if (currentPage === totalPages) {
+                        $nextPageItem.addClass('disabled');
+                    }
+                    $pagination.append($nextPageItem);
 
                 },
                 error: function (xhr, status, error) {
@@ -155,14 +187,46 @@
 
                     // 페이지네이션 생성
                     const totalPages = data.totalPages;
-                    for (let i = 0; i < totalPages; i++) {
-                        const pageNumber = i + 1;
-                        const $pageItem = $('<li class="page-item"><a class="page-link" href="#">' + pageNumber + '</a></li>');
+                    const currentPage = data.pageable.pageNumber + 1;
+                    const pagesToShow = 10; // 한 번에 보여줄 페이지 번호 개수
+
+                    const startPage = Math.floor((currentPage - 1) / pagesToShow) * pagesToShow + 1;
+                    const endPage = Math.min(startPage + pagesToShow - 1, totalPages);
+
+                    const $prevPageItem = $('<li class="page-item"><a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&lt;</span></a></li>');
+                    $prevPageItem.click(function () {
+                        if (!$(this).hasClass('disabled')) {
+                            fetchData(sort, order, currentPage - 2);
+                        }
+                    });
+                    if (currentPage === 1) {
+                        $prevPageItem.addClass('disabled');
+                    }
+                    $pagination.append($prevPageItem);
+
+                    for (let i = startPage; i <= endPage; i++) {
+                        const $pageItem = $('<li class="page-item"><a class="page-link" href="#">' + i + '</a></li>');
+                        if (i === currentPage) {
+                            $pageItem.addClass('active');
+                        }
                         $pageItem.click(function () {
-                            fetchData(sort, order, i);
+                            if (!$(this).hasClass('active')) {
+                                fetchData(sort, order, i - 1);
+                            }
                         });
                         $pagination.append($pageItem);
                     }
+
+                    const $nextPageItem = $('<li class="page-item"><a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&gt;</span></a></li>');
+                    $nextPageItem.click(function () {
+                        if (!$(this).hasClass('disabled')) {
+                            fetchData(sort, order, currentPage);
+                        }
+                    });
+                    if (currentPage === totalPages) {
+                        $nextPageItem.addClass('disabled');
+                    }
+                    $pagination.append($nextPageItem);
                 },
                 error: function (xhr, status, error) {
                     console.error("AJAX 요청 실패:", status, error);
