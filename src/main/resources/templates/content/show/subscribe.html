@@ -6,6 +6,8 @@
       layout:fragment="content">
 <head>
     <title>subscribe</title>
+</head>
+
 <body>
 
 <!-- Main -->
@@ -19,13 +21,19 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title text-center">아티스트 구독</h4>
+                            <form id="search-input" class="mb-3">
+                                <div class="input-group">
+                                    <input type="search" class="form-control" name="param" placeholder="Search artist">
+                                    <button class="btn btn-primary" type="submit">Search</button>
+                                </div>
+                            </form>
                             <hr>
-                            <div id="artistList" class="container mt-5">
+                            <div id="artistList" class="mt-5">
                                 <div class="row justify-content-start">
                                     <script type="text/template" id="artistCardTemplate">
                                         <div class="col-md-4 artist-card" data-artist-id="{{artist.id}}">
                                             <div class="text-center">
-                                                <img src="{{artist.profileImg}}" class="rounded-circle img-thumbnail mb-3" alt="Artist Profile Picture" width="200" height="200">
+                                                <img src="{{artist.profileImg}}" class="rounded-circle img-thumbnail mb-3" alt="Artist Profile Picture" style="width:200px; height:250px">
                                                 <h4>{{artist.name}}</h4>
                                                 <p>나이: {{artist.age}}</p>
                                                 <p>성별: {{artist.gender}}</p>
@@ -40,6 +48,11 @@
                                     </script>
                                 </div>
                             </div>
+                            <nav aria-label="Page navigation example" class="mt-5 d-flex justify-content-center">
+                                <ul class="pagination">
+
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
@@ -73,9 +86,7 @@
     </div>
 </main>
 
-
 <script th:src="@{/js/subscribe.js}">
-
 </script>
 </body>
 </html>
