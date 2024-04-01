@@ -126,3 +126,6 @@ cloud:
       auto: false
     stack:
       auto: false
+
+toss:
+  secret: test_sk_ma60RZblrq7kNdB1Z70x3wzYWBn1
