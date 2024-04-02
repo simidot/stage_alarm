@@ -70,17 +70,26 @@
             // }
         }
 
+
         // 상세정보 및 댓글 불러오기
         $.ajax({
             url: "/show/" + id,
             type: "GET",
             contentType: "application/json; charset=utf-8",
             success: function (data) {
-                const {showInfoResponseDto: showInfo, showCommentsResponseDtos: comments} = data;
+                const {
+                    showInfoResponseDto: showInfo,
+                    showCommentsResponseDtos: comments,
+                    authorityDto: authority
+                } = data;
 
                 const showHtml = `
                     <div class="card mb-3" data-comment-id="${comments.id}">
-                        <img src="https://via.placeholder.com/800x500" class="card-img-top" alt="축제 이미지">
+                        <div class="d-flex">
+                            <button class="flex-grow-1 info-update btn btn-light">수정</button>
+                            <button class="flex-grow-1 info-delete btn btn-light" style="color: red;">삭제</button>
+                        </div>
+                        <img src=${showInfo.posterImage ? showInfo.posterImage : 'https://via.placeholder.com/800x500'} class="card-img-top" alt="축제 이미지">
                         <div class="card-body position-relative">
                             <h5 class="card-title">${showInfo.title}</h5>
                             <p class="card-text">날짜: ${showInfo.date}</p>
@@ -96,6 +105,21 @@
 
 
                 $('.showInfo').append(showHtml);
+
+                // 버튼을 보여줄지 여부를 결정하는 함수
+                function toggleButtons() {
+                    console.log(authority)
+                    if (authority.authority === "ROLE_ADMIN") {
+                        $(".info-update").show(); // 수정 버튼 보이기
+                        $(".info-delete").show(); // 삭제 버튼 보이기
+                    } else {
+                        $(".info-update").hide(); // 수정 버튼 숨기기
+                        $(".info-delete").hide(); // 삭제 버튼 숨기기
+                    }
+                }
+
+                // 초기 로딩 시 한번 실행
+                toggleButtons();
 
                 comments.forEach(comment => {
                     const {id, loginUserId, userResponseDto: {userId, nickname}, content} = comment;
@@ -126,6 +150,33 @@
             }
         });
 
+        // update 페이지로 이동시키는 메서드
+        function redirectToUpdatePage() {
+            window.location.href = '/shows/' + id + '/update';
+        }
+
+        $(document).on("click", ".info-update", function () {
+            redirectToUpdatePage();
+        });
+
+
+        $(document).on("click", ".info-delete", function () {
+            if (confirm("공연정보를 삭제하시겠습니까?")) {
+                $.ajax({
+                    type: "DELETE",
+                    url: "/show/" + id,
+                    success: function () {
+                        window.location.href = "/shows"
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("공연정보 삭제 실패.", error);
+                    }
+                });
+            }
+        });
+
+
+        // 좋아요 기능, get요청으로 좋아요를 눌렀는지 안눌렀는지 boolean을 반환받아 post or delete요청
         $(document).on("click", ".like-btn", function () {
             const token = localStorage.getItem("jwtToken");
             if (token === null) {
@@ -178,7 +229,6 @@
 
             var $likeCountElement = $(this).closest('.card-body').find('.total-like');
             var $likeBtn = $(this)
-
 
 
         })

@@ -131,26 +131,31 @@ public class ShowInfoService {
 
     // 공연 정보 업데이트
     @Transactional
-    public void update(Long id, ShowInfoRequestDto dto) {
+    public void update(Long id, ShowInfoRequestDto dto, MultipartFile file) {
         // 관리자 계정인지 아닌지 확인하는 과정 추가로 필요
+        String authorities = facade.getUserEntity().getAuthorities();
+        if (!authorities.equals("ROLE_ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
 
         ShowInfo showInfo = showInfoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         showInfo.setDate(dto.getDate());
         showInfo.setStartTime(dto.getStartTime());
-        showInfo.setHours(dto.getHours());
         showInfo.setDuration(dto.getDuration());
         showInfo.setLocation(dto.getLocation());
         showInfo.setTitle(dto.getTitle());
         showInfo.setTicketVendor(dto.getTicketVendor());
         // s3service
-        showInfo.setPosterImage("image");
-        showInfo.setPrice(dto.getPrice());
-
+        showInfo.setPosterImage(s3FileService.uploadIntoS3("/showInfoImg", file));
     }
 
     @Transactional
     public void delete(Long id) {
+        UserEntity userEntity = facade.getUserEntity();
+        if (!userEntity.getAuthorities().equalsIgnoreCase("ROLE_ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
         showInfoRepository.deleteById(id);
     }
 

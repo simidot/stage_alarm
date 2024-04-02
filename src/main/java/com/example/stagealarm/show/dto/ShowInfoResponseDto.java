@@ -28,6 +28,7 @@ public class ShowInfoResponseDto {
     private String title;
     private String ticketVendor;
     private String price;
+    private String posterImage;
     private Long totalLike;
     @Setter
     private Boolean isLiked;
@@ -36,7 +37,7 @@ public class ShowInfoResponseDto {
     private List<GenreDto> genres;
 
     public ShowInfoResponseDto(Long id, LocalDate date, LocalTime startTime, Integer hours, Integer duration,
-                               String location, String title, String ticketVendor, String price, Long totalLike) {
+                               String location, String title, String ticketVendor, String price, String posterImage, Long totalLike) {
         this.id = id;
         this.date = date;
         this.startTime = startTime;
@@ -46,6 +47,7 @@ public class ShowInfoResponseDto {
         this.title = title;
         this.ticketVendor = ticketVendor;
         this.price = price;
+        this.posterImage = posterImage;
         this.totalLike = totalLike;
     }
 
@@ -71,6 +73,7 @@ public class ShowInfoResponseDto {
                 .title(showInfo.getTitle())
                 .ticketVendor(showInfo.getTicketVendor())
                 .price(showInfo.getPrice())
+                .posterImage(showInfo.getPosterImage())
                 .totalLike((long) showInfo.getShowLikes().size())
                 .isLiked(isLiked)
                 .build();

@@ -175,7 +175,7 @@
                     $.each(content, function (index, showInfo) {
                         const showHtml =
                             '<div class="card position-relative" style="width: 18rem;">\n' +
-                            '<img src="https://via.placeholder.com/300\n" class="card-img-top" alt="축제 이미지">\n' +
+                            `<img src="${showInfo.posterImage ? showInfo.posterImage : 'https://via.placeholder.com/800x500'}" class="card-img-top" alt="축제 이미지" style="height: 300px">\n` +
                             '<div class="card-body">\n' +
                             '<h5 class="card-title"> ' + showInfo.title + '</h5>\n' +
                             '<p class="card-text">' + showInfo.date + '</p>\n' +
