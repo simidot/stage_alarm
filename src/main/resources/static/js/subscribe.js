@@ -30,7 +30,7 @@ $(document).ready(function () {
             "size": size
         },
         success: function (data) {
-            console.log("fetchData : ",data.content.toString());
+            // console.log("fetchData : ", JSON.stringify(data.content));
             renderArtists(data);
             // 페이지네이션 생성
             renderPagination(data);
@@ -157,14 +157,16 @@ function fillArtistTemplate(template, artist) {
         };
     }
     // 장르 리스트를 문자열로 변환
-    const genresStr = artist.genres.join(', ');
+    const genresStr = artist.genres.map(genre => genre.name).join(', ');
+    const defaultImageUrl = 'https://stage-alarm.s3.ap-northeast-2.amazonaws.com/artistImg/artistDefault.png'; // 기본 이미지 URL
+
     console.log("genreStr: ",genresStr);
-    const filledTemplate = template.replace(/{{artist.profileImg}}/g, artist.profileImg)
+    const filledTemplate = template.replace(/{{artist.profileImg}}/g, artist.profileImg !== '' ? artist.profileImg : defaultImageUrl)
         .replace(/{{artist.name}}/g, artist.name)
-        .replace(/{{artist.age}}/g, artist.age)
-        .replace(/{{artist.gender}}/g, artist.gender)
+        .replace(/{{artist.age}}/g, artist.age !== null ? artist.age : '?')
+        .replace(/{{artist.gender}}/g, artist.gender !== null ? artist.gender : '?')
         .replace(/{{artist.id}}/g, artist.id)
-        .replace(/{{artist.genres}}/g, genresStr)
+        .replace(/{{artist.genres}}/g, genresStr !=='' ? genresStr : '?')
         .replace(/{{artist.artistLike}}/g, artist.likes)
         .replace(/{{buttonText}}/g, artist.isSubscribed ? '구독중' : '구독');
     artistFilledTemplate = filledTemplate;

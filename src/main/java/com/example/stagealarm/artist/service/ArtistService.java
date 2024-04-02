@@ -23,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -40,28 +41,35 @@ public class ArtistService {
     // 아티스트 저장
     @Transactional
     public ArtistResponseDto join(ArtistRequestDto dto, MultipartFile file) {
+        String imgUrl = "";
+        if (file != null && !file.isEmpty()) {
+            // 파일 처리 로직
+            imgUrl = s3FileService.uploadIntoS3("/artistImg", file);
+        }
         Artist artist = Artist.builder()
             .name(dto.getName())
             .age(dto.getAge())
             .gender(dto.getGender())
-            .profileImg(s3FileService.uploadIntoS3("/artistImg", file))
+            .profileImg(imgUrl)
             .genres(new ArrayList<>())
             .build();
         artist = artistRepository.save(artist);
-
-        List<Long> genreIds = dto.getGenreIds();
         Artist finalArtist = artist;
-        genreIds.stream()
-            .map(genreId -> genreRepository.findById(genreId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)))
-            .map(genre -> {
-                ArtistGenre artistGenre = ArtistGenre.builder()
-                    .genre(genre)
-                    .build();
-                artistGenre.addArtist(finalArtist); // addArtist 메서드를 사용하여 아티스트와의 연관 관계 설정
-                return artistGenre;
-            })
-            .forEach(artistGenreRepo::save);
+
+        if (dto.getGenreIds() != null) {
+            List<Long> genreIds = dto.getGenreIds();
+            genreIds.stream()
+                .map(genreId -> genreRepository.findById(genreId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)))
+                .map(genre -> {
+                    ArtistGenre artistGenre = ArtistGenre.builder()
+                        .genre(genre)
+                        .build();
+                    artistGenre.addArtist(finalArtist); // addArtist 메서드를 사용하여 아티스트와의 연관 관계 설정
+                    return artistGenre;
+                })
+                .forEach(artistGenreRepo::save);
+        }
 
         return ArtistResponseDto.fromEntity(artist);
     }
@@ -86,6 +94,31 @@ public class ArtistService {
             return artistPage.map(ArtistDto::fromEntity);
         }
     }
+
+    public List<ArtistDto> searchAll() {
+        List<Artist> artists = artistRepository.findAll();
+
+        // 인증된 사용자라면 좋아요한 정보를 함께 전달
+        if (facade.getAuth().isAuthenticated()) {
+            Long userId = facade.getUserEntity().getId();
+            return artists.stream()
+                .map(artist -> {
+                    boolean isLiked = artist.getLikes().stream().anyMatch(
+                        like -> like.getUserEntity().getId().equals(userId)
+                    );
+                    boolean isSubscribed = artist.getSubscribes().stream().anyMatch(
+                        subscribe -> subscribe.getUserEntity().getId().equals(userId)
+                    );
+                    return ArtistDto.fromEntityWithLikeStatusAndSubStatus(artist, isLiked, isSubscribed);
+                })
+                .collect(Collectors.toList());
+        } else { // 인증되지 않은 경우는 없이 전달
+            return artists.stream()
+                .map(ArtistDto::fromEntity)
+                .collect(Collectors.toList());
+        }
+    }
+
 
     // 아티스트 검색
     public Page<ArtistDto> searchByArtistName(String param, Pageable pageable) {
