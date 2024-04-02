@@ -14,17 +14,26 @@ import java.util.List;
 public class OrderController {
     private final OrderService service;
 
+    // 모든 주문 보기
     @GetMapping
     public List<ItemOrderDto> readAll(){
         return service.readAll();
     }
 
+    // 아이디로 주문 찾기
     @GetMapping("{id}")
     public ItemOrderDto readOne(
             @PathVariable("id")
             Long id
     ){
         return service.searchById(id);
+    }
+
+    // 내 주문 찾기
+    @GetMapping("my")
+    public List<ItemOrderDto> readAllByUser(
+    ){
+        return service.searAllByUserId();
     }
 
 
@@ -36,6 +45,7 @@ public class OrderController {
         return service.readTossPayment(id);
     }
 
+    // 주문취소 하기
     @PostMapping("{id}/cancel")
     public Object cancelPayment(
             @PathVariable("id")
