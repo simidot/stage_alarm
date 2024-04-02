@@ -89,6 +89,7 @@
     <button id="write-button">글쓰기</button>
   </div>
 </main>
+</body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script th:inline="javascript">
     const boardId = getPathParam(3);
@@ -124,13 +125,14 @@
                           <p>${data.content}</p>
                         </div>
                         <hr>
+                        <hr>
                     `;
 
                 $('.board-header').append(boardHeader);
                 $('.board-body').append(boardBody);
 
               // 댓글 컨텐츠 생성
-              const commentsHtml = displayComments(data.commentList);
+              const commentsHtml = displayComments(data.commentList, boardId);
               $('.comments-section').append(commentsHtml);
 
               // 댓글 작성 버튼 클릭 이벤트
@@ -149,7 +151,6 @@
                 };
 
                 // 댓글 데이터를 서버로 전송
-                // todo 사용자 인증 정보 삽입 후 테스트 해봐야 함
                 $.ajax({
                   url: `/comments/${boardId}`, // 실제 댓글 생성 API 경로로 변경해주세요.
                   type: 'POST',
