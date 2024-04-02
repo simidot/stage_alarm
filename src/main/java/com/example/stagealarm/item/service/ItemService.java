@@ -55,7 +55,7 @@ public class ItemService {
                 .content(itemDto.getContent())
                 .price(itemDto.getPrice())
                 .amount(itemDto.getAmount())
-                .itemImg(s3FileService.uploadIntoS3("/profileImg", file))
+                .itemImg(s3FileService.uploadIntoS3("/itemImg", file))
                 .status(Status.SALE)
                 .build();
         // 공연정보
@@ -67,23 +67,48 @@ public class ItemService {
 
     // 아이템 업데이트
     @Transactional
-    public ItemDto update(Long id, ItemDto itemDto) {
-        Item item = itemRepository.findById(id).orElseThrow(
+    public ItemDto update(ItemDto itemDto , MultipartFile file) {
+        Item item = itemRepository.findById(itemDto.getId()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
         );
 
-        item.setItemImg(itemDto.getItemImg());
+        item.setItemImg(s3FileService.uploadIntoS3("/itemImg", file));
         item.setName(item.getName());
         item.setPrice(item.getPrice());
         item.setAmount(item.getAmount());
         item.setContent(item.getContent());
-        item.setStatus(item.getStatus());
+        item.setStatus(Status.SALE);
 
         return ItemDto.fromEntity(item);
 
     }
 
+    // 아이템 업데이트(주문시 수량 및 상태)
+    @Transactional
+    public ItemDto updateAmount(Long id, Integer quantity) {
+        Item item = itemRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+        );
+
+        if(item.getAmount() + quantity < 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수량이 재고보다 많습니다.");
+        }
+
+        // quantity 가 음수면 주문, 양수면 주문 취소
+        item.setAmount(item.getAmount() + quantity);
+
+        if(item.getAmount() == 0){
+            item.setStatus(Status.SOLD);
+        } else{
+            item.setStatus(Status.SALE);
+
+        }
+
+        return ItemDto.fromEntity(item);
+    }
+
     // 아이템 삭제
+    @Transactional
     public void delete(Long id) {
         itemRepository.deleteById(id);
     }
