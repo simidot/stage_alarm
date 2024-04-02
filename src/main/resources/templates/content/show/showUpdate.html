@@ -47,6 +47,8 @@
                                 <input type="time" id="startTime" name="startTime" class="form-control" value="${showInfo.startTime}" required>
                                 <label for="ticketVendor">예매처</label>
                                 <input type="text" id="ticketVendor" name="ticketVendor" class="form-control" value="${showInfo.ticketVendor}" required>
+                                <label for="duration">공연기간</label>
+                                <input type="text" id="duration" name="duration" class="form-control" value="${showInfo.duration}" required>
                                 <label for="image">이미지</label>
                                 <input type="file" id="image" name="file" class="form-control" accept="image/*">
                             </div>
@@ -60,8 +62,6 @@
         })
 
         $(document).on('click', '.save', function () {
-            console.log("update 버튼 클릭")
-
             var form = document.getElementById('updateShowForm');
             var formData = new FormData(form);
 
@@ -70,20 +70,21 @@
                 formData.append('file', $('#image')[0].files[0]);
             }
 
-            console.log($('#image')[0].files[0])
-
             const dto = {
                 id: $('#updateShowForm input[name="id"]').val(),
                 title: $('#title').val(),
                 date: $('#date').val(),
                 location: $('#location').val(),
                 startTime: $('#startTime').val(),
-                ticketVendor: $('#ticketVendor').val()
+                ticketVendor: $('#ticketVendor').val(),
+                duration: $('#duration').val()
             }
 
+            const json = JSON.stringify(dto);
+            const blob = new Blob([json], { type: 'application/json' });
 
             // 나머지 폼 데이터 추가
-            formData.append('dto', JSON.stringify(dto));
+            formData.append('dto', blob);
 
             $.ajax({
                 url: "/show/" + id,

@@ -44,6 +44,7 @@ public class QShowInfoRepository {
                                 showInfo.title,
                                 showInfo.ticketVendor,
                                 showInfo.price,
+                                showInfo.posterImage,
                                 // showInfo가 총 몇개 인지 count => showLike안의 showInfo 갯수를 셈
                                 //select t1.id, count(t1.id) from SHOW_INFO t1 join SHOW_LIKE t2
                                 //on t1.id = t2.SHOW_INFO_ID group by (t1.id);
@@ -66,6 +67,7 @@ public class QShowInfoRepository {
                         showInfo.title,
                         showInfo.ticketVendor,
                         showInfo.price,
+                        showInfo.posterImage,
                         showInfo.createdAt
                 )
                 .orderBy(SortableUtility.of(

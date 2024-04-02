@@ -89,7 +89,7 @@
                             <button class="flex-grow-1 info-update btn btn-light">수정</button>
                             <button class="flex-grow-1 info-delete btn btn-light" style="color: red;">삭제</button>
                         </div>
-                        <img src="https://via.placeholder.com/800x500" class="card-img-top" alt="축제 이미지">
+                        <img src=${showInfo.posterImage ? showInfo.posterImage : 'https://via.placeholder.com/800x500'} class="card-img-top" alt="축제 이미지">
                         <div class="card-body position-relative">
                             <h5 class="card-title">${showInfo.title}</h5>
                             <p class="card-text">날짜: ${showInfo.date}</p>

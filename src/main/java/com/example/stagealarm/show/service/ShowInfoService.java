@@ -142,15 +142,12 @@ public class ShowInfoService {
 
         showInfo.setDate(dto.getDate());
         showInfo.setStartTime(dto.getStartTime());
-        showInfo.setHours(dto.getHours());
         showInfo.setDuration(dto.getDuration());
         showInfo.setLocation(dto.getLocation());
         showInfo.setTitle(dto.getTitle());
         showInfo.setTicketVendor(dto.getTicketVendor());
         // s3service
         showInfo.setPosterImage(s3FileService.uploadIntoS3("/showInfoImg", file));
-        showInfo.setPrice(dto.getPrice());
-
     }
 
     @Transactional
