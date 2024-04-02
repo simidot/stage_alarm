@@ -51,9 +51,10 @@ public class QShowInfoRepository {
                         )
                 )
                 .from(showInfo)
+                .leftJoin(showLike)
+                .on(showLike.showInfo.id.eq(showInfo.id))
                 .where(containIgnoreCaseTitle(title))
                 // on showInfo.id = showLike.showInfo_id
-                .leftJoin(showInfo.showLikes, showLike)
                 .groupBy(
                         // showInfo에서 좋아요개수를 제외한 나머지가 같은 showInfo끼리 묶어준다.
                         showInfo.id,
