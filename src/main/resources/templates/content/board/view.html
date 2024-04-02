@@ -88,6 +88,15 @@
   <div class="enroll-button-container">
     <button id="write-button">글쓰기</button>
   </div>
+<!-- 페이지네이션 -->
+  <div class="pagination">
+
+  </div>
+<!-- 검색 박스-->
+  <div>
+    <select></select>
+
+  </div>
 </main>
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -152,7 +161,7 @@
 
                 // 댓글 데이터를 서버로 전송
                 $.ajax({
-                  url: `/comments/${boardId}`, // 실제 댓글 생성 API 경로로 변경해주세요.
+                  url: `/comments/${boardId}`,
                   type: 'POST',
                   contentType: 'application/json',
                   data: JSON.stringify(commentData),
