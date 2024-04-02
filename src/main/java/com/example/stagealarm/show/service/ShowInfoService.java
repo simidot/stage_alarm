@@ -56,6 +56,8 @@ public class ShowInfoService {
     // 공연 정보 등록
     @Transactional
     public ShowInfoResponseDto create(ShowInfoRequestDto dto, MultipartFile file) {
+        UserEntity userEntity = facade.getUserEntity();
+
         // 공연 기본정보 + 아티스트 정보 + 장르 정보 + 이미지 파일
 
         // 1) 공연 기본정보 저장 (ShowInfo)
@@ -107,7 +109,7 @@ public class ShowInfoService {
         }
         showInfoRepository.save(saved);
         alertService.createAlert(saved.getId());
-        return ShowInfoResponseDto.fromEntity(saved);
+        return ShowInfoResponseDto.fromEntity(saved, userEntity);
     }
 
 
@@ -121,8 +123,9 @@ public class ShowInfoService {
 
     // 공연 정보 조히 (단일)
     public ShowInfoResponseDto readOne(Long id) {
+        UserEntity userEntity = facade.getUserEntity();
         ShowInfo showInfo = showInfoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        return ShowInfoResponseDto.fromEntity(showInfo);
+        return ShowInfoResponseDto.fromEntity(showInfo, userEntity);
     }
 
 

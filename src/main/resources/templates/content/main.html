@@ -7,17 +7,18 @@
 <head>
     <title>main</title>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+</head>
 <body>
-
 <!-- Main -->
-<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+<main role="main" class="ml-sm-auto px-md-4"
+      style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
     <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
         <div id="calendar"></div>
     </div>
 </main>
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         // AJAX 요청으로 서버에서 일정 정보 가져오기
         $.ajax({
             url: "/show/calendar",

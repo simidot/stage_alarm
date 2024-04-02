@@ -37,7 +37,7 @@
 <script th:inline="javascript">
     $(document).ready(function () {
         // 기본 화면
-        fetchData("like,createdAt", "desc, desc", 0);
+        fetchData("createdAt", "desc", 0);
 
         // 제목 검색
         $(".search").click(function () {
@@ -171,14 +171,19 @@
 
                     // 데이터 표시
                     const content = data.content;
+
                     $.each(content, function (index, showInfo) {
                         const showHtml =
-                            '<div class="card" style="width: 18rem;">\n' +
+                            '<div class="card position-relative" style="width: 18rem;">\n' +
                             '<img src="https://via.placeholder.com/300\n" class="card-img-top" alt="축제 이미지">\n' +
                             '<div class="card-body">\n' +
                             '<h5 class="card-title"> ' + showInfo.title + '</h5>\n' +
                             '<p class="card-text">' + showInfo.date + '</p>\n' +
                             '<a href="shows/' + showInfo.id + '" class="btn btn-primary">상세보기</a>\n' +
+                            '<div class="card-footer d-flex mt-2 justify-content-between">\n' +
+                            '<img class="liked" src="' + (showInfo.isLiked === true ? '/images/like.png' : '/images/unlike.png') + '" style="width: 30px; height: 30px" alt="">\n' +
+                            '<p class="card-text">' + showInfo.totalLike + '</p>\n' +
+                            '</div>\n' +
                             '</div>\n' +
                             '</div>';
 

@@ -1,5 +1,6 @@
 package com.example.stagealarm.show.controller;
 
+import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.show.dto.ShowLikeResponseDto;
 import com.example.stagealarm.show.service.ShowLikeService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ShowLikeController {
     private final ShowLikeService showLikeService;
+    private final AuthenticationFacade facade;
 
     @PostMapping
     public ResponseEntity<ShowLikeResponseDto> create(@PathVariable("id") Long showInfoId) {
@@ -22,5 +24,11 @@ public class ShowLikeController {
     public ResponseEntity<Void> delete(@PathVariable("id") Long showInfoId) {
         showLikeService.deleteShowLike(showInfoId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public boolean isLiked(@PathVariable("id") Long showInfoId) {
+        Long userId = facade.getUserEntity().getId();
+        return showLikeService.isLiked(showInfoId, userId);
     }
 }
