@@ -3,6 +3,7 @@ package com.example.stagealarm.user.controller;
 import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.jwt.JwtRequestDto;
 import com.example.stagealarm.jwt.JwtResponseDto;
+import com.example.stagealarm.user.dto.PasswordDto;
 import com.example.stagealarm.user.dto.UserDto;
 import com.example.stagealarm.user.service.UserService;
 import jakarta.mail.MessagingException;
@@ -158,5 +159,13 @@ public class UserController {
         return userService.userExists(loginId);
     }
 
+    // 비밀번호 변경 로직
+    @PatchMapping("/change-password")
+    public void changePassword(
+            @RequestBody
+            PasswordDto dto
+    ){
+        userService.changePassword(dto);
+    }
 
 }
