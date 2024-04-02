@@ -36,7 +36,7 @@
   <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
       <div>
         <div>
-          <span><strong>[[${category}]]</strong></span>
+          <h3><strong>[[${category}]]</strong></h3>
           <div class="sort-buttons" style="margin-bottom: 10px">
             <button id="date-sort" style="margin-right: 2px">작성일 순</button>
             <button id="views-sort">조회 순</button>
@@ -57,39 +57,59 @@
           </tbody>
         </table>
       </div>
-    <button id="write-board" style="margin-top: 10px">글쓰기</button>
+    <div style="display: flex; justify-content: flex-end;">
+      <button id="write-board" style="margin-top: 10px;">글쓰기</button>
+    </div>
+
+    <!-- 페이지네이션을 중앙에 배치하기 위한 컨테이너 -->
+    <nav style="text-align: center; margin-top: 20px;">
+      <ul class="pagination" style="display: inline-flex; padding-left: 0;">
+        <!-- 페이지네이션 항목 -->
+      </ul>
+    </nav>
     </div>
   </main>
 
 <script th:inline="javascript">
-    $(document).ready(function () {
-        // fetchData("like,createdAt", "desc, desc", 0);
-        let sortParam; // 정렬 파라미터 초기화
+  $(document).ready(function () {
+    let sortParam; // 정렬 파라미터 초기화
 
-        // 페이지 로드 시 기본 데이터 로드
-        loadDataAndRender();
+    // URL에서 페이지 번호 가져오기
+    function getPageNumberFromUrl() {
+      let searchParams = new URLSearchParams(window.location.search);
+      return searchParams.get('page') ? parseInt(searchParams.get('page')) : 0; // 페이지 번호가 없으면 0으로 설정
+    }
 
-        // 작성일 순 정렬 버튼 클릭 이벤트
-        $('#date-sort').click(function () {
-            // 정렬 파라미터 토글
-            sortParam = sortParam === 'dateD' ? 'dateA' : 'dateD';
-            // 데이터 로드 및 렌더링
-            loadDataAndRender(sortParam);
-        });
+    // 현재 페이지 번호
+    let currentPage = getPageNumberFromUrl();
 
-        // 조회 순 정렬 버튼 클릭 이벤트
-        $('#views-sort').click(function () {
-            // 정렬 파라미터 토글
-            sortParam = sortParam === 'viewsD' ? 'viewsA' : 'viewsD';
-            // 데이터 로드 및 렌더링
-            loadDataAndRender(sortParam);
-        });
+    // 페이지 로드 시 기본 데이터 로드
+    loadData(currentPage, sortParam); // 페이지 로드 시 현재 페이지 데이터 로드
 
-        // 글쓰기 버튼 클릭 이벤트
-        $('#write-board').click(function () {
-          window.location.href = '/boards/write';
-        })
+    // 작성일 순 정렬 버튼 클릭 이벤트
+    $('#date-sort').click(function () {
+      sortParam = sortParam === 'dateD' ? 'dateA' : 'dateD';
+      loadData(currentPage, sortParam);
     });
+
+    // 조회 순 정렬 버튼 클릭 이벤트
+    $('#views-sort').click(function () {
+      sortParam = sortParam === 'viewsD' ? 'viewsA' : 'viewsD';
+      loadData(currentPage, sortParam);
+    });
+
+    // 글쓰기 버튼 클릭 이벤트
+    $('#write-board').click(function () {
+      window.location.href = '/boards/write';
+    });
+
+    // 페이지 번호 클릭 이벤트 (예시)
+    $(document).on('click', '.page-link', function (e) {
+      e.preventDefault();
+      let page = $(this).text() - 1; // 페이지 번호는 0부터 시작하므로 -1
+      window.location.search = `?page=${page}`; // URL에 페이지 번호 추가
+    });
+  });
 </script>
 </body>
 </html>

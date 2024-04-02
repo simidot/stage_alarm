@@ -6,25 +6,24 @@ function getPathParam(index) {
 }
 
 // 데이터 로드 및 페이지에 렌더링하는 함수
-function loadDataAndRender(sortParam) {
+function loadData(pageNumber, sortParam) {
   const categoryId = getPathParam(2); // URL에서 categoryId 추출
 
-  let requestURL = `/board/${categoryId}`;
-  if (sortParam) {
-    requestURL += `?sortParam=${sortParam}`;
-
-    // URL에 쿼리스트링 추가
-    const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?sortParam=${sortParam}`;
-    window.history.pushState({path:newUrl}, '', newUrl);
-  }
-
   $.ajax({
-    url: requestURL,
+    url: `/board/${categoryId}`,
     type: 'GET',
     contentType: 'application/json',
-    success: function(data) {
+    data: {
+      page: pageNumber,
+      size: 20,
+      sortParam: sortParam
+    },
+    success: function (data) {
       const $boardList = $('.boardList');
-      $boardList.empty(); // 기존 목록을 비웁니다.
+      const $pagination = $('.pagination');
+      // 초기화
+      $boardList.empty();
+      $pagination.empty();
 
       // 받아온 데이터로 게시글 목록 업데이트
       $.each(data.content, function(index, board) {
@@ -39,11 +38,25 @@ function loadDataAndRender(sortParam) {
                 `;
         $boardList.append(boardRow); // 생성한 행을 '.boardList'에 추가합니다.
       });
+
+      // 페이지네이션 생성
+      const totalPages = data.totalPages;
+      console.log("totalPages "+ totalPages)
+      for (let i = 0; i < totalPages; i++) {
+        const pageNumber = i + 1;
+        const $pageItem = $('<li class="page-item"><a class="page-link" href="#" style="color: black">' + pageNumber + '</a></li>');
+        $pageItem.click(function (e) {
+          e.preventDefault();
+          loadData(i, sortParam);
+        });
+        $pagination.append($pageItem);
+        console.log("pagination "+$pagination.html());
+      }
     },
     error: function(xhr, status, error) {
       console.error("요청 실패: ", status, error);
     }
-  });
+  })
 }
 
 // 댓글 컨텐츠 생성
