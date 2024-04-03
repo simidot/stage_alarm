@@ -41,7 +41,7 @@ public class ShowLikeService {
         showInfo.addLike(like);
 
         showLikesRepository.save(like);
-
+        showInfoRepository.save(showInfo);
 
         ShowLikeResponseDto dto = ShowLikeResponseDto.builder()
                 .userId(userId)
