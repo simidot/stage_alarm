@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+  <title>Category</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/js/board.js"></script>
+  <style>
+      table {
+          width: 100%;
+          margin: auto; /* 페이지 중앙에 테이블 정렬 */
+          border-collapse: collapse;
+          border-top: 2px solid green; /* 테이블 위에 초록색 밑줄 추가 */
+          border-bottom: 2px solid green; /* 테이블 아래에 초록색 밑줄 추가 */
+      }
+      th, td {
+          text-align: center;
+          padding: 8px;
+          border-bottom: 1px solid #ccc; /* 각 행 사이에 선 추가 */
+      }
+      thead {
+          border-bottom: 1px solid #ccc;
+      }
+      .sort-buttons {
+          text-align: center;
+          display: flex;
+          justify-content: flex-end;
+      }
+  </style>
+</head>
+<body>
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+  <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
+      <div>
+        <div>
+          <h3><strong>[[${category}]]</strong></h3>
+          <div class="sort-buttons" style="margin-bottom: 10px">
+            <button id="date-sort" style="margin-right: 2px" class="btn btn-secondary mr-2">작성일 순</button>
+            <button id="views-sort" class="btn btn-secondary mr-2">조회 순</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+          <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성일</th>
+            <th>조회</th>
+          </tr>
+          </thead>
+          <tbody class="boardList">
+          <!-- 게시글 목록을 동적으로 추가할 공간 -->
+          </tbody>
+        </table>
+      </div>
+    <div style="display: flex; justify-content: flex-end;">
+      <button id="write-board" style="margin-top: 10px;" class="btn btn-primary mt-2">글쓰기</button>
+    </div>
+
+    <!-- 페이지네이션을 중앙에 배치하기 위한 컨테이너 -->
+    <nav style="text-align: center; margin-top: 20px;">
+      <ul class="pagination" style="display: inline-flex; padding-left: 0;">
+        <!-- 페이지네이션 항목 -->
+      </ul>
+    </nav>
+    </div>
+  </main>
+
+<script th:inline="javascript">
+  $(document).ready(function () {
+    let sortParam; // 정렬 파라미터 초기화
+
+    // URL에서 페이지 번호 가져오기
+    function getPageNumberFromUrl() {
+      let searchParams = new URLSearchParams(window.location.search);
+      return searchParams.get('page') ? parseInt(searchParams.get('page')) : 0; // 페이지 번호가 없으면 0으로 설정
+    }
+
+    // 현재 페이지 번호
+    let currentPage = getPageNumberFromUrl();
+
+    // 페이지 로드 시 기본 데이터 로드
+    loadData(currentPage, sortParam); // 페이지 로드 시 현재 페이지 데이터 로드
+
+    // 작성일 순 정렬 버튼 클릭 이벤트
+    $('#date-sort').click(function () {
+      sortParam = sortParam === 'dateD' ? 'dateA' : 'dateD';
+      loadData(currentPage, sortParam);
+    });
+
+    // 조회 순 정렬 버튼 클릭 이벤트
+    $('#views-sort').click(function () {
+      sortParam = sortParam === 'viewsD' ? 'viewsA' : 'viewsD';
+      loadData(currentPage, sortParam);
+    });
+
+    // 글쓰기 버튼 클릭 이벤트
+    $('#write-board').click(function () {
+      window.location.href = '/boards/write';
+    });
+
+    // 페이지 번호 클릭 이벤트 (예시)
+    $(document).on('click', '.page-link', function (e) {
+      e.preventDefault();
+      let page = $(this).text() - 1; // 페이지 번호는 0부터 시작하므로 -1
+      window.location.search = `?page=${page}`; // URL에 페이지 번호 추가
+    });
+  });
+</script>
+</body>
+</html>

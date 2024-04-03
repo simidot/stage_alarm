@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+  <title>Board View</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/js/board.js"></script>
+  <style>
+      .board-info,
+      .board-body {
+          margin-bottom: 20px;
+      }
+
+      .board-content img {
+          max-width: 100%;
+      }
+
+      .board-body > div {
+          border: 1px solid #ccc; /* 테두리 설정 */
+          padding: 15px; /* 내부 여백 설정 */
+          margin-bottom: 20px; /* 아래쪽 여백 설정 */
+          background-color: #f9f9f9; /* 배경색 설정 */
+          border-radius: 5px; /* 테두리 둥글게 설정 */
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 그림자 효과 추가 */
+      }
+
+      .board-image {
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .board-image img {
+          display: inline-block;
+          margin-right: 10px;
+          max-width: 100%;
+      }
+
+      .input-container {
+          resize: none;
+          width: 100%; /* textarea의 너비를 조정 */
+          margin-bottom: 10px;
+      }
+
+      .enroll-button-container {
+          margin-top: 10px;
+      }
+
+      .enroll-button {
+          float: right;
+      }
+  </style>
+</head>
+<body>
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+  <div class="main-container border rounded p-3 mt-2" style="flex: 1;">
+    <!-- 게시판 종류 -->
+    <div class="board-info">
+      <h3>[[${category}]]</h3>
+    </div>
+    <!-- 게시판 header -->
+    <div class="board-header">
+      <!-- 여기에 JavaScript를 통해 내용이 동적으로 추가됩니다 -->
+    </div>
+    <!-- 게시판 body -->
+    <div class="board-image">
+      <!-- 여기에 JavaScript를 통해 내용이 동적으로 추가됩니다 -->
+    </div>
+    <div class="board-body">
+      <!-- 여기에 JavaScript를 통해 내용이 동적으로 추가됩니다 -->
+    </div>
+    <!-- 댓글 섹션 -->
+    <div class="comments-section">
+      <h5> 댓글 </h5>
+      <!-- 여기에 JavaScript를 통해 댓글이 동적으로 추가됩니다 -->
+    </div>
+    <!-- 댓글 입력 폼 -->
+    <div class="comment-form">
+      <div class="enroll-button-container">
+        <textarea class="input-container" rows="5" placeholder="댓글을 입력하세요"></textarea>
+        <button class="enroll-button btn btn-primary mt-2">등록</button>
+      </div>
+    </div>
+  </div>
+  <div class="enroll-button-container">
+    <button id="write-button" class="btn btn-primary mt-2">글쓰기</button>
+  </div>
+</main>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:inline="javascript">
+    const boardId = getPathParam(3);
+
+    $(document).ready(function () {
+        // 게시판 내용 불러오기
+        $.ajax({
+            url: `/board/detail/${boardId}`,
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (data) {
+                // 게시물 헤더 생성
+                const boardHeader = `
+                  <h2>${data.title}</h2>
+                  <p>${data.loginId}</p>
+                  <hr>
+                `;
+
+                // imageList가 있을 경우 실행
+                if (data.imageList.length > 0) {
+                    let imageHtml = `<div class="image-container">`;
+                    data.imageList.forEach(image => {
+                        imageHtml += `<img src="${image.imgUrl}" alt="Board Image" style="max-width:400px; max-height: 500px;">`;
+                    });
+                    imageHtml += `</div>`;
+
+                    $('.board-image').append(imageHtml);
+                }
+
+                // 텍스트 컨텐츠 생성
+                const boardBody = `
+                        <div>
+                          <p>${data.content}</p>
+                        </div>
+                        <hr>
+                        <hr>
+                    `;
+
+                $('.board-header').append(boardHeader);
+                $('.board-body').append(boardBody);
+
+              // 댓글 컨텐츠 생성
+              const commentsHtml = displayComments(data.commentList, boardId);
+              $('.comments-section').append(commentsHtml);
+
+              // 댓글 작성 버튼 클릭 이벤트
+              $('.enroll-button').click(function() {
+                // 댓글 내용 가져오기
+                const commentContent = $('.input-container').val();
+                // 댓글 공간 확인
+                if (!commentContent.trim()) {
+                  alert('댓글 내용을 입력해주세요.');
+                  return;
+                }
+
+                // 댓글 데이터를 JSON 객체로 생성
+                const commentData = {
+                  content: commentContent
+                };
+
+                // 댓글 데이터를 서버로 전송
+                $.ajax({
+                  url: `/comments/${boardId}`,
+                  type: 'POST',
+                  contentType: 'application/json',
+                  data: JSON.stringify(commentData),
+                  success: function(response) {
+                    $('.input-container').val('');
+                    // 새 댓글을 페이지에 추가
+                    addCommentToPage(response);
+                  },
+                  error: function(xhr, status, error) {
+                    console.error('댓글 작성 실패:', status, error);
+                  }
+                });
+              });
+            },
+            error: function (xhr, status, error) {
+                console.error("요청 실패: ", status, error);
+            }
+        });
+
+      // 글쓰기 버튼 클릭 이벤트
+      $('#write-button').click(function () {
+        window.location.href = '/boards/write';
+      })
+    });
+</script>
