@@ -16,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
+
     @GetMapping("items")
     public List<ItemDto> readAll() {
         log.info("readAll");
@@ -44,5 +45,21 @@ public class ItemController {
             @RequestPart(name = "file") MultipartFile file
     ){
         return itemService.create(dto, file);
+    }
+
+    @PatchMapping("items")
+    public ItemDto update(
+            @RequestPart("dto") ItemDto dto,
+            @RequestPart(name = "file") MultipartFile file
+    ){
+        return itemService.update(dto, file);
+    }
+
+    @DeleteMapping("items/{id}")
+    public void delete(
+            @PathVariable("id")
+            Long id
+    ){
+        itemService.delete(id);
     }
 }

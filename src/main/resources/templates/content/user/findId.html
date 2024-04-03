@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <meta charset="UTF-8">
+    <title>아이디 찾기</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<main role="main" class="container">
+    <div class="main-container border rounded p-3 mt-2">
+        <h1>아이디 찾기</h1>
+        <div class="form-group">
+            <label for="email">이메일 주소:</label>
+            <input type="email" class="form-control" id="email" placeholder="이메일을 입력하세요">
+            <div id="emailFeedback" class="feedback"></div>
+        </div>
+        <button id="findIdBtn" class="btn btn-primary">인증번호 받기</button>
+        <hr>
+        <div id="result"></div>
+    </div>
+</main>
+
+<!-- 이메일 인증 모달 -->
+<div class="modal" id="emailVerificationModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">이메일 인증</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>이메일로 전송된 인증번호를 입력해주세요.</p>
+                <input type="text" class="form-control" id="verificationCode">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="verifyEmail">인증</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#findIdBtn').click(function() {
+            const email = $('#email').val();
+            // 이메일 인증번호를 사용자에게 보내는 요청
+            $.ajax({
+                url: '/user/email-send', // 이메일 인증번호 전송 요청 URL
+                type: 'POST',
+                data: { email: email },
+                success: function(response) {
+                    // 이메일로 인증번호가 성공적으로 전송되었을 때
+                    $('#emailFeedback').css('color', 'green').text('인증 이메일이 발송되었습니다. 이메일을 확인해주세요.');
+                },
+                error: function(xhr, status, error) {
+                    console.error("인증번호 전송 오류: ", status, error);
+                    alert('인증번호 전송에 실패하였습니다.');
+                }
+            });
+            
+
+            $('#emailVerificationModal').modal('show'); // 인증 모달을 보여줌
+        });
+
+        $('#verifyEmail').click(function() {
+            const email = $('#email').val();
+            const verificationCode = $('#verificationCode').val();
+            // 이메일과 인증번호를 서버로 전송하여 검증하는 요청
+            $.ajax({
+                url: '/user/email-findId', // 이메일 인증 검증 요청 URL
+                type: 'POST',
+                data: {
+                    email: email,
+                    code: verificationCode
+                },
+                success: function(response) {
+
+                    // 인증 성공 시, 사용자에게 해당하는 loginId를 표시
+                    alert("인증 되었습니다.");
+                    $('#emailVerificationModal').modal('hide'); // 인증 모달을 숨김
+                    $('#result').html(`<p>찾으시는 아이디는 <strong>${response.loginId}</strong> 입니다.</p>`);
+                },
+                error: function(xhr, status, error) {
+
+                    if (xhr.status === 408) {
+                        // 이메일을 찾을 수 없을 때의 처리
+                        alert("인증시간 5분이 초과되었습니다. 인증하기 버튼을 다시 클릭해주세요");
+                        $('#emailVerificationModal').modal('hide'); // 인증 모달 닫기
+                    } else if (xhr.status === 400) {
+                        // 유효하지 않은 코드일 때의 처리
+                        alert("인증번호가 틀렸습니다 다시 확인해 주세요.");
+                    } else if (xhr.status === 404){
+                        // 그 외 오류 처리
+                        alert("가입된 이메일이 아닙니다.");
+                        $('#emailVerificationModal').modal('hide'); // 인증 모달 닫기
+                    } else{
+                        // 그 외 오류 처리
+                        alert("오류가 발생했습니다. 처음부터 다시 시도해주세요.");
+                        $('#emailVerificationModal').modal('hide'); // 인증 모달 닫기
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

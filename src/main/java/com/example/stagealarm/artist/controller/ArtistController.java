@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ public class ArtistController {
     public ResponseEntity<ArtistResponseDto> addArtist(
         @RequestPart("dto")
         ArtistRequestDto dto,
-        @RequestPart("file")
+        @RequestPart(name = "file", required = false)
         MultipartFile file
     ) {
         // 관리자 권한 일때
@@ -35,12 +37,17 @@ public class ArtistController {
 
     // 모든 아티스트 조회
     @GetMapping
-    public Page<ArtistDto> getAllArtist(PaginationRequest paginationRequest) {
+    public Page<ArtistDto> getAllArtistWithPage(PaginationRequest paginationRequest) {
         Pageable pageable = PageRequest.of(
             paginationRequest.getPage(),
             paginationRequest.getSize()
         );
         return artistService.searchAll(pageable);
+    }
+
+    @GetMapping("/all")
+    public List<ArtistDto> getAllArtist() {
+        return artistService.searchAll();
     }
 
     // 아티스트 검색

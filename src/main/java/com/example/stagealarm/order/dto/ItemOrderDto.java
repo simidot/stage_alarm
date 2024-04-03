@@ -17,6 +17,8 @@ public class ItemOrderDto {
 
     private Long itemId;
 
+    private String itemName;
+
     private Integer amount;
 
     private Integer totalPrice;
@@ -30,6 +32,7 @@ public class ItemOrderDto {
     public static ItemOrderDto fromEntity(ItemOrder itemOrder){
         return ItemOrderDto.builder()
                 .id(itemOrder.getId())
+                .itemName(itemOrder.getItem().getName())
                 .userId(itemOrder.getUser().getId())
                 .itemId(itemOrder.getItem().getId())
                 .amount(itemOrder.getAmount())

@@ -3,6 +3,7 @@ package com.example.stagealarm.user.controller;
 import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.jwt.JwtRequestDto;
 import com.example.stagealarm.jwt.JwtResponseDto;
+import com.example.stagealarm.user.dto.PasswordDto;
 import com.example.stagealarm.user.dto.UserDto;
 import com.example.stagealarm.user.service.UserService;
 import jakarta.mail.MessagingException;
@@ -149,6 +150,39 @@ public class UserController {
         return userService.checkEmailCode(email, code);
     }
 
+    // 비밀번호 인증번호 확인
+    @PostMapping("/email-pwAuth")
+    public ResponseEntity<String> checkEmailPwCode(
+            @RequestParam("email")
+            String email,
+            @RequestParam("code")
+            String code
+    ){
+        return userService.checkEmailPwCode(email, code);
+    }
+
+    // 임시비밀번호 발급
+    @PostMapping("/email-tempPwSend")
+    public void sendTempPw(
+            @RequestParam("email")
+            String email
+    ){
+        userService.sendPwEmail(email);
+    }
+
+    // 이메일로 아이디 찾기
+    @PostMapping("/email-findId")
+    public ResponseEntity<UserDto> findIdByEmail(
+            @RequestParam("email")
+            String email,
+            @RequestParam("code")
+            String code
+    ){
+        return userService.findIdByEmailCode(email, code);
+    }
+
+
+
     // 회원가입시 로그인 아이디 중복 체크 로직
     @PostMapping("/loginId-check")
     public boolean checkLoginId(
@@ -158,5 +192,21 @@ public class UserController {
         return userService.userExists(loginId);
     }
 
+    // 비밀번호 변경 로직
+    @PatchMapping("/change-password")
+    public void changePassword(
+            @RequestBody
+            PasswordDto dto
+    ){
+        userService.changePassword(dto);
+    }
+
+    @PostMapping("find/loginId")
+    public UserDto findLogId(
+            @RequestParam("email")
+            String email
+    ){
+        return userService.findLoginIdByEmail(email);
+    }
 
 }

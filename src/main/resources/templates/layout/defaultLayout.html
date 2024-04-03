@@ -11,27 +11,58 @@
 <!--header 영역 참조-->
 <th:block th:replace="~{header/header :: headerFragment}"></th:block>
 
-<!--main 영역 참조-->
-<div id="content-wrapper" style="display: flex;">
-    <div id="sidebar" class="sidebar col-md-3 col-lg-2 d-md-block">
-        <!-- Sidebar -->
-        <div>
-<!--        <div th:if="${#httpServletRequest.requestURI.startsWith('/admin')}">-->
-            <th:block th:replace="~{sidebar/sidebar :: sidebarFragment}"></th:block>
-        </div>
-<!--        <div th:unless="${#httpServletRequest.requestURI.startsWith('/admin')}">-->
-<!--            <th:block th:replace="~{sidebar/sidebar :: sidebarFragment}"></th:block>-->
-<!--        </div>-->
-    </div>
 
-    <div id="main-content" style="flex: 1;">
-        <!-- main content -->
-        <th:block layout:fragment="content"></th:block>
+<div id="wrapper" style="display: flex;">
+
+  <!-- sidebar -->
+  <div id="sidebar" class="sidebar col-md-3 col-lg-2 d-md-block">
+    <div id="adminSidebar" style="display: none;"> <!-- Admin 사이드바 -->
+      <div>Admin~~~~</div>
+      <th:block th:replace="~{sidebar/adminSidebar :: sidebarFragment}"></th:block>
     </div>
+    <div id="userSidebar" style="display: none;"> <!-- User 사이드바 -->
+      <div>user~~~~</div>
+      <th:block th:replace="~{sidebar/sidebar :: sidebarFragment}"></th:block>
+    </div>
+  </div>
+
+  <!-- main-content -->
+  <div id="main-content" style="flex: 1;">
+    <!-- main content -->
+    <th:block layout:fragment="content"></th:block>
+  </div>
+
 </div>
 
 <!--footer 영역 참조-->
 <th:block th:replace="~{footer/footer :: footerFragment}"></th:block>
 
 </body>
+
+<!-- 페이지 렌더링 시 로컬 스토리지에서 JWT 토큰을 가져와 HTML에 포함시킵니다. -->
+<script type="text/javascript">
+    // 페이지가 로드될 때 실행되는 함수
+    window.onload = function() {
+        // localStorage에서 JWT 토큰을 가져옵니다.
+        const jwtToken = localStorage.getItem('jwtToken');
+
+        // JWT 토큰이 존재하는 경우에만 처리합니다.
+        if (jwtToken) {
+            // 토큰을 디코딩하여 권한을 확인합니다. 여기서는 'authority'라는 필드를 가정합니다.
+            const tokenPayload = JSON.parse(atob(jwtToken.split('.')[1]));
+            const authority = tokenPayload.roles;
+
+            // 권한에 따라서 적절한 사이드바를 표시합니다.
+            if (authority === 'ROLE_ADMIN') {
+                document.getElementById('adminSidebar').style.display = 'block';
+            } else {
+                document.getElementById('userSidebar').style.display = 'block';
+            }
+        }
+    };
+</script>
+
+
+
 </html>
+

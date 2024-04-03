@@ -6,6 +6,7 @@ import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.jwt.JwtRequestDto;
 import com.example.stagealarm.jwt.JwtResponseDto;
 import com.example.stagealarm.jwt.JwtTokenUtils;
+import com.example.stagealarm.user.dto.PasswordDto;
 import com.example.stagealarm.user.entity.UserEntity;
 import com.example.stagealarm.user.dto.CustomUserDetails;
 import com.example.stagealarm.user.dto.UserDto;
@@ -17,6 +18,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -149,7 +152,6 @@ public class UserService implements UserDetailsService {
         userEntity.setNickname(dto.getNickname());
         userEntity.setGender(dto.getGender());
         userEntity.setPhone(dto.getPhone());
-        userEntity.setProfileImg(dto.getProfileImg());
         userEntity.setAddress(dto.getAddress());
         userEntity.setProfileImg(s3FileService.uploadIntoS3("/profileImg", file));
 
@@ -216,6 +218,39 @@ public class UserService implements UserDetailsService {
                         "귀하의 인증 코드는: " + code + " 입니다.");
     }
 
+
+    @Async("threadPoolTaskExecutor")
+    @Transactional
+    public void sendPwEmail(String email) {
+        // 이메일 전송 로직
+        String tempPassword = generateTempPassword(10);
+        try {
+            // 이메일 전송
+            emailAlertService.sendMail(email,
+                    "스테이지알람 임시 비밀번호 입니다",
+                    "귀하의 임시 비밀번호는: " + tempPassword + " 입니다.\n로그인 후 빠른 시일 내에 비밀번호를 수정하시길 바랍니다.");
+
+
+        } catch (MessagingException e) {
+            // 예외 처리 로직
+            log.error("Failed to send temporary password email to {}", email, e);
+        } finally {
+            // 임시 비밀번호로 비밀번호 변경
+            changeTempPassword(email, tempPassword);
+        }
+    }
+
+    public void changeTempPassword(String email, String tempPassword) {
+        log.info("==============================");
+        UserEntity userEntity = searchByEmail(email);
+
+        userEntity.setPassword(passwordEncoder.encode(tempPassword));
+
+        userRepository.save(userEntity);
+        log.info("==============================");
+    }
+
+
     // 인증 로직
     public ResponseEntity<String> checkEmailCode(String email, String code) {
         log.info("email auth start");
@@ -223,8 +258,8 @@ public class UserService implements UserDetailsService {
         String original = operations.get(email);
 
         if(original == null){
-            // 이메일 주소에 해당하는 코드가 존재하지 않을 경우, 클라이언트에게 Not Found 응답을 반환
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email not found");
+            // 이메일 주소에 해당하는 코드가 존재하지 않을 경우(코드 만료), 클라이언트에게 Not Found 응답을 반환
+            return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body("Email not found");
         }
 
         if(!original.equals(code)){
@@ -237,10 +272,39 @@ public class UserService implements UserDetailsService {
 
     }
 
+
+
+    // 이메일로 아이디 찾기 로직
+    public ResponseEntity<UserDto> findIdByEmailCode(String email, String code) {
+        ValueOperations<String, String> operations = redisTemplate.opsForValue();
+        String original = operations.get(email);
+
+        if(original == null){
+            // 이메일 주소에 해당하는 코드가 존재하지 않을 경우(코드 만료), 클라이언트에게 Not Found 응답을 반환
+            return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(null);
+        }
+
+        if(!original.equals(code)){
+            // 코드와 인증번호가 맞지 않을경우
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        if(!existsByEmail(email)){
+            // 없는 이메일일 경우
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        // 인증 성공시 UserDto 를 body 에 담아서 리턴
+        return ResponseEntity.ok(UserDto.fromEntity(searchByEmail(email)));
+
+    }
+
+
+
+    @Transactional
     public UserDto updateWithoutFile(UserDto dto) {
         // 본인이나 관리자 인지 확인
         UserEntity currentUser = authFacade.getUserEntity();
-
 
         if (currentUser == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated.");
@@ -254,16 +318,15 @@ public class UserService implements UserDetailsService {
         }
 
         UserEntity userEntity = searchByLoginId(dto.getLoginId());
-
         userEntity.setNickname(dto.getNickname());
         userEntity.setGender(dto.getGender());
         userEntity.setPhone(dto.getPhone());
-        userEntity.setProfileImg(dto.getProfileImg());
         userEntity.setAddress(dto.getAddress());
 
         return UserDto.fromEntity(userRepository.save(userEntity));
     }
 
+    @Transactional
     public UserDto joinWithoutFile(UserDto dto) {
         // 로그인 아이디가 이미 있을경우 오류
         if(this.userExists(dto.getLoginId()))
@@ -281,5 +344,58 @@ public class UserService implements UserDetailsService {
                 .build();
 
         return UserDto.fromEntity(userRepository.save(newUser));
+    }
+
+    @Transactional
+    public void changePassword(PasswordDto dto) {
+        UserEntity userEntity = authFacade.getUserEntity();
+        if (!passwordEncoder.matches(dto.getCurrentPassword(), userEntity.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+        }
+
+        userEntity.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+
+    }
+
+    public UserDto findLoginIdByEmail(String email) {
+        return UserDto.fromEntity(userRepository.findByEmail(email).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND))
+        );
+    }
+
+    // 임시 비밀번호 생성 메서드
+    private String generateTempPassword(int length) {
+        // 영문 대소문자와 숫자를 포함하는 문자열을 정의
+        String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        // 보안에 더 강화된 랜덤 값을 생성하기 위해 SecureRandom 인스턴스를 생성
+        SecureRandom random = new SecureRandom();
+        // 임시 비밀번호를 생성하기 위해 아래의 과정
+        return random.ints(length, 0, letters.length())
+                .mapToObj(i -> String.valueOf(letters.charAt(i)))
+                .collect(Collectors.joining());
+    }
+
+
+    public ResponseEntity<String> checkEmailPwCode(String email, String code) {
+        ValueOperations<String, String> operations = redisTemplate.opsForValue();
+        String original = operations.get(email);
+
+        if(original == null){
+            // 이메일 주소에 해당하는 코드가 존재하지 않을 경우(코드 만료), 클라이언트에게 Not Found 응답을 반환
+            return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(null);
+        }
+
+        if(!original.equals(code)){
+            // 코드와 인증번호가 맞지 않을경우
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        if(!existsByEmail(email)){
+            // 없는 이메일일 경우
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        // 인증 성공시 UserDto 를 body 에 담아서 리턴
+        return ResponseEntity.ok("success");
     }
 }
