@@ -26,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -270,6 +271,19 @@ public class BoardService {
     } catch (Exception e) {
       log.error("err: {}", e.getMessage());
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "update image");
+    }
+  }
+
+  // boardId로 categoryId를 반환
+  public Long findCategoryId(Long boardId) {
+    try {
+      Board targetBoard = boardRepository.findById(boardId)
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+      return targetBoard.getCategory().getId();
+    } catch (Exception e) {
+      log.error("err: {}", e.getMessage());
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "find categoryId");
     }
   }
 }
