@@ -1,10 +1,14 @@
 package com.example.stagealarm.artist.dto;
 
 import com.example.stagealarm.artist.entity.Artist;
+import com.example.stagealarm.artist.entity.ArtistGenre;
+import com.example.stagealarm.genre.dto.GenreDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -24,9 +28,13 @@ public class ArtistDto {
     private Boolean isLiked;
     private Long subscribes;
     private Boolean isSubscribed;
-    private List<String> genres;
+    private List<GenreDto> genres;
 
     public static ArtistDto fromEntity(Artist artist){
+        List<GenreDto> genreDtos = artist.getGenres().stream()
+            .map(artistGenre -> GenreDto.fromEntity(artistGenre.getGenre()))
+            .collect(Collectors.toList());
+
         return ArtistDto.builder()
             .id(artist.getId())
             .createdAt(artist.getCreatedAt())
@@ -38,11 +46,15 @@ public class ArtistDto {
             .isLiked(false)
             .subscribes((long) artist.getSubscribes().size())
             .isSubscribed(false)
-            .genres(artist.getGenresString(artist.getGenres()))
+            .genres(genreDtos)
             .build();
     }
 
     public static ArtistDto fromEntityWithLikeStatusAndSubStatus(Artist artist, boolean isLiked, boolean isSubscribed) {
+        List<GenreDto> genreDtos = artist.getGenres().stream()
+            .map(artistGenre -> GenreDto.fromEntity(artistGenre.getGenre()))
+            .collect(Collectors.toList());
+
         return ArtistDto.builder()
             .id(artist.getId())
             .createdAt(artist.getCreatedAt())
@@ -54,7 +66,7 @@ public class ArtistDto {
             .isLiked(isLiked)
             .subscribes((long)artist.getSubscribes().size())
             .isSubscribed(isSubscribed)
-            .genres(artist.getGenresString(artist.getGenres()))
+            .genres(genreDtos)
             .build();
     }
 

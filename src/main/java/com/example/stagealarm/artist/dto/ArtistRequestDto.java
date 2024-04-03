@@ -4,6 +4,7 @@ import com.example.stagealarm.artist.entity.Artist;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -15,6 +16,6 @@ public class ArtistRequestDto {
   private String name;
   private Integer age;
   private String gender;
-  private List<Long> genreIds;
+  private List<Long> genreIds = new ArrayList<>();
 }
 
