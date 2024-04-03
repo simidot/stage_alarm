@@ -57,5 +57,16 @@ public class UserViewController {
     public String changePassword(){
         return "content/user/changePassword";}
 
+    // 아이디 찾기 페이지
+    @GetMapping("/user/find/id")
+    public String findingId(){
+        return "content/user/findId";
+    }
+
+    // 비밀번호 찾기 페이지
+    @GetMapping("/user/find/pw")
+    public String findingPassword(){
+        return "content/user/findPassword";
+    }
 
 }
