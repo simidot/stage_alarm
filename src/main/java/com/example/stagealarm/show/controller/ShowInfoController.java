@@ -6,6 +6,7 @@ import com.example.stagealarm.show.service.ShowCommentsService;
 import com.example.stagealarm.show.service.ShowInfoService;
 import com.example.stagealarm.user.dto.UserResponseDto;
 import com.example.stagealarm.user.entity.UserEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+@Tag(name = "ShowInfo 컨트롤러", description = "ShowInfo API입니다.")
 @RestController
 @RequestMapping("/show")
 @RequiredArgsConstructor

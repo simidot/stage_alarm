@@ -5,7 +5,7 @@
       layout:decorate="~{layout/defaultLayout}"
       layout:fragment="content">
 <head>
-    <title>artist upload</title>
+    <title>Artist Upload</title>
 <body>
 
 <!-- Main -->
@@ -24,7 +24,7 @@
                         <div class="input-group">
                             <div class="input-group-text">아티스트명</div>
                             <input type="text" class="form-control" id="artistName" name="artistName" maxlength="50"
-                                   placeholder="아티스트명">
+                                   placeholder="아티스트명" required>
                             <button type="button" id="checkArtist" class="btn btn-secondary">아티스트 중복 검사</button>
                             <div id="artistFeedback" class="feedback"></div>
                         </div>
@@ -53,7 +53,7 @@
 
                     <div class="col-md-8 mb-3">
                         <label for="profileImg" class="light-label form-label">아티스트 프로필 이미지 추가</label>
-                        <input class="form-control" type="file" id="profileImg" name="profileImg" accept="image/*" placeholder="아티스트 프로필">
+                        <input class="form-control" type="file" id="profileImg" name="profileImg" accept="image/*" placeholder="아티스트 프로필" required>
                         <div id="imageContainer"></div>
                     </div>
                 </div>

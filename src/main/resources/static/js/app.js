@@ -13,7 +13,7 @@ function toggleDropdown(dropdownId) {
 window.onclick = function(event) {
     if (!event.target.matches('.dropdown button')) {
         const dropdowns = document.getElementsByClassName("dropdown-content");
-        for (const i = 0; i < dropdowns.length; i++) {
+        for (let i = 0; i < dropdowns.length; i++) {
             const openDropdown = dropdowns[i];
             if (openDropdown.style.display === "block") {
                 openDropdown.style.display = "none";
@@ -23,6 +23,18 @@ window.onclick = function(event) {
 }
 
 // sidebar 토글 js
+// admin
+function toggleAdminSubMenu() {
+    const adminShowSubMenu = document.getElementById('adminShowSubMenu');
+    adminShowSubMenu.style.display = (adminShowSubMenu.style.display === 'none' || adminShowSubMenu.style.display === '') ? 'block' : 'none';
+}
+
+function toggleAdminUploadMenu() {
+    const adminUploadSubMenu = document.getElementById('adminUploadSubMenu');
+    adminUploadSubMenu.style.display = (adminUploadSubMenu.style.display === 'none' || adminUploadSubMenu.style.display === '') ? 'block' : 'none';
+}
+
+// user
 function toggleMySubMenu() {
     const myPageSubMenu = document.getElementById('myPageSubMenu');
     myPageSubMenu.style.display = (myPageSubMenu.style.display === 'none' || myPageSubMenu.style.display === '') ? 'block' : 'none';
@@ -38,7 +50,16 @@ function toggleShowSubMenu() {
     showSubMenu.style.display = (showSubMenu.style.display === 'none' || showSubMenu.style.display === '') ? 'block' : 'none';
 }
 
+// 비로그인 유저
+function toggleUnauthShowSubMenu() {
+    const unauthShowSubMenu = document.getElementById('unauthShowSubMenu');
+    unauthShowSubMenu.style.display = (unauthShowSubMenu.style.display === 'none' || unauthShowSubMenu.style.display === '') ? 'block' : 'none';
+}
 
+function toggleUnauthComSubMenu() {
+    const unauthCommunitySubMenu = document.getElementById('unauthCommunitySubMenu');
+    unauthCommunitySubMenu.style.display = (unauthCommunitySubMenu.style.display === 'none' || unauthCommunitySubMenu.style.display === '') ? 'block' : 'none';
+}
 
 // Ajax 전역 설정
 $.ajaxSetup({

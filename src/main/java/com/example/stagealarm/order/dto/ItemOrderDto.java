@@ -1,7 +1,7 @@
 package com.example.stagealarm.order.dto;
 
 
-import com.example.stagealarm.enums.Status;
+import com.example.stagealarm.item.entity.Status;
 import com.example.stagealarm.order.entity.ItemOrder;
 import lombok.*;
 

@@ -5,7 +5,7 @@
       layout:decorate="~{layout/defaultLayout}"
       layout:fragment="content">
 <head>
-    <title>main</title>
+    <title>Show Detail</title>
     <style>
         .like-btn:hover {
             cursor: pointer;
@@ -30,10 +30,6 @@
         </div>
         <div style="height: 2px; width: 100%" class="bg-secondary bg-opacity-25 my-3"></div>
         <div class="comments"></div>
-        <div>
-            <button></button>
-            <button></button>
-        </div>
     </div>
 </main>
 
@@ -93,7 +89,7 @@
                             <button class="flex-grow-1 info-update btn btn-light">수정</button>
                             <button class="flex-grow-1 info-delete btn btn-light" style="color: red;">삭제</button>
                         </div>
-                        <img src=${showInfo.posterImage ? showInfo.posterImage : 'https://via.placeholder.com/800x500'} class="card-img-top" alt="축제 이미지">
+                        <img src=${showInfo.posterImage ? showInfo.posterImage : 'https://via.placeholder.com/500x700'} class="card-img-top" alt="축제 이미지" style="max-width:400px; max-height: 500px;">
                         <div class="card-body position-relative">
                             <h5 class="card-title">${showInfo.title}</h5>
                             <p class="card-text">날짜: ${showInfo.date}</p>

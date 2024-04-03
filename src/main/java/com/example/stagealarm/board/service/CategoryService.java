@@ -47,7 +47,16 @@ public class CategoryService {
   }
 
   // Read
-  // read All
+    // read category
+  public String readCategoryName(Long categoryId) {
+    Category targetCategory = categoryRepository.findById(categoryId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    return targetCategory.getCategory();
+  }
+
+
+    // read All
   public Page<BoardListDto> readAll(Long categoryId, String sortParam, Pageable pageable) {
     // Category 불러오기
     Category targetCategory = categoryRepository.findById(categoryId)
@@ -62,10 +71,10 @@ public class CategoryService {
       case "dateA":
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").ascending());
         break;
-      case "viewD":
+      case "viewsD":
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("views").descending());
         break;
-      case "viewA":
+      case "viewsA":
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("views").ascending());
         break;
     }
@@ -74,37 +83,5 @@ public class CategoryService {
       = boardRepository.findAllByCategory(targetCategory, pageable);
 
     return boardPage.map(BoardListDto::fromEntity);
-  }
-
-  // 어떤 게시판인지 반환
-  public String returnBoard(String category) {
-    Long categoryId = makeCategoryId(category);
-
-    // category 반환 (공연 후기, 아티스트, 자유, 동행)
-    return categoryRepository.findById(categoryId)
-      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
-      .getCategory();
-  }
-
-  // String -> Long
-  public Long makeCategoryId(String category) {
-    Long categoryId = 0L;
-    // switch
-    switch (category) {
-      case "concert":
-        categoryId = 1L;
-        break;
-      case "artist":
-        categoryId = 2L;
-        break;
-      case "agora":
-        categoryId = 3L;
-        break;
-      case "mate":
-        categoryId = 4L;
-        break;
-    }
-
-    return categoryId;
   }
 }

@@ -5,6 +5,7 @@ import com.example.stagealarm.artist.dto.ArtistRequestDto;
 import com.example.stagealarm.artist.dto.ArtistResponseDto;
 import com.example.stagealarm.artist.dto.PaginationRequest;
 import com.example.stagealarm.artist.service.ArtistService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Tag(name = "Artist 컨트롤러", description = "Artist API입니다.")
 @Slf4j
 @RestController
 @RequiredArgsConstructor

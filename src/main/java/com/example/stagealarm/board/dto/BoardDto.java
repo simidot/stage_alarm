@@ -67,6 +67,7 @@ public class BoardDto {
       comment.getUserEntity().getId(),
       comment.getUserEntity().getLoginId(),
       comment.getBoard().getId(),
+      BoardCommentDto.formattedDate(comment),
       childCommentDtos
     );
   }
