@@ -6,6 +6,22 @@
       layout:fragment="content">
 <head>
     <title>Artist Upload</title>
+    <style>
+        #artistFeedback {
+            display: inline-block; /* 인라인 요소로 변경하여 옆에 배치 */
+            vertical-align: middle; /* 가운데 정렬 */
+        }
+        .input-group .form-control {
+            height: calc(1.5em + 0.75rem + 2px); /* Bootstrap 기본값 */
+        }
+
+        .input-group .btn {
+            height: calc(1.5em + 0.75rem + 2px); /* Bootstrap 기본값 */
+            margin-bottom: 0; /* 버튼의 위쪽 여백 제거 */
+        }
+    </style>
+</head>
+
 <body>
 
 <!-- Main -->
@@ -19,16 +35,46 @@
                 <div class="bold-label text-center mb-4" style="font-size: 20px;">아티스트 정보 입력</div>
                 <div class="light-label"> 아티스트 정보를 입력해주세요. </div>
                 <div class="row g-3">
-                    <div class="col-md-8">
-                        <label class="visually-hidden" for="artistName"></label>
+                  <div class="row">
+                    <div class="col-md-12 d-flex align-items-stretch">
+                      <div class="col-md-6">
                         <div class="input-group">
-                            <div class="input-group-text">아티스트명</div>
-                            <input type="text" class="form-control" id="artistName" name="artistName" maxlength="50"
-                                   placeholder="아티스트명" required>
-                            <button type="button" id="checkArtist" class="btn btn-secondary">아티스트 중복 검사</button>
-                            <div id="artistFeedback" class="feedback"></div>
+                          <div class="input-group-text">아티스트명 <span class="required">*</span></div>
+                          <input type="text" class="form-control" id="artistName" name="artistName" maxlength="50"
+                                 placeholder="아티스트명" required>
                         </div>
+                      </div>
+                      <!-- 오른쪽: 버튼 -->
+                      <div class="col-md-6">
+                        <button type="button" id="checkArtist" class="btn btn-secondary">아티스트 중복 검사</button>
+                        <div id="artistFeedback" class="feedback"></div>
+                      </div>
                     </div>
+                  </div>
+
+                  <!--                    <div class="col-md-6">-->
+<!--                        <label class="visually-hidden" for="artistName"></label>-->
+<!--                        <div class="input-group">-->
+<!--                            <div class="input-group-text">아티스트명 <span class="required">*</span></div>-->
+<!--                            <input type="text" class="form-control" id="artistName" name="artistName" maxlength="50"-->
+<!--                                   placeholder="아티스트명" required>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    &lt;!&ndash; 오른쪽: 버튼 &ndash;&gt;-->
+<!--                    <div class="col-md-6">-->
+<!--                        <button type="button" id="checkArtist" class="btn btn-secondary">아티스트 중복 검사</button>-->
+<!--                        <div id="artistFeedback" class="feedback"></div>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-8">-->
+<!--                        <label class="visually-hidden" for="artistName"></label>-->
+<!--                        <div class="input-group">-->
+<!--                            <div class="input-group-text">아티스트명 <span class="required">*</span></div>-->
+<!--                            <input type="text" class="form-control" id="artistName" name="artistName" maxlength="50"-->
+<!--                                   placeholder="아티스트명" required>-->
+<!--                            <button type="button" id="checkArtist" class="btn btn-secondary">아티스트 중복 검사</button>-->
+<!--                            <div id="artistFeedback" class="feedback"></div>-->
+<!--                        </div>-->
+<!--                    </div>-->
                     <div class="col-md-8 mb-3">
                         <label class="visually-hidden" for="age"></label>
                         <div class="input-group">
@@ -64,19 +110,17 @@
                         <!-- 왼쪽: 선택한 장르 -->
                         <div class="col-md-6">
                             <div class="light-label">선택한 장르</div>
-                            <div id="selectedGenre">
-                                선택된 장르: <span id="selectedGenreName"></span>
-                            </div>
+                            <div id="selectedGenre"><span id="selectedGenreName"></span></div>
                         </div>
                         <div class="col-md-6">
                             <div class="light-label">전체 장르 리스트</div>
                             <div id="genreList" style="height: 300px; overflow-y: auto;">
                                 <!-- 각 장르 요소에 genre.id를 hidden으로 추가 -->
                                 <!-- 선택 버튼에도 data-artist-id 속성을 추가하여 각 아티스트의 id를 저장 -->
-                                <div class="genre-item" style="display: flex; justify-content: space-between;">
-                                    <span>{{genre.name}}</span> <!-- 장르 이름 -->
+                                <div class="genre-item light-label" style="display: flex; justify-content: space-between;">
+                                    <span class="light-label">{{genre.name}}</span> <!-- 장르 이름 -->
                                     <input type="hidden" class="genre-id" value="{{genre.id}}">
-                                    <button type="button" class="select-genre-btn" data-genre-id="{{genre.id}}" data-genre-name="{{genre.name}}">선택</button> <!-- 선택 버튼 -->
+                                    <button type="button" class="btn btn-outline-primary select-genre-btn light-label" data-genre-id="{{genre.id}}" data-genre-name="{{genre.name}}">선택</button> <!-- 선택 버튼 -->
                                 </div>
                             </div>
                         </div>
@@ -85,7 +129,7 @@
                 </div>
                 <div class="border mt-5 mb-5"></div> <!--구분선 넣기 -->
 
-                <button type="submit" class="submit-btn btn-dark">업로드</button>
+                <button type="submit" class="btn submit-btn btn-dark">업로드</button>
             </div>
             </form>
         </div>

@@ -29,7 +29,7 @@
                     <div class="col-md-8">
                         <label class="visually-hidden" for="title"></label>
                         <div class="input-group">
-                            <div class="input-group-text">공연명</div>
+                            <div class="input-group-text">공연명 <span class="required">*</span></div>
                             <input type="text" class="form-control" id="title" name="title" maxlength="50"
                                    placeholder="공연명">
                         </div>
@@ -37,7 +37,7 @@
                     <div class="col-md-8">
                         <label class="visually-hidden" for="place"></label>
                         <div class="input-group">
-                            <div class="input-group-text">공연 장소</div>
+                            <div class="input-group-text">공연 장소 <span class="required">*</span></div>
                             <input type="text" class="form-control" id="place" name="place" maxlength="50"
                                    placeholder="공연 장소">
                         </div>
@@ -45,7 +45,7 @@
                     <div class="col-md-8">
                         <label class="visually-hidden" for="place"></label>
                         <div class="input-group">
-                            <div class="input-group-text">공연 날짜</div>
+                            <div class="input-group-text" >공연 날짜 <span class="required">*</span></div>
                             <input type="date" class="form-control" id=date name="date" placeholder="공연 날짜">
                         </div>
                     </div>
@@ -84,18 +84,19 @@
                     <div class="col-md-8">
                         <label class="visually-hidden" for="price"></label>
                         <div class="input-group">
-                            <div class="input-group-text">공연 가격</div>
+                            <div class="input-group-text">공연 가격 <span class="required">*</span></div>
                             <input type="text" class="form-control" id=price name="price" placeholder="공연 가격" maxlength="500">
                         </div>
                     </div>
                     <div class="col-md-8 mb-3">
-                        <label for="posterImage" class="light-label">공연 포스터 이미지 추가</label>
+                        <label for="posterImage" class="light-label">공연 포스터 이미지 추가 <span class="required">*</span></label>
                         <input class="form-control" type="file" id="posterImage" name="posterImage" accept="image/*" placeholder="공연 포스터">
                         <div id="imageContainer"></div>
                     </div>
                 </div>
                 <div class="border mt-5 mb-5"></div> <!--구분선 넣기 -->
-                <div class="light-label col-md-8"> 출연 아티스트 정보를 입력해주세요. </div>
+                <div class="light-label col-md-8"> 출연 아티스트 정보를 입력해주세요. <span class="required">*</span></div>
+
                 <div class="container">
                     <div class="row">
                         <!-- 왼쪽: 선택한 아티스트 -->
@@ -113,7 +114,7 @@
                                 <div class="artist-item" style="display: flex; justify-content: space-between;">
                                     <span>{{artist.name}}</span> <!-- 아티스트 이름 -->
                                     <input type="hidden" class="artist-id" value="{{artist.id}}">
-                                    <button class="btn btn-outline-primary select-artist-btn"
+                                    <button class="btn btn-outline-primary select-artist-btn light-label"
                                             data-artist-id="{{artist.id}}"
                                             data-artist-name="{{artist.name}}"
                                             data-artist-genres="{{artist.genres}}"
@@ -121,16 +122,16 @@
                                     type="button">선택</button>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-outline-primary" id="addArtistBtn">아티스트 추가</button> <!-- 아티스트 추가 버튼 -->
+                            <button type="button" class="btn btn-outline-primary light-label" id="addArtistBtn">아티스트 추가</button> <!-- 아티스트 추가 버튼 -->
                             <div id="addArtistForm" style="display: none;">
                                 <label for="newArtistName"><input type="text" id="newArtistName" placeholder="새 아티스트 이름"></label>
-                                <button class="btn btn-outline-primary" type="button" id="addNewArtistBtn">추가</button>
+                                <button class="btn btn-outline-primary light-label" type="button" id="addNewArtistBtn">추가</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="border mt-5 mb-5"></div> <!--구분선 넣기 -->
-                <div class="light-label col-md-8"> 해당 공연의 장르를 선택해주세요. </div>
+                <div class="light-label col-md-8"> 해당 공연의 장르를 선택해주세요. <span class="required">*</span></div>
                 <div class="container">
                     <div class="row">
                         <!-- 왼쪽: 선택한 장르 -->
@@ -147,7 +148,7 @@
                                 <div class="genre-item" style="display: flex; justify-content: space-between;">
                                     <span>{{genre.name}}</span> <!-- 장르 이름 -->
                                     <input type="hidden" class="genre-id" value="{{genre.id}}">
-                                    <button class="btn btn-outline-primary select-genre-btn" type="button" data-genre-id="{{genre.id}}" data-genre-name="{{genre.name}}">선택</button> <!-- 선택 버튼 -->
+                                    <button class="btn btn-outline-primary select-genre-btn light-label" type="button" data-genre-id="{{genre.id}}" data-genre-name="{{genre.name}}">선택</button> <!-- 선택 버튼 -->
                                 </div>
                             </div>
                         </div>
@@ -155,7 +156,7 @@
                 </div>
                 <div class="border mt-5 mb-5"></div> <!--구분선 넣기 -->
 
-                <button type="submit" class="btn btn-dark">업로드</button>
+                <button type="submit" class="btn btn-dark text-center">업로드</button>
             </div>
             </form>
         </div>

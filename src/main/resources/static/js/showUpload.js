@@ -47,9 +47,7 @@ let genreListHtml= '';
 const artistTemplate = $('#artistList').html();
 const genreTemplate = $('#genreList').html();
 let selectedArtists = []; // 선택된 아티스트 이름을 저장할 배열
-let selectedArtistIds = [];
 let selectedGenres = [];
-let selectedGenreIds = [];
 
 $(document).ready(function () {
     $.ajax({
@@ -138,7 +136,7 @@ $(document).on('click', '.select-artist-btn', function () {
     let artistGenreIds = artistGenreIdsData ? artistGenreIdsData.split(',') : [];
 
     // 아티스트 중복 체크
-    const isDuplicateArtist = selectedArtists.some(artist => artist.id === artistId);
+    const isDuplicateArtist = selectedArtists.some(artist => artist.name === artistName);
 
     if (!isDuplicateArtist) {
         console.log("중복되지 않은 아티스트: ", artistName);
@@ -248,6 +246,7 @@ $('#showInfoForm').on('submit', function (e) {
     const posterImgInput = document.getElementById('posterImage');
     formData.append('file', posterImgInput.files[0]);
     const genreIds = selectedGenres.map(genre => genre.id);
+    const artistIds = selectedArtists.map(artist => artist.id);
 
     const showData = {
         title: $('#title').val(),
@@ -258,7 +257,7 @@ $('#showInfoForm').on('submit', function (e) {
         duration: $('#duration').val(),
         ticketVendor: $('#ticketVendor').val(),
         price: $('#price').val(),
-        artists: selectedArtistIds,
+        artists: artistIds,
         genres: genreIds
     };
     formData.append('dto', new Blob([JSON.stringify(showData)], {type: 'application/json'}));
