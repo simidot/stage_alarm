@@ -1,0 +1,59 @@
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="sidebarFragment">
+<nav>
+    <div style="padding-top: 20px;">
+        <ul class="nav flex-column">
+            <li class="nav-item" th:onclick="|toggleShowSubMenu();|">
+                <a class="nav-link">Shows</a>
+                <div id="showSubMenu" style="display: none;">
+                    <ul class="nav flex-column ml-3">
+                        <li class="nav-item">
+                            <a class="nav-link sub-menu" href="/shows">공연</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sub-menu" href="/subscribe">구독</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item" th:onclick="|toggleComSubMenu();|">
+                <a class="nav-link">Community</a>
+                <!-- Wrap the sub-menu items in a container with an id -->
+                <div id="communitySubMenu" style="display: none;">
+                    <ul class="nav flex-column ml-3">
+                        <li class="nav-item">
+                            <a class="nav-link sub-menu" href="/boards/1">공연 후기</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sub-menu" href="/boards/2">아티스트</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sub-menu" href="/boards/3">자유 </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sub-menu" href="/boards/4">동행 모집</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item" th:onclick="|toggleMySubMenu();|">
+                <a class="nav-link">My Page</a>
+                <!-- Wrap the sub-menu items in a container with an id -->
+                <div id="myPageSubMenu" style="display: none;">
+                    <ul class="nav flex-column ml-3">
+                        <li class="nav-item">
+                            <a class="nav-link sub-menu" href="/userInfo">My Info</a>
+                        </li>
+<!--                        <li class="nav-item">-->
+<!--                            <a class="nav-link sub-menu" href="#!">My Subscribes</a>-->
+<!--                        </li>-->
+<!--                        <li class="nav-item">-->
+<!--                            <a class="nav-link sub-menu" href="#!">My Likes</a>-->
+<!--                        </li>-->
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</html>
