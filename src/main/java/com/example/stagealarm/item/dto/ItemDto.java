@@ -24,13 +24,17 @@ public class ItemDto {
 
     private Integer amount;
 
+    private String showName;
+
     private Status status;
+
 
     public static ItemDto fromEntity(Item item){
         return ItemDto.builder()
                 .id(item.getId())
                 .itemImg(item.getItemImg())
                 .name(item.getName())
+                .showName(item.getShowInfo().getTitle())
                 .content(item.getContent())
                 .price(item.getPrice())
                 .amount(item.getAmount())

@@ -34,31 +34,22 @@
         });
 
         function checkAuthenticationStatus() {
-            // $.ajax({
-            //     url: '/user/auth/status',
-            //     type: 'GET',
-            //     success: function(response) {
-            //         let menuHtml = '';
-            //         if (response.isAuthenticated) {
-            //             menuHtml = '<a href="/userInfo">mypage</a><a href="/user/logout">logout</a>';
-            //         } else {
-            //             menuHtml = '<a href="/user/login">login</a>';
-            //         }
-            //         $('#dropdownContent').html(menuHtml).toggle();
-            //     },
-            //     error: function(error) {
-            //         console.log('Error fetching user authentication status:', error);
-            //     }
-            // });
-
-            const token = localStorage.getItem("jwtToken");
-
-            if (token === null) {
-                menuHtml = '<a href="/user/login">login</a>';
-            } else {
-                menuHtml = '<a href="/userInfo">mypage</a><a href="/user/logout">logout</a>';
-            }
-            $('#dropdownContent').html(menuHtml).toggle();
+            $.ajax({
+                url: '/user/auth/status',
+                type: 'GET',
+                success: function(response) {
+                    let menuHtml = '';
+                    if (response.isAuthenticated) {
+                        menuHtml = '<a href="/userInfo">mypage</a><a href="/user/logout">logout</a>';
+                    } else {
+                        menuHtml = '<a href="/user/login">login</a>';
+                    }
+                    $('#dropdownContent').html(menuHtml).toggle();
+                },
+                error: function(error) {
+                    console.log('Error fetching user authentication status:', error);
+                }
+            });
         }
     });
 </script>
