@@ -1,6 +1,6 @@
 package com.example.stagealarm.item.dto;
 
-import com.example.stagealarm.enums.Status;
+import com.example.stagealarm.item.entity.Status;
 import com.example.stagealarm.item.entity.Item;
 import lombok.*;
 

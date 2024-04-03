@@ -5,7 +5,7 @@
       layout:decorate="~{layout/defaultLayout}"
       layout:fragment="content">
 <head>
-  <title>Board-View</title>
+  <title>Board View</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="/js/board.js"></script>
   <style>
@@ -121,7 +121,7 @@
                 if (data.imageList.length > 0) {
                     let imageHtml = `<div class="image-container">`;
                     data.imageList.forEach(image => {
-                        imageHtml += `<img src="${image.imgUrl}" alt="Board Image">`;
+                        imageHtml += `<img src="${image.imgUrl}" alt="Board Image" style="max-width:400px; max-height: 500px;">`;
                     });
                     imageHtml += `</div>`;
 
