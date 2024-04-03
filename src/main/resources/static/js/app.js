@@ -13,7 +13,7 @@ function toggleDropdown(dropdownId) {
 window.onclick = function(event) {
     if (!event.target.matches('.dropdown button')) {
         const dropdowns = document.getElementsByClassName("dropdown-content");
-        for (const i = 0; i < dropdowns.length; i++) {
+        for (let i = 0; i < dropdowns.length; i++) {
             const openDropdown = dropdowns[i];
             if (openDropdown.style.display === "block") {
                 openDropdown.style.display = "none";
@@ -36,6 +36,16 @@ function toggleComSubMenu() {
 function toggleShowSubMenu() {
     const showSubMenu = document.getElementById('showSubMenu');
     showSubMenu.style.display = (showSubMenu.style.display === 'none' || showSubMenu.style.display === '') ? 'block' : 'none';
+}
+
+function toggleAdminSubMenu() {
+    const adminShowSubMenu = document.getElementById('adminShowSubMenu');
+    adminShowSubMenu.style.display = (adminShowSubMenu.style.display === 'none' || adminShowSubMenu.style.display === '') ? 'block' : 'none';
+}
+
+function toggleAdminUploadMenu() {
+    const adminUploadSubMenu = document.getElementById('adminUploadSubMenu');
+    adminUploadSubMenu.style.display = (adminUploadSubMenu.style.display === 'none' || adminUploadSubMenu.style.display === '') ? 'block' : 'none';
 }
 
 

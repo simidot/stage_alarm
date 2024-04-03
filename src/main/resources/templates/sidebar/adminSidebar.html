@@ -3,9 +3,9 @@
 <nav>
     <div style="padding-top: 20px;">
         <ul class="nav flex-column">
-            <li class="nav-item" th:onclick="|toggleShowSubMenu();|">
+            <li class="nav-item" th:onclick="|toggleAdminSubMenu();|">
                 <a class="nav-link">Shows</a>
-                <div id="showSubMenu" style="display: none;">
+                <div id="adminShowSubMenu" style="display: none;">
                     <ul class="nav flex-column ml-3">
                         <li class="nav-item">
                             <a class="nav-link sub-menu" href="/shows">공연</a>
@@ -13,9 +13,9 @@
                     </ul>
                 </div>
             </li>
-            <li class="nav-item" th:onclick="|toggleComSubMenu();|">
+            <li class="nav-item" th:onclick="|toggleAdminUploadMenu();|">
                 <a class="nav-link">New Upload</a>
-                <div id="communitySubMenu" style="display: none;">
+                <div id="adminUploadSubMenu" style="display: none;">
                     <ul class="nav flex-column ml-3">
                         <li class="nav-item">
                             <a class="nav-link sub-menu" href="/shows/showInfo">ShowInfo Upload</a>
