@@ -30,6 +30,10 @@
         </div>
         <div style="height: 2px; width: 100%" class="bg-secondary bg-opacity-25 my-3"></div>
         <div class="comments"></div>
+        <div>
+            <button></button>
+            <button></button>
+        </div>
     </div>
 </main>
 
@@ -95,7 +99,7 @@
                             <p class="card-text">날짜: ${showInfo.date}</p>
                             <p class="card-text">위치: ${showInfo.location}</p>
                             <p class="card-text">시작시간: ${showInfo.startTime}</p>
-                            <p class="card-text">예매처: ${showInfo.ticketVendor}</p>
+                            <p class="card-text">예매처: <a href="${showInfo.ticketVendor}"> ${showInfo.ticketVendor}</a></p>
                             <p class="position-absolute like-count" style="top: 2%; right: 2%">
                                 <img data-show-Info-is-Liked="${showInfo.isLiked}" class="like-btn cursor-pointer" src="${showInfo.isLiked ? '/images/like.png' : '/images/unlike.png'}" alt="좋아요" style="width: 30px; height: 30px">
                                     <span class="total-like">${showInfo.totalLike}</span>
