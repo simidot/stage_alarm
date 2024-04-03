@@ -6,6 +6,11 @@
       layout:fragment="content">
 <head>
     <title>main</title>
+    <style>
+        .like-btn:hover {
+            cursor: pointer;
+        }
+    </style>
 <body>
 
 <!-- Main -->
@@ -65,35 +70,62 @@
             // }
         }
 
-        // 상세정보 및 댓글 불러오기
-        function loadShowInfoComments() {
-            $.ajax({
-                url: "/show/" + id,
-                type: "GET",
-                contentType: "application/json; charset=utf-8",
-                success: function (data) {
-                    const {showInfoResponseDto: showInfo, showCommentsResponseDtos: comments} = data;
-                    const totalLike = showInfo.totalLike || 0;
 
-                    const showHtml = `
+        // 상세정보 및 댓글 불러오기
+        $.ajax({
+            url: "/show/" + id,
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                const {
+                    showInfoResponseDto: showInfo,
+                    showCommentsResponseDtos: comments,
+                    authorityDto: authority
+                } = data;
+
+                const showHtml = `
                     <div class="card mb-3" data-comment-id="${comments.id}">
-                        <img src="https://via.placeholder.com/800x500" class="card-img-top" alt="축제 이미지">
-                        <div class="card-body">
+                        <div class="d-flex">
+                            <button class="flex-grow-1 info-update btn btn-light">수정</button>
+                            <button class="flex-grow-1 info-delete btn btn-light" style="color: red;">삭제</button>
+                        </div>
+                        <img src=${showInfo.posterImage ? showInfo.posterImage : 'https://via.placeholder.com/800x500'} class="card-img-top" alt="축제 이미지">
+                        <div class="card-body position-relative">
                             <h5 class="card-title">${showInfo.title}</h5>
                             <p class="card-text">날짜: ${showInfo.date}</p>
                             <p class="card-text">위치: ${showInfo.location}</p>
                             <p class="card-text">시작시간: ${showInfo.startTime}</p>
                             <p class="card-text">예매처: ${showInfo.ticketVendor}</p>
-                            <p class="card-text"><small class="text-body-secondary">좋아요 : ${totalLike}</small></p>
+                            <p class="position-absolute like-count" style="top: 2%; right: 2%">
+                                <img data-show-Info-is-Liked="${showInfo.isLiked}" class="like-btn cursor-pointer" src="${showInfo.isLiked ? '/images/like.png' : '/images/unlike.png'}" alt="좋아요" style="width: 30px; height: 30px">
+                                    <span class="total-like">${showInfo.totalLike}</span>
+                            </p>
                         </div>
                     </div>`;
-                    $('.showInfo').append(showHtml);
 
-                    comments.forEach(comment => {
-                        const {id, loginUserId, userResponseDto: {userId, nickname}, content} = comment;
-                        const showButtons = loginUserId === userId;
 
-                        const commentHtml = `
+                $('.showInfo').append(showHtml);
+
+                // 버튼을 보여줄지 여부를 결정하는 함수
+                function toggleButtons() {
+                    console.log(authority)
+                    if (authority.authority === "ROLE_ADMIN") {
+                        $(".info-update").show(); // 수정 버튼 보이기
+                        $(".info-delete").show(); // 삭제 버튼 보이기
+                    } else {
+                        $(".info-update").hide(); // 수정 버튼 숨기기
+                        $(".info-delete").hide(); // 삭제 버튼 숨기기
+                    }
+                }
+
+                // 초기 로딩 시 한번 실행
+                toggleButtons();
+
+                comments.forEach(comment => {
+                    const {id, loginUserId, userResponseDto: {userId, nickname}, content} = comment;
+                    const showButtons = loginUserId === userId;
+
+                    const commentHtml = `
                 <div class="card mb-3" data-comment-id="${id}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start">
@@ -110,14 +142,96 @@
                         </div>
                     </div>
                 </div>`;
-                        $('.comments').append(commentHtml);
-                    });
+                    $('.comments').append(commentHtml);
+                });
+            },
+            error: function () {
+                console.error("Ajax 요청 실패")
+            }
+        });
+
+        // update 페이지로 이동시키는 메서드
+        function redirectToUpdatePage() {
+            window.location.href = '/shows/' + id + '/update';
+        }
+
+        $(document).on("click", ".info-update", function () {
+            redirectToUpdatePage();
+        });
+
+
+        $(document).on("click", ".info-delete", function () {
+            if (confirm("공연정보를 삭제하시겠습니까?")) {
+                $.ajax({
+                    type: "DELETE",
+                    url: "/show/" + id,
+                    success: function () {
+                        window.location.href = "/shows"
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("공연정보 삭제 실패.", error);
+                    }
+                });
+            }
+        });
+
+
+        // 좋아요 기능, get요청으로 좋아요를 눌렀는지 안눌렀는지 boolean을 반환받아 post or delete요청
+        $(document).on("click", ".like-btn", function () {
+            const token = localStorage.getItem("jwtToken");
+            if (token === null) {
+                alert("로그인이 필요합니다.")
+                return;
+            }
+
+            $.ajax({
+                url: "/show/" + id + "/like",
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                success: function (response) {
+                    if (response === false) {
+                        $.ajax({
+                            url: "/show/" + id + "/like",
+                            type: "POST",
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (response) {
+                                $likeCountElement.text(response.likes);
+                                $likeBtn.attr('src', '/images/like.png');
+                            },
+                            error: function (xhr, status, error) {
+                                // 요청이 실패했을 때의 처리
+                                console.error("AJAX 요청 실패:", status, error);
+                            }
+                        });
+                    } else {
+                        $.ajax({
+                            url: "/show/" + id + "/like",
+                            type: "DELETE",
+                            contentType: 'application/json; charset=utf-8',
+                            success: function () {
+                                const currentLikes = parseInt($likeCountElement.text(), 10);
+                                $likeCountElement.text(currentLikes - 1);
+                                $likeBtn.attr('src', '/images/unlike.png');
+                                data = false;
+                            },
+                            error: function (xhr, status, error) {
+                                // 요청이 실패했을 때의 처리
+                                console.error("AJAX 요청 실패:", status, error);
+                            }
+                        });
+                    }
                 },
-                error: function () {
-                    console.error("Ajax 요청 실패")
+                error: function (xhr, status, error) {
+                    // 요청이 실패했을 때의 처리
+                    console.error("AJAX 요청 실패:", status, error);
                 }
             });
-        }
+
+            var $likeCountElement = $(this).closest('.card-body').find('.total-like');
+            var $likeBtn = $(this)
+
+
+        })
 
         // 댓글 작성
         $("#commentForm").submit(function (event) {
@@ -197,8 +311,6 @@
             });
         });
 
-        // 초기 댓글 불러오기
-        loadShowInfoComments();
     });
 </script>
 </body>

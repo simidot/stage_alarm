@@ -6,6 +6,7 @@ import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.jwt.JwtRequestDto;
 import com.example.stagealarm.jwt.JwtResponseDto;
 import com.example.stagealarm.jwt.JwtTokenUtils;
+import com.example.stagealarm.user.dto.PasswordDto;
 import com.example.stagealarm.user.entity.UserEntity;
 import com.example.stagealarm.user.dto.CustomUserDetails;
 import com.example.stagealarm.user.dto.UserDto;
@@ -149,7 +150,6 @@ public class UserService implements UserDetailsService {
         userEntity.setNickname(dto.getNickname());
         userEntity.setGender(dto.getGender());
         userEntity.setPhone(dto.getPhone());
-        userEntity.setProfileImg(dto.getProfileImg());
         userEntity.setAddress(dto.getAddress());
         userEntity.setProfileImg(s3FileService.uploadIntoS3("/profileImg", file));
 
@@ -237,10 +237,10 @@ public class UserService implements UserDetailsService {
 
     }
 
+    @Transactional
     public UserDto updateWithoutFile(UserDto dto) {
         // 본인이나 관리자 인지 확인
         UserEntity currentUser = authFacade.getUserEntity();
-
 
         if (currentUser == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated.");
@@ -254,16 +254,15 @@ public class UserService implements UserDetailsService {
         }
 
         UserEntity userEntity = searchByLoginId(dto.getLoginId());
-
         userEntity.setNickname(dto.getNickname());
         userEntity.setGender(dto.getGender());
         userEntity.setPhone(dto.getPhone());
-        userEntity.setProfileImg(dto.getProfileImg());
         userEntity.setAddress(dto.getAddress());
 
         return UserDto.fromEntity(userRepository.save(userEntity));
     }
 
+    @Transactional
     public UserDto joinWithoutFile(UserDto dto) {
         // 로그인 아이디가 이미 있을경우 오류
         if(this.userExists(dto.getLoginId()))
@@ -281,5 +280,16 @@ public class UserService implements UserDetailsService {
                 .build();
 
         return UserDto.fromEntity(userRepository.save(newUser));
+    }
+
+    @Transactional
+    public void changePassword(PasswordDto dto) {
+        UserEntity userEntity = authFacade.getUserEntity();
+        if (!passwordEncoder.matches(dto.getCurrentPassword(), userEntity.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+        }
+
+        userEntity.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+
     }
 }

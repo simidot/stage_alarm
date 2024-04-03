@@ -62,4 +62,10 @@ public class ShowLikeService {
 
         showLikesRepository.delete(showLike);
     }
+
+    public boolean isLiked(Long showInfoId, Long userId) {
+        ShowLike byShowInfoIdAndUserId = showLikesRepository.findByShowInfoIdAndUserId(showInfoId, userId);
+        boolean isLiked = byShowInfoIdAndUserId != null;
+        return isLiked;
+    }
 }

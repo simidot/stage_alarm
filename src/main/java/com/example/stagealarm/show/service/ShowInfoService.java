@@ -52,6 +52,8 @@ public class ShowInfoService {
     // 공연 정보 등록
     @Transactional
     public ShowInfoResponseDto create(ShowInfoRequestDto dto, MultipartFile file) {
+        UserEntity userEntity = facade.getUserEntity();
+
         // 공연 기본정보 + 아티스트 정보 + 장르 정보 + 이미지 파일
 
         // 1) 공연 기본정보 저장 (ShowInfo)
@@ -103,7 +105,8 @@ public class ShowInfoService {
         }
         ShowInfo finalSaved = showInfoRepository.save(saved);
         alertService.createAlert(saved.getId());
-        return ShowInfoResponseDto.fromEntity(finalSaved);
+
+        return ShowInfoResponseDto.fromEntity(finalSaved, userEntity);
     }
 
 
@@ -117,33 +120,39 @@ public class ShowInfoService {
 
     // 공연 정보 조히 (단일)
     public ShowInfoResponseDto readOne(Long id) {
+        UserEntity userEntity = facade.getUserEntity();
         ShowInfo showInfo = showInfoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        return ShowInfoResponseDto.fromEntity(showInfo);
+        return ShowInfoResponseDto.fromEntity(showInfo, userEntity);
     }
 
 
     // 공연 정보 업데이트
     @Transactional
-    public void update(Long id, ShowInfoRequestDto dto) {
+    public void update(Long id, ShowInfoRequestDto dto, MultipartFile file) {
         // 관리자 계정인지 아닌지 확인하는 과정 추가로 필요
+        String authorities = facade.getUserEntity().getAuthorities();
+        if (!authorities.equals("ROLE_ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
 
         ShowInfo showInfo = showInfoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         showInfo.setDate(dto.getDate());
         showInfo.setStartTime(dto.getStartTime());
-        showInfo.setHours(dto.getHours());
         showInfo.setDuration(dto.getDuration());
         showInfo.setLocation(dto.getLocation());
         showInfo.setTitle(dto.getTitle());
         showInfo.setTicketVendor(dto.getTicketVendor());
         // s3service
-        showInfo.setPosterImage("image");
-        showInfo.setPrice(dto.getPrice());
-
+        showInfo.setPosterImage(s3FileService.uploadIntoS3("/showInfoImg", file));
     }
 
     @Transactional
     public void delete(Long id) {
+        UserEntity userEntity = facade.getUserEntity();
+        if (!userEntity.getAuthorities().equalsIgnoreCase("ROLE_ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
         showInfoRepository.deleteById(id);
     }
 
