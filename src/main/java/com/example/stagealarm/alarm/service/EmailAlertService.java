@@ -15,6 +15,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -50,7 +51,6 @@ public class EmailAlertService implements AlertService {
 
     @Override
     @Async("threadPoolTaskExecutor")
-    @Transactional
     public void createAlert(Long showInfoId) {
         // 해당 공연정보에서 아티스트 관련 알림 객체 생성
         log.info("===== artist alert creation start");
@@ -143,7 +143,6 @@ public class EmailAlertService implements AlertService {
 
     @Override
     @Async("threadPoolTaskExecutor")
-    @Transactional
     public void sendMail(Alert alert) throws MessagingException {
         log.info("===== email sending start");
 

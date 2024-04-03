@@ -1,5 +1,6 @@
 package com.example.stagealarm.alarm.service;
 
+import com.example.stagealarm.alarm.entity.Alert;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -12,14 +13,15 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EmailAuthService {
-    @Autowired
-    private JavaMailSender mailSender;
+public class EmailAuthService implements AuthService {
 
+    private final JavaMailSender mailSender;
+
+    @Override
     public void sendMail(
-            String to,
-            String subject,
-            String text
+        String to,
+        String subject,
+        String text
     ) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -30,6 +32,4 @@ public class EmailAuthService {
         helper.setText(text);
         mailSender.send(message);
     }
-
-
 }

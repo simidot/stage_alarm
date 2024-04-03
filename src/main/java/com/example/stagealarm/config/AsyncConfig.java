@@ -9,7 +9,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.Executor;
 
 @Configuration
-@EnableAsync(proxyTargetClass = true) // 스프링의 비동기 기능을 활성화하여 Async 어노테이션을 감지
+@EnableAsync// 스프링의 비동기 기능을 활성화하여 Async 어노테이션을 감지
 public class AsyncConfig implements AsyncConfigurer {
 
   @Override
