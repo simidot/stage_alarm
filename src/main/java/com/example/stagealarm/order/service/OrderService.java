@@ -2,7 +2,7 @@ package com.example.stagealarm.order.service;
 
 import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.item.entity.Item;
-import com.example.stagealarm.enums.Status;
+import com.example.stagealarm.item.entity.Status;
 import com.example.stagealarm.item.repo.ItemRepository;
 import com.example.stagealarm.item.service.ItemService;
 import com.example.stagealarm.order.dto.ItemOrderDto;

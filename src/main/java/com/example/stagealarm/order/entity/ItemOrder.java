@@ -2,7 +2,7 @@ package com.example.stagealarm.order.entity;
 
 import com.example.stagealarm.BaseEntity;
 import com.example.stagealarm.item.entity.Item;
-import com.example.stagealarm.enums.Status;
+import com.example.stagealarm.item.entity.Status;
 import com.example.stagealarm.order.dto.ItemOrderDto;
 import com.example.stagealarm.user.entity.UserEntity;
 import jakarta.persistence.*;

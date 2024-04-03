@@ -5,7 +5,7 @@
       layout:decorate="~{layout/defaultLayout}"
       layout:fragment="content">
 <head>
-    <title>main</title>
+    <title>All Shows</title>
 </head>
 <body>
 
@@ -23,7 +23,11 @@
             <button class="btn btn-popular btn-outline-secondary rounded">좋아요순</button>
         </div>
         <div id="showList" class="row row-cols-3 g-3 align-items-center justify-content-center text-center">
-            <!-- 여기에 아이템을 추가할 것입니다 -->
+            <div class="row justify-content-start">
+                <script type="text/template" id="showCardTemplate">
+
+                </script>
+            </div>
         </div>
 
         <nav aria-label="Page navigation example" class="mt-5 d-flex justify-content-center">
@@ -75,15 +79,19 @@
                     const content = data.content;
 
                     $.each(content, function (index, showInfo) {
-                        const showHtml =
-                            '<div class="card" style="width: 18rem;">\n' +
-                            `<img src="${showInfo.posterImage ? showInfo.posterImage : 'https://via.placeholder.com/800x500'}" class="card-img-top" alt="축제 이미지" style="height: 300px">\n` +
-                            '<div class="card-body">\n' +
-                            '<h5 class="card-title"> ' + showInfo.title + '</h5>\n' +
-                            '<p class="card-text">' + showInfo.date + '</p>\n' +
-                            '<a href="shows/' + showInfo.id + '" class="btn btn-primary">상세보기</a>\n' +
-                            '</div>\n' +
-                            '</div>';
+                        const showHtml = `
+                <div class="col-sm-4">
+                    <div class="card">
+                        <div class="card-img-top" style="height: 500px; overflow: hidden;">
+                            <img src="${showInfo.posterImage ? showInfo.posterImage : 'https://via.placeholder.com/500x700'}" alt="축제 이미지" style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">${showInfo.title}</h5>
+                            <p class="card-text">${showInfo.date}</p>
+                            <a href="shows/${showInfo.id}" class="btn btn-primary">상세보기</a>
+                        </div>
+                    </div>
+                </div>`;
 
                         $showInfo.append(showHtml);
                     });
@@ -164,6 +172,7 @@
                 },
                 success: function (data) {
                     const $showInfo = $('#showList');
+                    const $showList = $('#showList .row');
                     const $pagination = $('.pagination');
                     // 초기화
                     $showInfo.empty();
@@ -173,19 +182,25 @@
                     const content = data.content;
 
                     $.each(content, function (index, showInfo) {
-                        const showHtml =
-                            '<div class="card position-relative" style="width: 18rem;">\n' +
-                            `<img src="${showInfo.posterImage ? showInfo.posterImage : 'https://via.placeholder.com/800x500'}" class="card-img-top" alt="축제 이미지" style="height: 300px">\n` +
-                            '<div class="card-body">\n' +
-                            '<h5 class="card-title"> ' + showInfo.title + '</h5>\n' +
-                            '<p class="card-text">' + showInfo.date + '</p>\n' +
-                            '<a href="shows/' + showInfo.id + '" class="btn btn-primary">상세보기</a>\n' +
-                            '<div class="card-footer d-flex mt-2 justify-content-between">\n' +
-                            '<img class="liked" src="' + (showInfo.isLiked === true ? '/images/like.png' : '/images/unlike.png') + '" style="width: 30px; height: 30px" alt="">\n' +
-                            '<p class="card-text">' + showInfo.totalLike + '</p>\n' +
-                            '</div>\n' +
-                            '</div>\n' +
-                            '</div>';
+                        const showHtml = `
+                <div class="col-sm-4">
+                    <div class="card">
+                        <div class="card-img-top" style="height: 500px; overflow: hidden;">
+                            <img src="${showInfo.posterImage ? showInfo.posterImage : 'https://via.placeholder.com/500x700'}" alt="축제 이미지" style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">${showInfo.title}</h5>
+                            <p class="card-text">${showInfo.date}</p>
+                            <a href="shows/${showInfo.id}" class="btn btn-primary">상세보기</a>
+                        </div>
+                    </div>
+                </div>`;
+
+
+                        // 가로로 3개씩 채우기
+                        if (index % 3 === 0) {
+                            $showList.append('<div class="w-100"></div>'); // 줄 바꾸기
+                        }
 
                         $showInfo.append(showHtml);
                     });
