@@ -15,11 +15,14 @@
 <div id="wrapper" style="display: flex;">
 
   <!-- sidebar -->
-  <div id="sidebar" class="sidebar col-md-3 col-lg-2 d-md-block">
+  <div id="sidebars" class="sidebar col-md-3 col-lg-2 d-md-block">
     <div id="adminSidebar" style="display: none;"> <!-- Admin 사이드바 -->
       <th:block th:replace="~{sidebar/adminSidebar :: sidebarFragment}"></th:block>
     </div>
     <div id="userSidebar" style="display: none;"> <!-- User 사이드바 -->
+      <th:block th:replace="~{sidebar/userSidebar :: sidebarFragment}"></th:block>
+    </div>
+    <div id="sidebar" style="display: none;"> <!-- User 사이드바 -->
       <th:block th:replace="~{sidebar/sidebar :: sidebarFragment}"></th:block>
     </div>
   </div>
@@ -56,11 +59,10 @@
             } else {
                 document.getElementById('userSidebar').style.display = 'block';
             }
+        } else {
+            document.getElementById('sidebar').style.display = 'block';
         }
     };
 </script>
-
-
-
 </html>
 

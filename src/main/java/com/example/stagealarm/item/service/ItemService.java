@@ -1,7 +1,7 @@
 package com.example.stagealarm.item.service;
 
 import com.example.stagealarm.awsS3.S3FileService;
-import com.example.stagealarm.enums.Status;
+import com.example.stagealarm.item.entity.Status;
 import com.example.stagealarm.item.dto.ItemDto;
 import com.example.stagealarm.item.entity.Item;
 import com.example.stagealarm.item.repo.ItemRepository;

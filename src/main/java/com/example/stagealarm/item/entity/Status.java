@@ -1,4 +1,4 @@
-package com.example.stagealarm.enums;
+package com.example.stagealarm.item.entity;
 
 public enum Status {
     PROCEEDING,
