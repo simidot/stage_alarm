@@ -1,8 +1,11 @@
 package com.example.stagealarm.show.controller;
 
+import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.show.dto.*;
 import com.example.stagealarm.show.service.ShowCommentsService;
 import com.example.stagealarm.show.service.ShowInfoService;
+import com.example.stagealarm.user.dto.UserResponseDto;
+import com.example.stagealarm.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +23,7 @@ import java.util.List;
 public class ShowInfoController {
     private final ShowInfoService showInfoService;
     private final ShowCommentsService showCommentsService;
+    private final AuthenticationFacade facade;
 
     @GetMapping
     public ResponseEntity<Page<ShowInfoResponseDto>> readAll(@RequestParam(required = false) String title, Pageable pageable, Sortable sortable) {
@@ -44,8 +48,9 @@ public class ShowInfoController {
     public ResponseEntity<ShowResponseDto> readOne(@PathVariable("id") Long id) {
         ShowInfoResponseDto showInfoResponseDto = showInfoService.readOne(id);
         List<ShowCommentsResponseDto> showCommentsResponseDtos = showCommentsService.readAll(id);
+        UserEntity userEntity = facade.getUserEntity();
 
-        ShowResponseDto showResponseDto = new ShowResponseDto(showInfoResponseDto, showCommentsResponseDtos);
+        ShowResponseDto showResponseDto = new ShowResponseDto(showInfoResponseDto, showCommentsResponseDtos, userEntity);
         return ResponseEntity.ok().body(showResponseDto);
     }
 
@@ -58,8 +63,8 @@ public class ShowInfoController {
 
     // 게시글 업데이트
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable("id") Long id, @RequestBody ShowInfoRequestDto dto) {
-        showInfoService.update(id, dto);
+    public ResponseEntity<Void> update(@PathVariable("id") Long id, @RequestPart("dto") ShowInfoRequestDto dto, @RequestPart(value = "file", required = false) MultipartFile file) {
+        showInfoService.update(id, dto, file);
         return ResponseEntity.noContent().build();
     }
 
@@ -68,5 +73,12 @@ public class ShowInfoController {
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         showInfoService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/calendar")
+    public ResponseEntity<List<CalendarDto>> calendar() {
+        List<CalendarDto> calendar = showInfoService.calendar();
+
+        return ResponseEntity.ok().body(calendar);
     }
 }

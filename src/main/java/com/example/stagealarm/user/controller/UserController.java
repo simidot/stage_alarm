@@ -3,13 +3,16 @@ package com.example.stagealarm.user.controller;
 import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.jwt.JwtRequestDto;
 import com.example.stagealarm.jwt.JwtResponseDto;
+import com.example.stagealarm.user.dto.PasswordDto;
 import com.example.stagealarm.user.dto.UserDto;
 import com.example.stagealarm.user.service.UserService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +25,8 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
     private final AuthenticationFacade facade;
+
+
 
     // 로그인 하기
     @PostMapping("/login")
@@ -37,10 +42,16 @@ public class UserController {
     // 회원 가입
     @PostMapping
     public UserDto signUp(
-            @RequestBody
-            UserDto dto
+            @RequestPart("dto") UserDto dto,
+            @RequestPart(name = "file", required = false) MultipartFile file
     ){
-        return userService.join(dto);
+        if (file != null && !file.isEmpty()) {
+            // 파일이 존재하면, 해당 파일과 함께 사용자 정보 업데이트 처리
+            return userService.join(dto, file);
+        } else {
+            // 파일이 없으면, 파일을 제외한 나머지 정보로 사용자 정보 업데이트 처리
+            return userService.joinWithoutFile(dto);
+        }
     }
 
 
@@ -55,10 +66,16 @@ public class UserController {
     // 나의 정보 수정
     @PatchMapping
     public UserDto update(
-            @RequestBody
-            UserDto dto
+            @RequestPart("dto") UserDto dto,
+            @RequestPart(name = "file", required = false) MultipartFile file
     ){
-        return userService.update(dto);
+        if (file != null && !file.isEmpty()) {
+            // 파일이 존재하면, 해당 파일과 함께 사용자 정보 업데이트 처리
+            return userService.update(dto, file);
+        } else {
+            // 파일이 없으면, 파일을 제외한 나머지 정보로 사용자 정보 업데이트 처리
+            return userService.updateWithoutFile(dto);
+        }
     }
 
     @DeleteMapping
@@ -113,6 +130,26 @@ public class UserController {
         return userService.existsByEmail(email);
     }
 
+    // 회원가입시 이메일 전송
+    @PostMapping("/email-send")
+    public void checkEmailAuth(
+            @RequestParam("email")
+            String email
+    ) throws MessagingException {
+        userService.sendEmail(email);
+    }
+
+    // 이메일 인증번호 확인
+    @PostMapping("/email-auth")
+    public ResponseEntity<String> checkEmail(
+            @RequestParam("email")
+            String email,
+            @RequestParam("code")
+            String code
+    ){
+        return userService.checkEmailCode(email, code);
+    }
+
     // 회원가입시 로그인 아이디 중복 체크 로직
     @PostMapping("/loginId-check")
     public boolean checkLoginId(
@@ -122,5 +159,13 @@ public class UserController {
         return userService.userExists(loginId);
     }
 
+    // 비밀번호 변경 로직
+    @PatchMapping("/change-password")
+    public void changePassword(
+            @RequestBody
+            PasswordDto dto
+    ){
+        userService.changePassword(dto);
+    }
 
 }

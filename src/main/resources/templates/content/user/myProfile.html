@@ -1,56 +1,85 @@
 <!DOCTYPE html>
-<html lang="ko"
-      xmlns:layout="  http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/defaultLayout}"
-      layout:fragment="content">
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/defaultLayout}" layout:fragment="content">
 <head>
-    <title>main</title>
+    <title>내 프로필</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .main-container {
+            background-color: #f9f9f9;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .profile-img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+        }
+        .btn {
+            margin: 10px 0;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
 <body>
 
-<!-- Main -->
-<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
-    <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
-        <div id="profile"></div>
-        <button id="editProfileBtn" class="btn btn-primary">회원정보 수정하기</button>
-        <br>
+<main role="main" class="ml-sm-auto px-md-4" style="min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2">
+        <div id="profile" class="text-center">
+            <!-- 프로필 정보가 여기에 표시됩니다 -->
+        </div>
+        <div class="text-center">
+            <button id="editProfileBtn" class="btn btn-primary">프로필 수정하기</button>
+            <button id="changePasswordBtn" class="btn btn-secondary">비밀번호 변경하기</button>
+            <button id="myOrdersBtn" class="btn btn-success">내 주문 목록</button>
+        </div>
     </div>
 </main>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function() {
         $.ajax({
-            url: "/user", // '나의 정보 조회' 엔드포인트
+            url: "/user",
             type: "GET",
             dataType: "json",
             success: function(user) {
-                // 사용자 정보를 화면에 표시
                 $('#profile').html(`
-                <p>로그인 ID: ${user.loginId}</p>
-                <p>이메일: ${user.email}</p>
-                <p>닉네임: ${user.nickname}</p>
-                <p>성별: ${user.gender}</p>
-                <p>전화번호: ${user.phone}</p>
-                <p>주소: ${user.address}</p>
-                <img src="${user.profileImg}" alt="프로필 이미지" style="width: 100px; height: 100px;">
-            `);
+                    <img src="${user.profileImg}" alt="프로필 이미지" class="profile-img">
+                    <p>로그인 ID: ${user.loginId}</p>
+                    <p>이메일: ${user.email}</p>
+                    <p>닉네임: ${user.nickname ? user.nickname : ''}</p>
+                    <p>성별: ${user.gender ? user.gender : ''}</p>
+                    <p>전화번호: ${user.phone ? user.phone : ''}</p>
+                    <p>주소: ${user.address ? user.address : ''}</p>
+                `);
             },
             error: function(xhr, textStatus, error) {
-                // 요청이 실패했을 때의 로직
                 if (xhr.status === 403) {
-                    // 권한 거부 응답을 처리
                     alert("권한이 없습니다.");
-                    window.history.back(); // 사용자를 이전 페이지로 돌려보냄
+                    window.history.back();
                 } else {
-                    // 다른 종류의 오류 처리
-                    console.error("Error: " + textStatus + ": " + error);
+                    console.error("오류: " + textStatus + ": " + error);
                 }
             }
         });
 
-        // 회원정보 수정하기 버튼 클릭 이벤트
         $('#editProfileBtn').click(function() {
-            // 회원 정보 수정 페이지로 이동하거나, 수정 모달 창 표시 로직 구현
             location.href = '/user/update';
+        });
+
+        $('#changePasswordBtn').click(function() {
+            location.href = '/user/change-password';
+        });
+
+        $('#myOrdersBtn').click(function() {
+            location.href = '/myOrders';
         });
     });
 </script>

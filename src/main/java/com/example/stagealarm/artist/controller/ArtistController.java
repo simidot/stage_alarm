@@ -1,35 +1,67 @@
 package com.example.stagealarm.artist.controller;
 
 import com.example.stagealarm.artist.dto.ArtistDto;
+import com.example.stagealarm.artist.dto.ArtistRequestDto;
+import com.example.stagealarm.artist.dto.ArtistResponseDto;
+import com.example.stagealarm.artist.dto.PaginationRequest;
 import com.example.stagealarm.artist.service.ArtistService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping ("/artist")
+@RequestMapping("/artist")
 public class ArtistController {
     private final ArtistService artistService;
 
     // 아티스트 추가
     @PostMapping
-    public ArtistDto addArtist(
-            @RequestBody
-            ArtistDto dto
-    ){
+    public ResponseEntity<ArtistResponseDto> addArtist(
+        @RequestPart("dto")
+        ArtistRequestDto dto,
+        @RequestPart(name = "file", required = false)
+        MultipartFile file
+    ) {
         // 관리자 권한 일때
-        return artistService.join(dto);
+        return ResponseEntity.ok(artistService.join(dto, file));
     }
 
     // 모든 아티스트 조회
     @GetMapping
-    public List<ArtistDto> getAllArtist(){
+    public Page<ArtistDto> getAllArtistWithPage(PaginationRequest paginationRequest) {
+        Pageable pageable = PageRequest.of(
+            paginationRequest.getPage(),
+            paginationRequest.getSize()
+        );
+        return artistService.searchAll(pageable);
+    }
+
+    @GetMapping("/all")
+    public List<ArtistDto> getAllArtist() {
         return artistService.searchAll();
     }
+
+    // 아티스트 검색
+    @GetMapping("/search")
+    public Page<ArtistDto> searchArtistName(
+        @RequestParam(name = "param") String param, PaginationRequest paginationRequest
+    ) {
+        Pageable pageable = PageRequest.of(
+            paginationRequest.getPage(),
+            paginationRequest.getSize()
+        );
+        return artistService.searchByArtistName(param, pageable);
+    }
+
 
     // 아티스트 조회
     @GetMapping("/{id}")
@@ -39,7 +71,6 @@ public class ArtistController {
     ){
         return artistService.searchById(id);
     }
-
 
     // 아티스트 수정
     @PutMapping("/{id}")
@@ -52,18 +83,19 @@ public class ArtistController {
         return artistService.update(id, dto);
     }
 
-
     // 아티스트 삭제
     @DeleteMapping("/{id}")
     public void deleteArtist(
             @PathVariable("id")
             Long id
-    )
-    {
+    ){
         artistService.deleteById(id);
     }
 
-
-
+    // 아티스트 create시 아티스트명 중복 체크 로직
+    @PostMapping("/artist-check")
+    public boolean checkArtist(@RequestParam("artistName") String artistName) {
+        return artistService.artistExists(artistName);
+    }
 
 }

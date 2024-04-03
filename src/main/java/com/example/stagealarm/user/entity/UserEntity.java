@@ -2,6 +2,7 @@ package com.example.stagealarm.user.entity;
 
 import com.example.stagealarm.BaseEntity;
 import com.example.stagealarm.artist.entity.ArtistLike;
+import com.example.stagealarm.artist.entity.ArtistSubscribe;
 import com.example.stagealarm.genre.entity.GenreSubscribe;
 import com.example.stagealarm.user.dto.UserDto;
 import jakarta.persistence.Column;
@@ -45,17 +46,20 @@ public class UserEntity extends BaseEntity {
   @OneToMany(mappedBy = "userEntity")
   private List<GenreSubscribe> genreSubscribeList;
 
+  @OneToMany(mappedBy = "userEntity")
+  private List<ArtistSubscribe> artistSubscribeList;
+
   // authorities 빌더에서 값을 정하지 않음
-  public static UserEntity fromDto(UserDto dto){
+  public static UserEntity fromDto(UserDto dto) {
     return UserEntity.builder()
-            .loginId(dto.getLoginId())
-            .password(dto.getPassword())
-            .email(dto.getEmail())
-            .nickname(dto.getNickname())
-            .gender(dto.getGender())
-            .phone(dto.getPhone())
-            .profileImg(dto.getProfileImg())
-            .address(dto.getAddress())
-            .build();
+        .loginId(dto.getLoginId())
+        .password(dto.getPassword())
+        .email(dto.getEmail())
+        .nickname(dto.getNickname())
+        .gender(dto.getGender())
+        .phone(dto.getPhone())
+        .profileImg(dto.getProfileImg())
+        .address(dto.getAddress())
+        .build();
   }
 }

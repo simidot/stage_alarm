@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <title>showInfo upload</title>
+    <style>
+        .genre-item {
+            display: none; /* 장르 정보를 숨김 처리 */
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
+        <div>
+            <h2 class="titles mb-3 mt-4 text-center">SHOW INFO UPDATE</h2>
+            <hr> <!--구분선 넣기 -->
+            <form id="showInfoForm" enctype="multipart/form-data">
+            <div class="form-group mt-3">
+                <div class="bold-label text-center mb-4" style="font-size: 20px;">공연 정보 입력</div>
+                <div class="light-label"> 공연 정보를 입력해주세요. </div>
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="title"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">공연명</div>
+                            <input type="text" class="form-control" id="title" name="title" maxlength="50"
+                                   placeholder="공연명">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="place"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">공연 장소</div>
+                            <input type="text" class="form-control" id="place" name="place" maxlength="50"
+                                   placeholder="공연 장소">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="place"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">공연 날짜</div>
+                            <input type="date" class="form-control" id=date name="date" placeholder="공연 날짜">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="startTime"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">공연 시작 시간</div>
+                            <input type="time" class="form-control" id=startTime name="startTime" maxlength="50"
+                                   placeholder="공연 시작 시간">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="hours"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">예상 공연 시간 (분)</div>
+                            <input type="number" class="form-control" id=hours name="hours" min="0" max="1440"
+                                   placeholder="예상 공연 시간">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="duration"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">공연 진행 기간 (시간)</div>
+                            <input type="number" class="form-control" id=duration name="duration" min="1" max="365"
+                                   placeholder="하루 진행시 1로 설정해주시길 바랍니다.">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="ticketVendor"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">티켓 예매 링크</div>
+                            <input type="text" class="form-control" id=ticketVendor name="ticketVendor" maxlength="300"
+                                   placeholder="티켓 예매 링크">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="visually-hidden" for="price"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">공연 가격</div>
+                            <input type="text" class="form-control" id=price name="price" placeholder="공연 가격" maxlength="500">
+                        </div>
+                    </div>
+                    <div class="col-md-8 mb-3">
+                        <label for="posterImage" class="light-label">공연 포스터 이미지 추가</label>
+                        <input class="form-control" type="file" id="posterImage" name="posterImage" accept="image/*" placeholder="공연 포스터">
+                        <div id="imageContainer"></div>
+                    </div>
+                </div>
+                <div class="border mt-5 mb-5"></div> <!--구분선 넣기 -->
+                <div class="light-label col-md-8"> 출연 아티스트 정보를 입력해주세요. </div>
+                <div class="container">
+                    <div class="row">
+                        <!-- 왼쪽: 선택한 아티스트 -->
+                        <div class="col-md-6">
+                            <div id="selectedArtist" class="light-label">선택한 아티스트</div>
+                            <div><span id="selectedArtistName"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="light-label">전체 아티스트 리스트</div>
+                            <input type="text" id="searchInput" placeholder="아티스트 검색">
+                            <div id="artistList" style="height: 300px; overflow-y: auto;">
+                                <!-- 각 아티스트 요소에 artist.id를 hidden으로 추가 -->
+                                <!-- 선택 버튼에도 data-artist-id 속성을 추가하여 각 아티스트의 id를 저장 -->
+                                <div class="artist-item" style="display: flex; justify-content: space-between;">
+                                    <span>{{artist.name}}</span> <!-- 아티스트 이름 -->
+                                    <input type="hidden" class="artist-id" value="{{artist.id}}">
+                                    <button class="btn btn-outline-primary select-artist-btn"
+                                            data-artist-id="{{artist.id}}"
+                                            data-artist-name="{{artist.name}}"
+                                            data-artist-genres="{{artist.genres}}"
+                                            data-artist-genreIds="{{artist.genreIds}}"
+                                    type="button">선택</button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary" id="addArtistBtn">아티스트 추가</button> <!-- 아티스트 추가 버튼 -->
+                            <div id="addArtistForm" style="display: none;">
+                                <label for="newArtistName"><input type="text" id="newArtistName" placeholder="새 아티스트 이름"></label>
+                                <button class="btn btn-outline-primary" type="button" id="addNewArtistBtn">추가</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="border mt-5 mb-5"></div> <!--구분선 넣기 -->
+                <div class="light-label col-md-8"> 해당 공연의 장르를 선택해주세요. </div>
+                <div class="container">
+                    <div class="row">
+                        <!-- 왼쪽: 선택한 장르 -->
+                        <div class="col-md-6">
+                            <div class="light-label">선택한 장르</div>
+                            <div id="selectedGenre"><span id="selectedGenreName"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="light-label">전체 장르 리스트</div>
+                            <div id="genreList" style="height: 300px; overflow-y: auto;">
+                                <!-- 각 장르 요소에 genre.id를 hidden으로 추가 -->
+                                <!-- 선택 버튼에도 data-artist-id 속성을 추가하여 각 아티스트의 id를 저장 -->
+                                <div class="genre-item" style="display: flex; justify-content: space-between;">
+                                    <span>{{genre.name}}</span> <!-- 장르 이름 -->
+                                    <input type="hidden" class="genre-id" value="{{genre.id}}">
+                                    <button class="btn btn-outline-primary select-genre-btn" type="button" data-genre-id="{{genre.id}}" data-genre-name="{{genre.name}}">선택</button> <!-- 선택 버튼 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="border mt-5 mb-5"></div> <!--구분선 넣기 -->
+
+                <button type="submit" class="btn btn-dark">업로드</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script th:src="@{/js/showUpload.js}"></script>
+
+</body>
+</html>

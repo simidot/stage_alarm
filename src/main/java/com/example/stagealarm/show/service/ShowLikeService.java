@@ -41,7 +41,7 @@ public class ShowLikeService {
         showInfo.addLike(like);
 
         showLikesRepository.save(like);
-
+        showInfoRepository.save(showInfo);
 
         ShowLikeResponseDto dto = ShowLikeResponseDto.builder()
                 .userId(userId)
@@ -61,5 +61,11 @@ public class ShowLikeService {
         ShowLike showLike = showLikesRepository.findByUserEntityAndShowInfo(userEntity, showInfo).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         showLikesRepository.delete(showLike);
+    }
+
+    public boolean isLiked(Long showInfoId, Long userId) {
+        ShowLike byShowInfoIdAndUserId = showLikesRepository.findByShowInfoIdAndUserId(showInfoId, userId);
+        boolean isLiked = byShowInfoIdAndUserId != null;
+        return isLiked;
     }
 }

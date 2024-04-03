@@ -1,9 +1,14 @@
 package com.example.stagealarm.artist.dto;
 
 import com.example.stagealarm.artist.entity.Artist;
+import com.example.stagealarm.artist.entity.ArtistGenre;
+import com.example.stagealarm.genre.dto.GenreDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -21,30 +26,49 @@ public class ArtistDto {
     private String profileImg;
     private Long likes;
     private Boolean isLiked;
+    private Long subscribes;
+    private Boolean isSubscribed;
+    private List<GenreDto> genres;
 
     public static ArtistDto fromEntity(Artist artist){
+        List<GenreDto> genreDtos = artist.getGenres().stream()
+            .map(artistGenre -> GenreDto.fromEntity(artistGenre.getGenre()))
+            .collect(Collectors.toList());
+
         return ArtistDto.builder()
-                .id(artist.getId())
-                .createdAt(artist.getCreatedAt())
-                .name(artist.getName())
-                .age(artist.getAge())
-                .gender(artist.getGender())
-                .profileImg(artist.getProfileImg())
-                .likes((long) artist.getLikes().size())
-                .isLiked(false)
-                .build();
+            .id(artist.getId())
+            .createdAt(artist.getCreatedAt())
+            .name(artist.getName())
+            .age(artist.getAge())
+            .gender(artist.getGender())
+            .profileImg(artist.getProfileImg())
+            .likes((long) artist.getLikes().size())
+            .isLiked(false)
+            .subscribes((long) artist.getSubscribes().size())
+            .isSubscribed(false)
+            .genres(genreDtos)
+            .build();
     }
 
-    public static ArtistDto fromEntityWithLikeStatus(Artist artist, boolean isLiked) {
+    public static ArtistDto fromEntityWithLikeStatusAndSubStatus(Artist artist, boolean isLiked, boolean isSubscribed) {
+        List<GenreDto> genreDtos = artist.getGenres().stream()
+            .map(artistGenre -> GenreDto.fromEntity(artistGenre.getGenre()))
+            .collect(Collectors.toList());
+
         return ArtistDto.builder()
-                .id(artist.getId())
-                .createdAt(artist.getCreatedAt())
-                .name(artist.getName())
-                .age(artist.getAge())
-                .gender(artist.getGender())
-                .profileImg(artist.getProfileImg())
-                .likes((long) artist.getLikes().size())
-                .isLiked(isLiked)
-                .build();
+            .id(artist.getId())
+            .createdAt(artist.getCreatedAt())
+            .name(artist.getName())
+            .age(artist.getAge())
+            .gender(artist.getGender())
+            .profileImg(artist.getProfileImg())
+            .likes((long) artist.getLikes().size())
+            .isLiked(isLiked)
+            .subscribes((long)artist.getSubscribes().size())
+            .isSubscribed(isSubscribed)
+            .genres(genreDtos)
+            .build();
     }
+
+
 }

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <meta charset="UTF-8">
+    <title>아이템 등록</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2">
+        <div class="py-5 text-center">
+            <h2>아이템 등록하기</h2>
+            <p class="lead">새로운 아이템을 등록해보세요!</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="mb-3">아이템 정보 입력</h4>
+                <form id="itemRegistrationForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="itemName">아이템 이름</label>
+                        <input type="text" class="form-control" id="itemName" name="itemName" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="itemDescription">설명</label>
+                        <textarea class="form-control" id="itemDescription" name="itemDescription" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="itemPrice">가격</label>
+                        <input type="number" class="form-control" id="itemPrice" name="itemPrice" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="itemAmount">수량</label>
+                        <input type="number" class="form-control" id="itemAmount" name="itemAmount" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="itemImage">아이템 이미지</label>
+                        <input class="form-control" type="file" id="itemImage" name="itemImage" accept="image/*" placeholder="아이템 이미지">
+                        <div id="imageContainer"></div>
+                    </div>
+
+                    <hr class="mb-4">
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">아이템 등록하기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    $("#itemImage").on("change", function(){
+        const fileInput = $("#itemImage")[0];
+        const files = fileInput.files;
+        const reg = /(.*?)\.(jpg|bmp|jpeg|png|JPG|BMP|JPEG|PNG)$/;
+        const maxSize = 5 * 1024 * 1024;
+
+        // var file = event.target.files[0];
+        const imageContainer = $("#imageContainer");
+        imageContainer.empty();
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+            // reader.readAsDataURL(file);
+
+            reader.onload = (function (file) {
+                return function (e) {
+                    // 미리보기 이미지의 크기 조절
+                    var img = $("<img>").attr("src", e.target.result).css({
+                        "max-width": "200px",
+                        "max-height": "200px",
+                        "margin": "5px"  // 이미지 간격을 조절하기 위한 스타일
+                    });
+                    // 이미지를 이미지 컨테이너에 추가
+                    imageContainer.append(img);
+                };
+            })(file);
+
+            if (!file.name.match(reg)) {
+                alert("이미지 파일만 업로드 가능합니다. ");
+                fileInput.value = "";
+                return;
+            } else if (file.size >= maxSize) {
+                alert("파일 사이즈는 5MB까지 가능합니다. ");
+                fileInput.value = "";
+                return;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function(){
+        // 쿠키에서 showInfoId 값 읽기
+        const showInfoId = getCookie("showInfoId");
+
+        // 쿠키 값을 읽는 함수
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // 이 쿠키가 찾고 있는 쿠키인지 확인
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // 폼에 숨겨진 입력 필드로 showInfoId 값 추가
+        if(showInfoId) {
+            const hiddenInput = document.createElement("input");
+            hiddenInput.setAttribute("type", "hidden");
+            hiddenInput.setAttribute("name", "showInfo_id");
+            hiddenInput.setAttribute("value", showInfoId);
+            document.querySelector("form").appendChild(hiddenInput);
+        }
+
+        // 쿠키 삭제하기 위해 과거 시간 설정
+        document.cookie = "showInfoId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+    });
+    $(document).ready(function() {
+        $('#itemRegistrationForm').on('submit', function(e) {
+            e.preventDefault();
+
+            // 모든 필드가 빈칸 없이 작성되었는지 확인
+            const itemName = $('#itemName').val().trim();
+            const itemDescription = $('#itemDescription').val().trim();
+            const itemPrice = $('#itemPrice').val().trim();
+            const itemAmount = $('#itemAmount').val().trim();
+
+            if (!itemName || !itemDescription || !itemPrice || !itemAmount) {
+                alert('모든 필드를 채워주세요.');
+                return false;
+            }
+
+            // FormData 객체 생성 및 데이터 추가
+            // FormData 객체 생성
+            const formData = new FormData();
+            // 프로필 이미지 파일 추가
+            const imageInput = document.getElementById('itemImage');
+            if (imageInput && imageInput.files.length > 0) {
+                formData.append('file', imageInput.files[0]);
+            } else {
+                alert("이미지 파일을 선택해주세요.");
+                return false;
+            }
+
+            // 이미지외 다른 데이터
+            const ItemData = {
+                name: itemName,
+                content: itemDescription,
+                price: itemPrice,
+                amount: itemAmount,
+                showInfoId: document.querySelector("input[name='showInfo_id']").value
+            };
+
+            formData.append('dto', new Blob([JSON.stringify(ItemData)], { type: 'application/json' }));
+
+
+            // AJAX 요청
+            $.ajax({
+                type: 'POST',
+                url: '/items', // 서버 엔드포인트 URL에 맞게 조정
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    console.log('아이템 등록 성공:', response);
+                    alert('아이템이 성공적으로 등록되었습니다.');
+                    window.location.href = '/'; // 성공 후 리다이렉트될 URL
+                },
+                error: function(xhr, status, error) {
+                    console.error('아이템 등록 실패:', xhr.responseText);
+                    alert('아이템 등록에 실패했습니다. 다시 시도해주세요.');
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

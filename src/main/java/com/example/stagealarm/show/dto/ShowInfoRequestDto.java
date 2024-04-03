@@ -6,6 +6,8 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Builder
@@ -20,6 +22,6 @@ public class ShowInfoRequestDto {
     private String ticketVendor;
     private String price;
 
-    private Long artistId; // 아티스트도 어떻게 받아와야할지?
-    private Long genreId; //프론트 입력창에서 장르를 선택 가능하도록..?하고 받아옴
+    private List<Long> artists = new ArrayList<>(); // 아티스트는 여러명일 가능성
+    private List<Long> genres = new ArrayList<>(); // 공연의 장르는 한가지로 결정.
 }

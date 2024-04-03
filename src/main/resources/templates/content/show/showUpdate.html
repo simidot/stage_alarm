@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <title>main</title>
+<body>
+
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4"
+      style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
+        <div class="showInfo"></div>
+    </div>
+</main>
+<script>
+    $(document).ready(function () {
+        var path = window.location.pathname;
+        var id = path.split('/').slice(-2, -1).pop();
+
+
+        $.ajax({
+            url: "/show/" + id,
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                const {
+                    showInfoResponseDto: showInfo,
+                    showCommentsResponseDtos: comments,
+                } = data;
+
+                const showHtml = `
+                    <form id="updateShowForm" enctype="multipart/form-data">
+                        <div class="card mb-3" data-comment-id="${comments.id}">
+                            <img src="https://via.placeholder.com/800x500" class="card-img-top" alt="축제 이미지">
+                            <div class="card-body position-relative">
+                                <input type="hidden" name="id" value="${showInfo.id}">
+                                <label for="title">제목</label>
+                                <input type="text" id="title" name="title" class="form-control" value="${showInfo.title}" required>
+                                <label for="date">날짜</label>
+                                <input type="date" id="date" name="date" class="form-control" value="${showInfo.date}" required>
+                                <label for="location">위치</label>
+                                <input type="text" id="location" name="location" class="form-control" value="${showInfo.location}" required>
+                                <label for="startTime">시작 시간</label>
+                                <input type="time" id="startTime" name="startTime" class="form-control" value="${showInfo.startTime}" required>
+                                <label for="ticketVendor">예매처</label>
+                                <input type="text" id="ticketVendor" name="ticketVendor" class="form-control" value="${showInfo.ticketVendor}" required>
+                                <label for="duration">공연기간</label>
+                                <input type="text" id="duration" name="duration" class="form-control" value="${showInfo.duration}" required>
+                                <label for="image">이미지</label>
+                                <input type="file" id="image" name="file" class="form-control" accept="image/*">
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary save">저장</button>
+                    </form>
+                `;
+
+                $('.showInfo').append(showHtml);
+            }
+        })
+
+        $(document).on('click', '.save', function () {
+            var form = document.getElementById('updateShowForm');
+            var formData = new FormData(form);
+
+            // 이미지 파일이 있는 경우에만 FormData에 추가
+            if ($('#image')[0].files.length > 0) {
+                formData.append('file', $('#image')[0].files[0]);
+            }
+
+            const dto = {
+                id: $('#updateShowForm input[name="id"]').val(),
+                title: $('#title').val(),
+                date: $('#date').val(),
+                location: $('#location').val(),
+                startTime: $('#startTime').val(),
+                ticketVendor: $('#ticketVendor').val(),
+                duration: $('#duration').val()
+            }
+
+            const json = JSON.stringify(dto);
+            const blob = new Blob([json], { type: 'application/json' });
+
+            // 나머지 폼 데이터 추가
+            formData.append('dto', blob);
+
+            $.ajax({
+                url: "/show/" + id,
+                type: "PATCH",
+                contentType: false,
+                processData: false,
+                data: formData,
+                timeout: 600000,
+                success: function (response) {
+                    console.log("Success:", response);
+                    alert("게시글이 업데이트되었습니다.");
+                    window.location.href = "/shows";
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("게시글 업데이트에 실패했습니다.");
+                }
+            });
+        });
+    })
+</script>
+</body>
+</html>

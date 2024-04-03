@@ -3,7 +3,6 @@ package com.example.stagealarm.user.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Slf4j
 @Controller
@@ -52,6 +51,11 @@ public class UserViewController {
     public String emailDuplicate() {
         return "content/user/emailDuplicate";
     }
+
+    // 비밀번호 변경 페이지
+    @GetMapping("/user/change-password")
+    public String changePassword(){
+        return "content/user/changePassword";}
 
 
 }

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <meta charset="UTF-8">
+    <title>내 주문 목록</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- 모달을 위한 Bootstrap CSS 추가 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .main-container { margin-top: 20px; }
+        th, td { text-align: center; }
+        .cancel-btn { margin-left: 10px; }
+    </style>
+</head>
+<body>
+
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2" style="flex: 1;">
+        <h1 class="mb-4">내 주문 목록</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>상품 이름</th>
+                <th>수량</th>
+                <th>총 가격</th>
+                <th>상태</th>
+                <th>조치</th>
+            </tr>
+            </thead>
+            <tbody id="orderList">
+            <!-- 주문 목록이 여기에 동적으로 삽입됩니다 -->
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<!-- 취소 사유를 입력받는 모달 -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">주문 취소 사유</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+            </div>
+            <div class="modal-body">
+                <form id="cancelForm">
+                    <div class="mb-3">
+                        <label for="cancelReason" class="form-label">사유</label>
+                        <input type="text" class="form-control" id="cancelReason" name="cancelReason" required>
+                    </div>
+                    <input type="hidden" id="cancelOrderId" name="orderId">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" onclick="submitCancel()">제출</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: '/orders/my', // 주문 목록을 불러올 URL
+            type: 'GET',
+            success: function(orders) {
+                let orderList = $('#orderList');
+                let totalOrders = orders.length; // 주문의 총 개수
+                orders.forEach(function(order) {
+                    let cancelBtn = order.status !== 'CANCEL' ? `<button class="btn btn-danger cancel-btn" data-bs-toggle="modal" data-bs-target="#cancelModal" onclick="setOrderId(${order.id})">주문 취소</button>` : '';
+                    orderList.append(
+                        `<tr>
+                        <td>${totalOrders--}</td> <!-- 인덱스 번호 역순으로 할당 -->
+                        <td>${order.itemName}</td>
+                        <td>${order.amount}</td>
+                        <td>${order.totalPrice}</td>
+                        <td>${order.status}</td>
+                        <td>${cancelBtn}</td>
+                    </tr>`
+                    );
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX 요청 실패: ", status, error);
+            }
+        });
+    });
+
+    // 주문 ID 설정 함수
+    function setOrderId(orderId) {
+        $('#cancelOrderId').val(orderId);
+    }
+
+    // 주문 취소 제출 함수
+    function submitCancel() {
+        var orderId = $('#cancelOrderId').val();
+        var cancelReason = $('#cancelReason').val();
+
+        $.ajax({
+            url: '/orders/' + orderId + '/cancel',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ cancelReason: cancelReason }),
+            success: function(response) {
+                alert('주문이 취소되었습니다.');
+                $('#cancelModal').modal('hide');
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error("주문 취소 실패: ", status, error);
+                alert('주문 취소에 실패하였습니다.');
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

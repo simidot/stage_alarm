@@ -1,25 +1,35 @@
 package com.example.stagealarm.user.service;
 
+import com.example.stagealarm.alarm.service.EmailAuthService;
+import com.example.stagealarm.awsS3.S3FileService;
 import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.jwt.JwtRequestDto;
 import com.example.stagealarm.jwt.JwtResponseDto;
 import com.example.stagealarm.jwt.JwtTokenUtils;
+import com.example.stagealarm.user.dto.PasswordDto;
 import com.example.stagealarm.user.entity.UserEntity;
 import com.example.stagealarm.user.dto.CustomUserDetails;
 import com.example.stagealarm.user.dto.UserDto;
 import com.example.stagealarm.user.repo.UserRepository;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,6 +41,9 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtils jwtTokenUtils;
     private final AuthenticationFacade authFacade;
+    private final EmailAuthService emailAlertService;
+    private final StringRedisTemplate redisTemplate;
+    private final S3FileService s3FileService;
 
     // Security 위한 메서드 구현
     @Override
@@ -65,7 +78,7 @@ public class UserService implements UserDetailsService {
 
     // 회원 등록
     @Transactional
-    public UserDto join(UserDto dto) {
+    public UserDto join(UserDto dto, MultipartFile file) {
         // 로그인 아이디가 이미 있을경우 오류
         if(this.userExists(dto.getLoginId()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -77,7 +90,7 @@ public class UserService implements UserDetailsService {
                 .nickname(dto.getNickname())
                 .gender(dto.getGender())
                 .phone(dto.getPhone())
-                .profileImg(dto.getProfileImg())
+                .profileImg(s3FileService.uploadIntoS3("/profileImg", file))
                 .address(dto.getAddress())
                 .authorities("ROLE_USER")
                 .build();
@@ -116,7 +129,7 @@ public class UserService implements UserDetailsService {
 
     // 회원 수정
     @Transactional
-    public UserDto update(UserDto dto) {
+    public UserDto update(UserDto dto, MultipartFile file) {
         // 본인이나 관리자 인지 확인
         UserEntity currentUser = authFacade.getUserEntity();
 
@@ -137,8 +150,8 @@ public class UserService implements UserDetailsService {
         userEntity.setNickname(dto.getNickname());
         userEntity.setGender(dto.getGender());
         userEntity.setPhone(dto.getPhone());
-        userEntity.setProfileImg(dto.getProfileImg());
         userEntity.setAddress(dto.getAddress());
+        userEntity.setProfileImg(s3FileService.uploadIntoS3("/profileImg", file));
 
         return UserDto.fromEntity(userRepository.save(userEntity));
     }
@@ -158,8 +171,8 @@ public class UserService implements UserDetailsService {
     public void deleteUser(Long id) {
         // 관리자 인지
         if (!authFacade.getUserEntity().getAuthorities().contains("ROLE_ADMIN")) {
-             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
-         }
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
 
         // 있는지 없는지
         boolean exists = userRepository.existsById(id);
@@ -187,5 +200,96 @@ public class UserService implements UserDetailsService {
         response.setToken(jwt);
 
         return response;
+    }
+
+    // 인증번호 보내는 로직
+    public void sendEmail(String email) throws MessagingException {
+        ValueOperations<String, String> operations = redisTemplate.opsForValue();
+        Random random = new Random();
+        String code = String.valueOf(1000000 + random.nextInt(9000000));
+        // 레디스에 인증 코드 저장 및 만료 시간 5분으로 설정
+        operations.set(email, code, 5, TimeUnit.MINUTES);
+
+        emailAlertService.
+                sendMail(email,
+                        "스테이지알람 이메일 인증 코드입니다",
+                        "귀하의 인증 코드는: " + code + " 입니다.");
+    }
+
+    // 인증 로직
+    public ResponseEntity<String> checkEmailCode(String email, String code) {
+        log.info("email auth start");
+        ValueOperations<String, String> operations = redisTemplate.opsForValue();
+        String original = operations.get(email);
+
+        if(original == null){
+            // 이메일 주소에 해당하는 코드가 존재하지 않을 경우, 클라이언트에게 Not Found 응답을 반환
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email not found");
+        }
+
+        if(!original.equals(code)){
+            // 코드와 인증번호가 맞지 않을경우
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid code");
+        }
+
+        //
+        return ResponseEntity.ok("Code verified successfully");
+
+    }
+
+    @Transactional
+    public UserDto updateWithoutFile(UserDto dto) {
+        // 본인이나 관리자 인지 확인
+        UserEntity currentUser = authFacade.getUserEntity();
+
+        if (currentUser == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated.");
+        }
+
+        boolean isCurrentUserOrAdmin = currentUser.getLoginId().equals(dto.getLoginId())
+                || currentUser.getAuthorities().contains("ROLE_ADMIN");
+
+        if (!isCurrentUserOrAdmin) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        UserEntity userEntity = searchByLoginId(dto.getLoginId());
+        userEntity.setNickname(dto.getNickname());
+        userEntity.setGender(dto.getGender());
+        userEntity.setPhone(dto.getPhone());
+        userEntity.setAddress(dto.getAddress());
+
+        return UserDto.fromEntity(userRepository.save(userEntity));
+    }
+
+    @Transactional
+    public UserDto joinWithoutFile(UserDto dto) {
+        // 로그인 아이디가 이미 있을경우 오류
+        if(this.userExists(dto.getLoginId()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+        UserEntity newUser = UserEntity.builder()
+                .loginId(dto.getLoginId())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .email(dto.getEmail())
+                .nickname(dto.getNickname())
+                .gender(dto.getGender())
+                .phone(dto.getPhone())
+                .address(dto.getAddress())
+                .authorities("ROLE_USER")
+                .build();
+
+        return UserDto.fromEntity(userRepository.save(newUser));
+    }
+
+    @Transactional
+    public void changePassword(PasswordDto dto) {
+        UserEntity userEntity = authFacade.getUserEntity();
+        if (!passwordEncoder.matches(dto.getCurrentPassword(), userEntity.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+        }
+
+        userEntity.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+
     }
 }
