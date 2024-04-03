@@ -74,8 +74,8 @@ function displayComments(commentList, boardId, depth = 0) {
         <div class="comment-footer" style="display: flex; justify-content: space-between; align-items: center;">
           <p class="comment-date">${comment.createdAt}</p>
           <div id="comment-actions-${comment.id}"> 
-            <button type="button" onclick="editComment('${comment.id}')">수정</button>
-            <button type="button" onclick="deleteComment('${comment.id}')">삭제</button>
+            <button type="button" class="btn btn-secondary mr-2" onclick="editComment('${comment.id}')">수정</button>
+            <button type="button" class="btn btn-secondary mr-2" onclick="deleteComment('${comment.id}')">삭제</button>
           </div>
         </div>
         <hr>
@@ -99,8 +99,8 @@ function addCommentToPage(comment) {
       <div class="comment-footer" style="display: flex; justify-content: space-between; align-items: center;">
         <p class="comment-date">${comment.createdAt}</p>
         <div id="comment-actions-${comment.id}"> 
-          <button type="button" onclick="editComment('${comment.id}')">수정</button>
-          <button type="button" onclick="deleteComment('${comment.id}')">삭제</button>
+          <button type="button" class="btn btn-secondary mr-2" onclick="editComment('${comment.id}')">수정</button>
+          <button type="button" class="btn btn-secondary mr-2" onclick="deleteComment('${comment.id}')">삭제</button>
         </div>
       </div>
       <hr>
@@ -126,7 +126,7 @@ function editComment(commentId) {
   editContainer.id = `edit-container-${commentId}`;
   editContainer.innerHTML = `
     <textarea id="edit-comment-${commentId}" class="input-container">${originalContent}</textarea>
-    <button onclick="saveEditedComment('${commentId}')">저장</button>
+    <button class="btn btn-primary mt-2" onclick="saveEditedComment('${commentId}')">저장</button>
   `;
 
   // 해당 댓글 위치에 삽입
