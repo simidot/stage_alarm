@@ -14,10 +14,10 @@ public class AuthorityDto {
     private String authority;
 
     public static AuthorityDto fromEntity(UserEntity user) {
-        AuthorityDto dto = AuthorityDto.builder()
-                .authority(user.getAuthorities())
-                .build();
+        String authority = user == null ? null : user.getAuthorities();
 
-        return dto;
+        return AuthorityDto.builder()
+                .authority(authority)
+                .build();
     }
 }
