@@ -40,23 +40,6 @@ public class BoardCommentDto {
     );
   }
 
-  public static BoardCommentDto fromEntityWithChildren(BoardComment entity) {
-    List<BoardCommentDto> childDtos = entity.getChildComments().stream()
-      .map(BoardCommentDto::fromEntityWithChildren)
-      .collect(Collectors.toList());
-
-    return new BoardCommentDto(
-      entity.getId(),
-      entity.getContent(),
-      entity.getDepth(),
-      entity.getUserEntity().getId(),
-      entity.getUserEntity().getLoginId(),
-      entity.getBoard().getId(),
-      formattedDate(entity),
-      childDtos
-    );
-  }
-
   // Custom CreatedAt "yyyy-MM-dd HH:mm"
   public static String formattedDate(BoardComment entity) {
     return entity.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));

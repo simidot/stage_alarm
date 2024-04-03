@@ -69,7 +69,7 @@ public class BoardCommentService {
       .build();
 
     // 저장 및 반환
-    return BoardCommentDto.fromEntityWithChildren(boardCommentRepository.save(newReplyComment));
+    return BoardCommentDto.fromEntity(boardCommentRepository.save(newReplyComment));
   }
 
   // Read
