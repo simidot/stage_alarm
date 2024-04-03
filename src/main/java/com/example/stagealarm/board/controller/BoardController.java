@@ -18,7 +18,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/boards")
+@RequestMapping("/board")
 @RequiredArgsConstructor
 public class BoardController {
   private final BoardService boardService;
@@ -39,7 +39,7 @@ public class BoardController {
   @GetMapping("/{categoryId}")
   public Page<BoardListDto> readAll(
     @PathVariable("categoryId") Long categoryId,
-    @RequestParam(value = "sortParam", defaultValue = "dateD") String sortParam, // Front에서 dateD, dateA, viewD, viewA를 건네준다.
+    @RequestParam(value = "sortParam", defaultValue = "dateD") String sortParam, // Front에서 dateD, dateA, viewsD, viewsA를 건네준다.
     Pageable pageable
   ) {
     return categoryService.readAll(categoryId, sortParam, pageable);

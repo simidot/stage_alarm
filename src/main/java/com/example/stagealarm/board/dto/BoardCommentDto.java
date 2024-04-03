@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.ArrayList;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,8 +19,10 @@ public class BoardCommentDto {
   private Long userId;
   private String loginId;
   private Long boardId;
+  private String createdAt;
   private List<BoardCommentDto> childComments;
 
+  // BoardComment (Entity) -> BoardCommentDto (Dto)
   public static BoardCommentDto fromEntity(BoardComment entity) {
     List<BoardCommentDto> childDtos = entity.getChildComments().stream()
       .map(BoardCommentDto::fromEntity)
@@ -33,6 +35,7 @@ public class BoardCommentDto {
       entity.getUserEntity().getId(),
       entity.getUserEntity().getLoginId(),
       entity.getBoard().getId(),
+      formattedDate(entity),
       childDtos
     );
   }
@@ -49,7 +52,13 @@ public class BoardCommentDto {
       entity.getUserEntity().getId(),
       entity.getUserEntity().getLoginId(),
       entity.getBoard().getId(),
+      formattedDate(entity),
       childDtos
     );
+  }
+
+  // Custom CreatedAt "yyyy-MM-dd HH:mm"
+  public static String formattedDate(BoardComment entity) {
+    return entity.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
   }
 }

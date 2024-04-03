@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}"
+      layout:fragment="content">
+<head>
+    <title>all artists</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+<body>
+
+<!-- Main -->
+<main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
+    <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
+        <div id="artistList" class="container mt-5">
+            <div class="row justify-content-start">
+            </div>
+                <!-- Ajax로 받아온 아티스트 목록을 동적으로 추가할 공간 -->
+            </div>
+        </div>
+    </div>
+</main>
+
+    <script th:inline="javascript">
+        // Ajax로 아티스트 목록을 가져와서 테이블에 추가하는 코드 작성
+        $(document).ready(function () {
+            $.ajax({
+                url: "/artist",
+                type: "GET",
+                success: function(data) {
+                    // 받아온 아티스트 목록을 표시
+                    var $artistList = $('#artistList .row');
+                    $.each(data, function(index, artist) {
+                        var artistCard =
+                            '<div class="col-md-4">' +
+                            '<div class="text-center">' +
+                            '<img src="' + artist.profileImg + '" class="rounded-circle img-thumbnail mb-3" alt="Artist Profile Picture" width="200" height="200">' +
+                            '<h4>' + artist.name + '</h4>' +
+                            '<p>나이: ' + artist.age + '</p>' +
+                            '<p>성별: ' + artist.gender + '</p>' +
+                            '<button class="btn btn-outline-primary like-btn" data-artist-id="' + artist.id + '">좋아요</button>' +
+                            '</div>' +
+                            '</div>';
+
+                        // 가로로 3개씩 채우기
+                        if (index % 3 === 0) {
+                            $artistList.append('<div class="w-100"></div>'); // 줄 바꾸기
+                        }
+                        $artistList.append(artistCard);
+                    });
+
+                    // 좋아요 버튼 클릭 이벤트 처리
+                    $('.like-btn').click(function() {
+                        var artistId = $(this).data('artist-id');
+                        // 여기에 좋아요 기능을 추가할 수 있습니다.
+                        console.log('좋아요 클릭 - 아티스트 ID:', artistId);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX 요청 실패:", status, error);
+                }
+            });
+        });
+    </script>
+
+
+</main>
+
+</body>
+</head></html>

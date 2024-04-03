@@ -26,7 +26,7 @@ public class BoardListDto {
 
     // 오늘 생성된 게시물인 경우 날짜와 시간 모두 표시
     if (createdAt.toLocalDate().isEqual(today)) {
-      formattedDate = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+      formattedDate = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     } else {
       // 어제 이전에 생성된 게시물인 경우 날짜만 표시
       formattedDate = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));

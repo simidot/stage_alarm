@@ -14,7 +14,7 @@ public class BoardCommentController {
   private final BoardCommentService boardCommentService;
 
   // Create
-  // note test 완료
+    // comment
   @PostMapping("/{boardId}")
   public BoardCommentDto write(
     @PathVariable("boardId") Long boardId,
@@ -23,7 +23,7 @@ public class BoardCommentController {
     return boardCommentService.writeComment(boardId, dto);
   }
 
-  // note test 완료
+    // reply comment
   @PostMapping("/{boardId}/reply/{commentId}")
   public BoardCommentDto replyWrite(
     @PathVariable("boardId") Long boardId,
@@ -34,7 +34,6 @@ public class BoardCommentController {
   }
 
   // Update
-  // note test 완료
   @PutMapping("/rewriting/{commentId}")
   public BoardCommentDto rewrite(
     @PathVariable("commentId") Long commentId,
@@ -44,7 +43,6 @@ public class BoardCommentController {
   }
 
   // Delete
-  // note test 완료
   @DeleteMapping("/trash/{commentId}")
   public void erase(
     @PathVariable("commentId") Long commentId
