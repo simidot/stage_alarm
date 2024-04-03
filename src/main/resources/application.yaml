@@ -117,7 +117,7 @@ thymeleaf:
 cloud:
   aws:
     s3:
-      bucket: stage-alarm
+      bucket:
     credentials:
       access-key:
       secret-key:

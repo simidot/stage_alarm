@@ -7,83 +7,105 @@
 <head>
   <title>Write a Board</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-<style>
-  .write-header-container {
-      display: flex;
-  }
+  <style>
+      .write-header-container {
+          display: flex;
+      }
 
-  .input-container {
-      resize: none;
-      width: 100%; /* textarea의 너비를 조정 */
-      margin-bottom: 10px;
-  }
+      .input-container {
+          resize: none;
+          width: 100%; /* textarea의 너비를 조정 */
+          margin-bottom: 10px;
+      }
 
-  #image-upload {
-      display: none;
-  }
+      #image-upload {
+          display: none;
+      }
 
-  .image-upload-label {
-      display: inline-block;
-      width: 100px;
-      height: 100px;
-      border: 2px dashed #ccc;
-      border-radius: 10px;
-      position: relative;
-      cursor: pointer;
-  }
+      .image-upload-label {
+          display: inline-block;
+          width: 100px;
+          height: 100px;
+          border: 2px dashed #ccc;
+          border-radius: 10px;
+          position: relative;
+          cursor: pointer;
+      }
 
-  .image-upload-label i {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 24px; /* 십자가 아이콘 크기 */
-  }
+      .image-upload-label i {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: 24px; /* 십자가 아이콘 크기 */
+      }
 
-  #image-preview img {
-      width: 100px; /* 미리보기 이미지 크기 */
-      height: 100px;
-      border-radius: 10px;
-  }
+      #image-preview img {
+          width: 100px; /* 미리보기 이미지 크기 */
+          height: 100px;
+          border-radius: 10px;
+      }
 
-  .title-wrap {
-      display: flex; /* flexbox를 사용하여 내부 요소들을 가로로 정렬 */
-      gap: 20px; /* 버튼과 입력 필드 사이의 간격 */
-      padding: 10px; /* 박스 내부의 여백 */
-      border: 1px solid #ccc; /* 박스 주위의 경계선 */
-      border-radius: 5px; /* 박스의 모서리를 둥글게 */
-      align-items: center; /* 내부 요소들을 세로 중앙에 정렬 */
-      margin-bottom: 10px; /* 박스 아래 여백 */
-  }
+      .title-wrap {
+          display: flex; /* flexbox를 사용하여 내부 요소들을 가로로 정렬 */
+          gap: 20px; /* 버튼과 입력 필드 사이의 간격 */
+          padding: 10px; /* 박스 내부의 여백 */
+          border: 1px solid #ccc; /* 박스 주위의 경계선 */
+          border-radius: 5px; /* 박스의 모서리를 둥글게 */
+          align-items: center; /* 내부 요소들을 세로 중앙에 정렬 */
+          margin-bottom: 10px; /* 박스 아래 여백 */
+      }
 
-  .write-header-container {
-      display: flex;
-      justify-content: space-between; /* h3와 버튼을 양끝으로 분리 */
-  }
+      .write-header-container {
+          display: flex;
+          justify-content: space-between; /* h3와 버튼을 양끝으로 분리 */
+      }
 
-  .input-container {
-      resize: none;
-      width: 100%; /* textarea의 너비를 조정 */
-      min-height: 500px;
-      margin-bottom: 10px;
-  }
+      .input-container {
+          resize: none;
+          width: 100%; /* textarea의 너비를 조정 */
+          min-height: 500px;
+          margin-bottom: 10px;
+      }
 
-  #image-preview {
-      display: flex; /* Flex 컨테이너로 설정 */
-      flex-wrap: wrap; /* 이미지가 많아질 경우 다음 줄로 넘어가도록 */
-      gap: 10px; /* 이미지 사이의 간격 */
-  }
+      #image-preview {
+          display: flex; /* Flex 컨테이너로 설정 */
+          flex-wrap: wrap; /* 이미지가 많아질 경우 다음 줄로 넘어가도록 */
+          gap: 10px; /* 이미지 사이의 간격 */
+      }
 
-  #image-preview img {
-      width: 100px; /* 미리보기 이미지 크기 */
-      height: 100px;
-      border-radius: 10px;
-  }
+      #image-preview img {
+          width: 100px; /* 미리보기 이미지 크기 */
+          height: 100px;
+          border-radius: 10px;
+      }
 
-  #title-input {
-      width: 500px;
-  }
-</style>
+      #title-input {
+          width: 500px;
+      }
+
+      .img-container {
+          position: relative;
+          display: inline-block;
+      }
+      .img-container img {
+          width: 100px; /* 이미지 크기 조정 */
+          height: auto;
+      }
+      .delete-img-btn {
+          position: absolute;
+          top: 0;
+          right: 0;
+          border: none;
+          border-radius: 50%; /* 버튼을 동그랗게 만듦 */
+          width: 25px;
+          height: 25px;
+          font-weight: bold;
+          cursor: pointer;
+          background-color: rgb(128, 128, 128); /* 배경색 */
+          color: white; /* 글자색 */
+      }
+  </style>
 </head>
 <body>
 
@@ -136,18 +158,28 @@
 
     // 이미지 추가 시, 미리보기 및 배열에 저장
     document.getElementById('image-upload').addEventListener('change', function(e) {
-      const files = e.target.files; // 선택된 파일들
+      const files = e.target.files;
       if (files.length > 0) {
         for (let i = 0; i < files.length; i++) {
-          imageFiles.push(files[i]); // 전역 배열에 파일 추가
+          const file = files[i];
+          imageFiles.push(file); // 전역 배열에 파일 추가
 
-          // 이미지 미리보기 로직
           const reader = new FileReader();
           reader.onload = function(e) {
             const preview = document.getElementById('image-preview');
-            preview.insertAdjacentHTML('beforeend', `<img src="${e.target.result}" alt="Image preview">`);
+            const imgId = "img-" + file.name.replace(/[^a-zA-Z0-9]/g, ''); // 파일 이름을 이용해 고유 ID 생성 및 특수문자 제거
+            const imgElement = `<div id="${imgId}" class="img-container"><img src="${e.target.result}" alt="Image preview"><button class="delete-img-btn">X</button></div>`;
+            preview.insertAdjacentHTML('beforeend', imgElement);
+
+            // 이미지 삭제 버튼 이벤트 리스너 추가
+            document.getElementById(imgId).querySelector('.delete-img-btn').addEventListener('click', function() {
+              // 미리보기에서 이미지 컨테이너 삭제
+              document.getElementById(imgId).remove();
+              // 전역 배열에서 해당 이미지 파일 삭제
+              imageFiles = imageFiles.filter(f => f.name.replace(/[^a-zA-Z0-9]/g, '') !== file.name.replace(/[^a-zA-Z0-9]/g, ''));
+            });
           };
-          reader.readAsDataURL(files[i]);
+          reader.readAsDataURL(file);
         }
       }
     });
@@ -160,6 +192,12 @@
       const title = $('#title-input').val(); // 제목
       const categoryId = $('#board-type').val();
       const content = $('.input-container').val(); // 내용
+
+      // 제목 공간 확인
+      if (!title.trim()) {
+        alert('제목을 입력해주세요.')
+        return;
+      }
 
       // 이미지 파일들을 formData에 추가
       if (imageFiles.length > 0) {
