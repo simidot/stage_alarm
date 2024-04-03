@@ -30,7 +30,7 @@ public class TestDataBean {
         userRepository.save(UserEntity.builder()
                 .loginId("user")
                 .password(passwordEncoder.encode("password"))
-                .email("hhhjs0133@naver.com123")
+                .email("hhhjs0133@naver.com")
                 .nickname("일반 사용자1")
                 .authorities("ROLE_USER")
                 .build());
