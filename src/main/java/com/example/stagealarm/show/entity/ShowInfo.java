@@ -43,6 +43,7 @@ public class ShowInfo extends BaseEntity {
     @Setter
     private String price;
 
+    @Builder.Default
     @OneToMany(mappedBy = "showInfo")
     private List<ShowLike> showLikes = new ArrayList<>();
 
