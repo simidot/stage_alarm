@@ -34,7 +34,7 @@
                 const showHtml = `
                     <form id="updateShowForm" enctype="multipart/form-data">
                         <div class="card mb-3" data-comment-id="${comments.id}">
-                            <img src="https://via.placeholder.com/800x500" class="card-img-top" alt="축제 이미지">
+                            <img src=${showInfo.posterImage ? showInfo.posterImage : 'https://via.placeholder.com/800x500'} class="card-img-top" alt="축제 이미지">
                             <div class="card-body position-relative">
                                 <input type="hidden" name="id" value="${showInfo.id}">
                                 <label for="title">제목</label>
