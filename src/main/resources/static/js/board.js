@@ -98,7 +98,7 @@ function addCommentToPage(comment) {
       <p id="comment-content-${comment.id}">${comment.content}</p>
       <div class="comment-footer" style="display: flex; justify-content: space-between; align-items: center;">
         <p class="comment-date">${comment.createdAt}</p>
-        <div>
+        <div id="comment-actions-${comment.id}"> 
           <button type="button" onclick="editComment('${comment.id}')">수정</button>
           <button type="button" onclick="deleteComment('${comment.id}')">삭제</button>
         </div>
