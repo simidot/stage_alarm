@@ -141,9 +141,10 @@
 
                 },
                 error: function (xhr, status, error) {
-                    console.error("Ajax 요청 실패:", status, error);
-                    // $showInfo.empty();
-                    // $pagination.empty();
+                    if (xhr.status === 403) {
+                        alert("권한이 없습니다.");
+                        window.history.back();
+                    }
                 }
             });
         }
@@ -253,7 +254,10 @@
                     $pagination.append($nextPageItem);
                 },
                 error: function (xhr, status, error) {
-                    console.error("AJAX 요청 실패:", status, error);
+                    if (xhr.status === 403) {
+                        alert("권한이 없습니다.");
+                        window.history.back();
+                    }
                 }
             });
         }
