@@ -130,6 +130,12 @@
             success: function(response) {
               console.log(data);
               location.href = "/success";
+            },
+            error: function (xhr){
+              if(xhr.status === 403){
+                alert("결제 권한이 없습니다. 취소되었습니다.")
+                location.href = "/fail"
+              }
             }
           });
         });
