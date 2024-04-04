@@ -17,7 +17,7 @@ public class OrderController {
     private final OrderService service;
 
     // 모든 주문 보기
-    @GetMapping
+    @GetMapping("/orders")
     public List<ItemOrderDto> readAll(){
         return service.readAll();
     }
