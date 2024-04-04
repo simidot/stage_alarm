@@ -118,7 +118,7 @@ $('#artistForm').on('submit', function(e) {
         alert('아티스트 중복검사를 받아주세요.');
         $('#artistName').css('border-color', 'red');
         return false;
-    } else if (selectedGenres === null) {
+    } else if (!selectedGenres || selectedGenres.length === 0) {
         alert('장르를 최소 1가지 이상 선택해주세요.');
         return false;
     }
