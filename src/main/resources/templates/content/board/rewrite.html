@@ -9,6 +9,7 @@
   <!-- Import Font Awesome 라이브러리-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link rel="stylesheet" href="/css/writeBoard.css">
+  <script src="/js/board.js"></script>
 </head>
 <body>
 
@@ -54,12 +55,51 @@
 </body>
 <script th:inline="javascript">
   $(document).ready(function () {
+    const boardId = [[${boardId}]];
     let imageFiles = []; // 이미지 파일들을 저장할 전역 배열
+
+// 페이지 로드 시 기존 데이터 가져오기 함수 호출 후 처리
+    fetchPostData(boardId).then(existingImageUrls => {
+
+      console.log("existingImageUrls " + existingImageUrls.length)
+
+      if (existingImageUrls.length > 0) {
+        existingImageUrls.forEach(imageUrl => {
+          // 기존 이미지 정보를 객체 형태로 추가
+          imageFiles.push({
+            name: imageUrl.split('/').pop(), // 파일 이름 추출
+            type: "existing",
+            url: imageUrl // 전체 URL 추가
+          });
+
+          // 기존 이미지 미리보기 추가
+          setupExistingImagePreviewAndDelete(imageUrl);
+        });
+      }
+    })
+
+    console.log("imageFiles with existingFile " + imageFiles)
 
     // 아이콘 클릭 시, 숨겨진 파일 입력 필드 트리거
     $('.image-upload-label').click(function() {
       $('#image-upload').click();
     });
+
+    function addDeleteEventListener(imageObject, imgId) {
+      document.getElementById(imgId).querySelector('.delete-img-btn').addEventListener('click', function() {
+        // 미리보기에서 이미지 컨테이너 삭제
+        document.getElementById(imgId).remove();
+        // 전역 배열에서 해당 이미지 객체 삭제
+        imageFiles = imageFiles.filter(f => {
+          if (f.type === "new") {
+            return f.name.replace(/[^a-zA-Z0-9]/g, '') !== imageObject.name.replace(/[^a-zA-Z0-9]/g, '');
+          } else {
+            // 기존 이미지의 경우
+            return imgId !== "existing-img-" + f.name.replace(/[^a-zA-Z0-9]/g, '');
+          }
+        });
+      });
+    }
 
     // 이미지 추가 시, 미리보기 및 배열에 저장
     document.getElementById('image-upload').addEventListener('change', function(e) {
@@ -77,12 +117,7 @@
             preview.insertAdjacentHTML('beforeend', imgElement);
 
             // 이미지 삭제 버튼 이벤트 리스너 추가
-            document.getElementById(imgId).querySelector('.delete-img-btn').addEventListener('click', function() {
-              // 미리보기에서 이미지 컨테이너 삭제
-              document.getElementById(imgId).remove();
-              // 전역 배열에서 해당 이미지 파일 삭제
-              imageFiles = imageFiles.filter(f => f.name.replace(/[^a-zA-Z0-9]/g, '') !== file.name.replace(/[^a-zA-Z0-9]/g, ''));
-            });
+            addDeleteEventListener(file, imgId);
           };
           reader.readAsDataURL(file);
         }
@@ -107,7 +142,14 @@
       // 이미지 파일들을 formData에 추가
       if (imageFiles.length > 0) {
         for (let i = 0; i < imageFiles.length; i++) {
-          formData.append('files', imageFiles[i]);
+          // todo 서버에서 기존 이미지를 받았으면 update를 하지 않는 로직 수정 필요
+          if (imageFiles[i].type === "existing") {
+            // 기존 이미지의 경우, 파일 대신 파일 정보를 추가
+            formData.append('existingImages', imageFiles[i].name);
+          } else {
+            // 새 이미지 파일의 경우
+            formData.append('files', imageFiles[i]);
+          }
         }
       }
 
@@ -119,8 +161,8 @@
 
       // AJAX 요청
       $.ajax({
-        url: '/board',
-        type: 'POST',
+        url: `/board/rewriting/${boardId}`,
+        type: 'PUT',
         data: formData,
         processData: false,
         contentType: false,
@@ -128,6 +170,7 @@
           window.location.href = `/boards/${categoryId}`
         },
         error: function(xhr, status, error) {
+          console.error(error)
         }
       });
     });

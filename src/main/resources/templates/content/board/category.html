@@ -100,10 +100,16 @@
 
     // 글쓰기 버튼 클릭 이벤트
     $('#write-board').click(function () {
+      const token = localStorage.getItem('jwtToken');
+      if (token === null) {
+        alert('로그인이 필요합니다.')
+        return;
+      }
+
       window.location.href = '/boards/write';
     });
 
-    // 페이지 번호 클릭 이벤트 (예시)
+    // 페이지 번호 클릭 이벤트
     $(document).on('click', '.page-link', function (e) {
       e.preventDefault();
       let page = $(this).text() - 1; // 페이지 번호는 0부터 시작하므로 -1

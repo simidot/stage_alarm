@@ -26,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -42,8 +43,8 @@ public class BoardService {
   // Create
   @Transactional
   public BoardDto createBoard(
-    List<MultipartFile> files,
-    BoardDto dto
+      List<MultipartFile> files,
+      BoardDto dto
   ) {
     try {
       // 유저 정보 가져오기
@@ -51,17 +52,17 @@ public class BoardService {
 
       // 카테고리 정보 가져오기
       Category targetCategory = categoryRepository.findById(dto.getCategoryId())
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
       // 생성
       Board newBoard = Board.customBuilder()
-        .title(dto.getTitle())
-        .content(dto.getContent())
-        .activate(ActivateEnum.ACTIVATE)
-        .views(0L)
-        .userEntity(targetUser)
-        .category(targetCategory)
-        .build();
+          .title(dto.getTitle())
+          .content(dto.getContent())
+          .activate(ActivateEnum.ACTIVATE)
+          .views(0L)
+          .userEntity(targetUser)
+          .category(targetCategory)
+          .build();
 
       // 이미지가 있다면
       if (files != null) {
@@ -73,8 +74,8 @@ public class BoardService {
         // Image Entity 생성 및 Board Entity와 연결
         for (String url : uploadedUrls) {
           Image targetImage = Image.builder()
-            .imgUrl(url)
-            .build();
+              .imgUrl(url)
+              .build();
 
           // addImage 메서드를 사용하여 Board Entity에 Image Entity 연결
           newBoard.addImage(targetImage);
@@ -97,7 +98,7 @@ public class BoardService {
   // read One
   public BoardDto readOne(Long boardId) {
     Board targetBoard = boardRepository.findById(boardId)
-      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     // 조회 수 올리기
     Long views = targetBoard.getViews() + 1L;
@@ -110,9 +111,9 @@ public class BoardService {
   // Update
   @Transactional
   public BoardDto reWriteBoard(
-    List<MultipartFile> files,
-    Long boardId,
-    BoardDto dto
+      List<MultipartFile> files,
+      Long boardId,
+      BoardDto dto
   ) {
     BoardDto result = updateBoard(boardId, dto);
     Boolean imageResult = updateImage(boardId, files);
@@ -127,7 +128,7 @@ public class BoardService {
     try {
       // 해당 board 가져오기
       Board targetBoard = boardRepository.findById(boardId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
       // 삭제 요청자 정보 가져오기
       UserEntity targetUser = auth.getUserEntity();
@@ -158,28 +159,28 @@ public class BoardService {
   }
 
   // Search
-    // title
+  // title
   public Page<BoardDto> searchTitle(
-    TitleSearchParams params,
-    Pageable pageable
+      TitleSearchParams params,
+      Pageable pageable
   ) {
     if (params.getTitle() == null && params.getCategoryId() == null)
       return boardRepository.findAll(pageable).map(BoardDto::fromEntity);
 
     return qBoardRepo.searchTitle(params, pageable)
-      .map(BoardDto::fromEntity);
+        .map(BoardDto::fromEntity);
   }
 
-    // content
+  // content
   public Page<BoardDto> searchContent(
-    ContentSearchParams params,
-    Pageable pageable
+      ContentSearchParams params,
+      Pageable pageable
   ) {
     if (params.getContent() == null && params.getCategoryId() == null)
       return boardRepository.findAll(pageable).map(BoardDto::fromEntity);
 
     return qBoardRepo.searchContent(params, pageable)
-      .map(BoardDto::fromEntity);
+        .map(BoardDto::fromEntity);
   }
 
   // Update - Board만 수정
@@ -270,6 +271,19 @@ public class BoardService {
     } catch (Exception e) {
       log.error("err: {}", e.getMessage());
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "update image");
+    }
+  }
+
+  // boardId로 categoryId를 반환
+  public Long findCategoryId(Long boardId) {
+    try {
+      Board targetBoard = boardRepository.findById(boardId)
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+      return targetBoard.getCategory().getId();
+    } catch (Exception e) {
+      log.error("err: {}", e.getMessage());
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "find categoryId");
     }
   }
 }

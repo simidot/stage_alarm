@@ -60,7 +60,7 @@
                     </div>
                 </div>
             </div>`;
-            $('.comments').prepend(commentHtml);
+            $('.comments').append(commentHtml);
 
             // 댓글 개수 업데이트
             // commentCount++;
@@ -100,6 +100,8 @@
                                 <img data-show-Info-is-Liked="${showInfo.isLiked}" class="like-btn cursor-pointer" src="${showInfo.isLiked ? '/images/like.png' : '/images/unlike.png'}" alt="좋아요" style="width: 30px; height: 30px">
                                     <span class="total-like">${showInfo.totalLike}</span>
                             </p>
+                            <button class="btn btn-primary show-goods" onclick="window.location.href='/showItems/' + ${showInfo.id}">굿즈 보기</button>
+                            <button class="btn btn-primary update-goods" onclick="window.location.href='/item/register?showInfoId=' + ${showInfo.id}">굿즈 등록</button>
                         </div>
                     </div>`;
 
@@ -112,9 +114,13 @@
                     if (authority.authority === "ROLE_ADMIN") {
                         $(".info-update").show(); // 수정 버튼 보이기
                         $(".info-delete").show(); // 삭제 버튼 보이기
+                        $(".update-goods").show(); // 굿즈 등록 버튼 보이기
+                        $(".show-goods").hide(); // 굿즈 보기 버튼 숨기기
                     } else {
                         $(".info-update").hide(); // 수정 버튼 숨기기
                         $(".info-delete").hide(); // 삭제 버튼 숨기기
+                        $(".update-goods").hide(); // 굿즈 등록 버튼 숨기기
+                        $(".show-goods").show(); // 굿즈 보기 버튼 보이기
                     }
                 }
 
@@ -142,7 +148,7 @@
                         </div>
                     </div>
                 </div>`;
-                    $('.comments').append(commentHtml);
+                    $('.comments').prepend(commentHtml);
                 });
             },
             error: function () {
