@@ -17,6 +17,8 @@ public class ItemOrderDto {
 
     private Long itemId;
 
+    private String showName;
+
     private String itemName;
 
     private Integer amount;
@@ -33,6 +35,7 @@ public class ItemOrderDto {
         return ItemOrderDto.builder()
                 .id(itemOrder.getId())
                 .itemName(itemOrder.getItem().getName())
+                .showName(itemOrder.getItem().getShowInfo().getTitle())
                 .userId(itemOrder.getUser().getId())
                 .itemId(itemOrder.getItem().getId())
                 .amount(itemOrder.getAmount())

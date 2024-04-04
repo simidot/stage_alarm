@@ -51,12 +51,12 @@ public class InitConfig {
         genres.add(Genre.builder().name("락/메탈").build());
         genres.add(Genre.builder().name("포크/트로트").build());
         genres.add(Genre.builder().name("내한공연").build());
-        genres.add(Genre.builder().name("그 외 장르").build());
         genres.add(Genre.builder().name("팝").build());
         genres.add(Genre.builder().name("클래식").build());
         genres.add(Genre.builder().name("재즈").build());
         genres.add(Genre.builder().name("케이팝").build());
         genres.add(Genre.builder().name("댄스/일렉트로닉").build());
+        genres.add(Genre.builder().name("그 외 장르").build());
 
         // 장르 저장
         genreRepository.saveAll(genres);

@@ -104,7 +104,7 @@ public class ShowInfoService {
             }
         }
         ShowInfo finalSaved = showInfoRepository.save(saved);
-        alertService.createAlert(saved.getId());
+        alertService.createAlert(finalSaved.getId());
 
         return ShowInfoResponseDto.fromEntity(finalSaved, userEntity);
     }

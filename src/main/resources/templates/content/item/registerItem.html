@@ -62,7 +62,7 @@
     $("#itemImage").on("change", function(){
         const fileInput = $("#itemImage")[0];
         const files = fileInput.files;
-        const reg = /(.*?)\.(jpg|bmp|jpeg|png|JPG|BMP|JPEG|PNG)$/;
+        const reg = /(.*?)\.(jpg|bmp|jpeg|png|jfif|JPG|BMP|JPEG|PNG|JFIF)$/;
         const maxSize = 5 * 1024 * 1024;
 
         // var file = event.target.files[0];
@@ -160,14 +160,14 @@
                 alert("이미지 파일을 선택해주세요.");
                 return false;
             }
-
+            const showInfoId = document.querySelector("input[name='showInfo_id']").value
             // 이미지외 다른 데이터
             const ItemData = {
                 name: itemName,
                 content: itemDescription,
                 price: itemPrice,
                 amount: itemAmount,
-                showInfoId: document.querySelector("input[name='showInfo_id']").value
+                showInfoId: showInfoId
             };
 
             formData.append('dto', new Blob([JSON.stringify(ItemData)], { type: 'application/json' }));
@@ -183,11 +183,17 @@
                 success: function(response) {
                     console.log('아이템 등록 성공:', response);
                     alert('아이템이 성공적으로 등록되었습니다.');
-                    window.location.href = '/'; // 성공 후 리다이렉트될 URL
+                    // 현재 페이지에서 이전 페이지로 돌아가기
+                    window.location.href = '/showItems/' + showInfoId;
                 },
                 error: function(xhr, status, error) {
                     console.error('아이템 등록 실패:', xhr.responseText);
-                    alert('아이템 등록에 실패했습니다. 다시 시도해주세요.');
+                    if(xhr.status === 403){
+                        alert('아이템 등록권한이 없습니다.');
+                    }
+                    else {
+                        alert('아이템 등록에 실패했습니다. 다시 시도해주세요.');
+                    }
                 }
             });
         });
