@@ -3,11 +3,13 @@ package com.example.stagealarm.order.controller;
 import com.example.stagealarm.order.dto.ItemOrderDto;
 import com.example.stagealarm.order.service.OrderService;
 import com.example.stagealarm.toss.dto.PaymentCancelDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Order 컨트롤러", description = "Order API입니다.")
 @RestController
 @RequestMapping("orders")
 @RequiredArgsConstructor

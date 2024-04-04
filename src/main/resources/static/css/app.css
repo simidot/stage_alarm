@@ -85,3 +85,8 @@
 .sub-menu {
     font-size: 17px;
 }
+
+.required {
+    color: red;
+    margin-left: 5px; /* 별표와 입력 필드 사이 간격 조절 */
+}

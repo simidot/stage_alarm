@@ -2,10 +2,12 @@ package com.example.stagealarm.board.controller;
 
 import com.example.stagealarm.board.dto.BoardCommentDto;
 import com.example.stagealarm.board.service.BoardCommentService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "BoardComment 컨트롤러", description = "BoardComment API입니다.")
 @Slf4j
 @RestController
 @RequestMapping("/comments")
