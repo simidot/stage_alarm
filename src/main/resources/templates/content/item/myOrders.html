@@ -70,7 +70,7 @@
 <script>
     $(document).ready(function() {
         $.ajax({
-            url: '/orders/my', // 주문 목록을 불러올 URL
+            url: '/myOrder', // 주문 목록을 불러올 URL
             type: 'GET',
             success: function(orders) {
                 let orderList = $('#orderList');

@@ -61,7 +61,9 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/board/rewriting/{boardId}", "/comments/rewriting/{commentId}").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/user", "/board/trash/{boardId}", "/comments/trash/{commentId}").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/user", "/user/change-password").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/orders/my", "/orders/{id}/payment").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/orders/{id}/payment", "/user").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/myOrder").authenticated()
+
 
                         // 비로그인 사용자 권한 경로
                         .requestMatchers(HttpMethod.POST, "/user/login", "/user", "/user/email-check", "/user/email-auth", "/user/email-findId", "/user/loginId-check", "/find/loginId", "/user/signup").permitAll()
