@@ -86,6 +86,10 @@ $(document).ready(function () {
         },
         error: function(xhr, status, error) {
             console.error('Failed to load artists: ', error);
+            if (xhr.status === 403) {
+                alert("권한이 없습니다.");
+                window.history.back();
+            }
         }
     });
 
@@ -122,6 +126,10 @@ $(document).ready(function () {
         },
         error: function(xhr, status, error) {
             console.error('Failed to load artists: ', error);
+            if (xhr.status === 403) {
+                alert("권한이 없습니다.");
+                window.history.back();
+            }
         }
     });
 });
@@ -230,7 +238,11 @@ $('#addNewArtistBtn').click(function() {
 
         },
         error: function (xhr, status, error) {
-            console.error('Failed to load artists: ', error);
+            console.error('Failed to add artists: ', error);
+            if (xhr.status === 403) {
+                alert("권한이 없습니다.");
+                window.history.back();
+            }
         }
     });
 });
@@ -275,6 +287,10 @@ $('#showInfoForm').on('submit', function (e) {
         error: function (xhr, status, error) {
             console.log('공연정보 등록 실패 : ', xhr.responseText);
             alert('공연정보 등록에 실패했습니다. 다시 시도해주세요. ');
+            if (xhr.status === 403) {
+                alert("권한이 없습니다.");
+                window.history.back();
+            }
         }
     })
 });
