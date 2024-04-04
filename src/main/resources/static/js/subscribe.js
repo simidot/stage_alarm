@@ -1,6 +1,20 @@
 $(document).ready(function () {
+
     fetchArtists(0);
     fetchGenres();
+
+    let previousState = null;
+
+    window.addEventListener('popstate', function(event) {
+        if (event.state !== null) {
+            // 이전 상태가 존재하면 해당 상태로 복원하여 검색 결과 다시 렌더링
+            renderArtists(event.state.data);
+            renderPagination(event.state.data);
+        } else {
+            window.history.back();
+        }
+    });
+
 
     $('#search-input').on('submit', function (e) {
         e.preventDefault();
@@ -19,7 +33,6 @@ $(document).ready(function () {
     $(document).on('click', '.genre-subscribe-btn', handleGenreSubscribeButtonClick);
 
     let artistFilledTemplate = null;
-    let previousState = null;
     function fetchArtists(page){
     const size = 9;
     $.ajax({
@@ -35,21 +48,21 @@ $(document).ready(function () {
             // 페이지네이션 생성
             renderPagination(data);
 
-            previousState = data;
-            // 페이지 이동 후 브라우저 히스토리에 상태 추가
-            const newUrl = '/subscribe'; // 새로운 페이지 URL
-            window.history.pushState({ path: newUrl }, '', newUrl);
-
-            // 뒤로가기 버튼 이벤트 리스너 등록
-            window.onpopstate = function (event) {
-                if (previousState) {
-                    renderArtists(previousState);
-                    renderPagination(previousState);
-                }
+            // 초기 상태는 검색하지 않은 상태로 설정
+            previousState = {
+                searchParam: null,
+                pagination: page,
+                data: data
             };
+            // 초기 상태를 브라우저 히스토리에 추가
+            window.history.pushState(previousState, '', window.location.pathname);
         },
         error: function(xhr, status, error) {
             console.error("아티스트 AJAX 요청 실패: ", status, error);
+            if (xhr.status === 403) {
+                alert("권한이 없습니다.");
+                window.history.back();
+            }
         }
     });
 }
@@ -65,21 +78,26 @@ $(document).ready(function () {
                 "size": size
             },
             success: function (data) {
-                console.log("fetchData : ",data.content.toString());
+                console.log("fetchData : ", JSON.stringify(data));
                 renderArtists(data);
                 renderPagination(data);
                 // 페이지 이동 후 브라우저 히스토리에 상태 추가
-                const newUrl = '/subscribe'; // 새로운 페이지 URL
-                window.history.pushState({ path: newUrl }, '', newUrl);
-
-                // 뒤로가기 버튼 이벤트 리스너 등록
-                window.onpopstate = function (event) {
-                    fetchArtists(0);
-                    fetchGenres();
+                previousState = {
+                    searchParam: null,
+                    pagination: page,
+                    data: data
                 };
+                // 초기 상태를 브라우저 히스토리에 추가
+                window.history.pushState(previousState, '', window.location.pathname);
+                console.log("history: ", history.state.data);
+
             },
             error: function (xhr, status, error) {
                 console.error("검색 AJAX 요청 실패: ", status, error);
+                if (xhr.status === 403) {
+                    alert("권한이 없습니다.");
+                    window.history.back();
+                }
             }
         });
     }
@@ -93,6 +111,10 @@ function fetchGenres() {
         },
         error: function (xhr, status, error) {
             console.error("장르 AJAX 요청 실패: ", status, error);
+            if (xhr.status === 403) {
+                alert("권한이 없습니다.");
+                window.history.back();
+            }
         }
     });
 }
@@ -257,6 +279,10 @@ function handleLikeButtonClick() {
         },
         error: function (xhr, status, error) {
             console.error("아티스트 좋아요 AJAX 요청 실패: ", status, error);
+            if (xhr.status === 403) {
+                alert("권한이 없습니다.");
+                window.history.back();
+            }
         },
     });
 }
@@ -285,6 +311,10 @@ function handleArtistSubscribeButtonClick() {
         },
         error: function (xhr, status, error) {
             console.error("아티스트 구독 AJAX 요청 실패: ", status, error);
+            if (xhr.status === 403) {
+                alert("권한이 없습니다.");
+                window.history.back();
+            }
         }
     });
 }
@@ -313,7 +343,14 @@ function handleArtistSubscribeButtonClick() {
             },
             error: function (xhr, status, error) {
                 console.error("AJAX 요청 실패: ", status, error);
+                if (xhr.status === 403) {
+                    alert("권한이 없습니다.");
+                    window.history.back();
+                }
             }
         });
     }
+
+
 });
+

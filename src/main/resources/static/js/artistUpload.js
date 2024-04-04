@@ -63,6 +63,10 @@ $(document).ready(function () {
         },
         error: function (xhr, status, error) {
             console.error('Failed to load artists: ', error);
+            if (xhr.status === 403) {
+                alert("권한이 없습니다.");
+                window.history.back();
+            }
         }
     });
 });
@@ -155,6 +159,10 @@ $('#artistForm').on('submit', function(e) {
         error: function (xhr, status, error) {
             console.log('아티스트 등록 실패:', xhr.responseText);
             alert('아티스트 등록에 실패하였습니다. 다시 시도해주세요.');
+            if (xhr.status === 403) {
+                alert("권한이 없습니다.");
+                window.history.back();
+            }
         }
     })
 });
