@@ -63,6 +63,7 @@
             error: function(xhr, textStatus, error) {
                 if (xhr.status === 403) {
                     alert("권한이 없습니다.");
+                    console.log(xhr.status);
                     window.history.back();
                 } else {
                     console.error("오류: " + textStatus + ": " + error);

@@ -72,7 +72,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
         }
         // 5. 다음 필터 호출
-        // doFilter를 호출하지 않으면 Controller까지 요청이 도달하지 못한다.
+        // doFilter 를 호출하지 않으면 Controller 까지 요청이 도달하지 못한다.
         filterChain.doFilter(request, response);
     }
 }

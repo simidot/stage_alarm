@@ -11,7 +11,7 @@ import java.util.List;
 
 @Tag(name = "Order 컨트롤러", description = "Order API입니다.")
 @RestController
-@RequestMapping("orders")
+@RequestMapping
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService service;
@@ -23,7 +23,7 @@ public class OrderController {
     }
 
     // 아이디로 주문 찾기
-    @GetMapping("{id}")
+    @GetMapping("/orders/{id}")
     public ItemOrderDto readOne(
             @PathVariable("id")
             Long id
@@ -32,14 +32,14 @@ public class OrderController {
     }
 
     // 내 주문 찾기
-    @GetMapping("my")
+    @GetMapping("myOrder")
     public List<ItemOrderDto> readAllByUser(
     ){
         return service.searAllByUserId();
     }
 
 
-    @GetMapping("{id}/payment")
+    @GetMapping("/orders/{id}/payment")
     public Object readTossPayment(
             @PathVariable("id")
             Long id
@@ -48,7 +48,7 @@ public class OrderController {
     }
 
     // 주문취소 하기
-    @PostMapping("{id}/cancel")
+    @PostMapping("/orders/{id}/cancel")
     public Object cancelPayment(
             @PathVariable("id")
             Long id,
