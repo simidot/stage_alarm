@@ -61,9 +61,6 @@ spring:
               - profile_image
               - account_email
 
-
-
-
   datasource:
     url: jdbc:sqlite:db.sqlite
     driver-class-name: org.sqlite.JDBC
@@ -95,7 +92,6 @@ spring:
           starttls:
             enable: true
     protocol: smtp
-
 
   data:
     redis:
@@ -129,3 +125,7 @@ cloud:
 
 toss:
   secret: test_sk_ma60RZblrq7kNdB1Z70x3wzYWBn1
+
+springdoc:
+  swagger-ui:
+    path: /swagger
