@@ -193,6 +193,10 @@
                             <p class="card-text">${showInfo.date}</p>
                             <a href="shows/${showInfo.id}" class="btn btn-primary">상세보기</a>
                         </div>
+                        <div class="card-footer d-flex mt-2 justify-content-between">
+                            <img class="liked" src="${showInfo.isLiked === true ? '/images/like.png' : '/images/unlike.png'}" style="width: 30px; height: 30px" alt="">
+                            <p class="card-text"> ${showInfo.totalLike}</p>
+                        </div>
                     </div>
                 </div>`;
 
