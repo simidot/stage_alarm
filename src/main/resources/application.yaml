@@ -72,7 +72,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     database-platform: org.hibernate.community.dialect.SQLiteDialect
     show-sql: true
 
@@ -117,7 +117,7 @@ thymeleaf:
 cloud:
   aws:
     s3:
-      bucket:
+      bucket: stage-alarm
     credentials:
       access-key:
       secret-key:

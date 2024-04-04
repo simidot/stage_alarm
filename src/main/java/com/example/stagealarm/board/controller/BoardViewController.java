@@ -42,8 +42,10 @@ public class BoardViewController {
 
   @GetMapping("/rewriting/{boardId}")
   public String rewriteBoardView(
-      @PathVariable("boardId") Long boardId
+      @PathVariable("boardId") Long boardId,
+      Model model
   ) {
+    model.addAttribute("boardId", boardId);
     return "content/board/rewrite";
   }
 }

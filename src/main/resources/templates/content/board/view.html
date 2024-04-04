@@ -89,8 +89,8 @@
   </div>
   <div class="edit-button-container">
     <button id="write-button" class="btn btn-primary mt-2 mr-2">글쓰기</button>
-    <button id="update-button" class="btn btn-primary mt-2 mr-2">수정</button>
-    <button id="delete-button" class="btn btn-primary mt-2">삭제</button>
+    <button id="update-button" class="btn btn-secondary mr-2">수정</button>
+    <button id="delete-button" class="btn btn-secondary mr-2">삭제</button>
   </div>
 </main>
 </body>
@@ -129,7 +129,6 @@
                         <div>
                           <p>${data.content}</p>
                         </div>
-                        <hr>
                         <hr>
                     `;
 
@@ -179,18 +178,33 @@
 
     // 글쓰기 버튼 클릭 이벤트
     $('#write-button').click(function () {
+      const token = localStorage.getItem('jwtToken');
+      if (token === null) {
+        alert('로그인이 필요합니다.')
+        return;
+      }
+
       window.location.href = '/boards/write';
     })
 
     // 수정 버튼 클릭 이벤트
     $('#update-button').click(function () {
+      const token = localStorage.getItem('jwtToken');
+      if (token === null) {
+        alert('로그인이 필요합니다.')
+        return;
+      }
+
       window.location.href = `/boards/rewriting/${boardId}`;
     })
 
     // 삭제 버튼 클릭 이벤트
     $('#delete-button').click(function () {
-
-      console.log(categoryId)
+      const token = localStorage.getItem('jwtToken');
+      if (token === null) {
+        alert('로그인이 필요합니다.')
+        return;
+      }
 
       $.ajax({
         url: `/board/trash/${boardId}`,

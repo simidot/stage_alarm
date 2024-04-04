@@ -193,3 +193,91 @@ function deleteComment(commentId) {
     }
   });
 }
+
+// 페이지 로드 시 기존 데이터 가져오기
+/*async function fetchPostData(boardId) {
+  let existingImageInfos = [];
+
+  // Promise를 반환하는 새로운 함수 정의
+  const fetchData = () => {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        url: `/board/detail/${boardId}`,
+        type: 'GET',
+        success: function(response) {
+          // 이미지 미리보기 생성 및 기존 이미지 정보 저장
+          response.imageList.forEach(function(image) {
+            const imageUrlParts = image.imgUrl.split('/'); // URL을 '/'로 분할
+            const imageName = imageUrlParts[imageUrlParts.length - 1]; // 마지막 부분을 추출
+            existingImageInfos.push(imageName); // 배열에 저장
+          });
+          resolve(existingImageInfos); // 비동기 처리 완료 후 existingImageInfos 반환
+        },
+        error: function(xhr, status, error) {
+          reject(error); // 오류 발생 시 오류를 reject
+        }
+      });
+    });
+  };
+
+  try {
+    // fetchData 함수가 Promise를 반환하므로 await로 비동기 처리의 완료를 기다림
+    return await fetchData(); // 비동기 처리가 완료된 후 결과 반환
+  } catch(error) {
+    console.error("An error occurred:", error);
+    return []; // 오류 발생 시 빈 배열 반환
+  }
+}*/
+
+// 기존 이미지 미리보기 및 삭제 이벤트 리스너 설정 함수
+function setupExistingImagePreviewAndDelete(imageUrl) {
+  const preview = document.getElementById('image-preview');
+  const imageUrlParts = imageUrl.split('/');
+  const imageName = imageUrlParts[imageUrlParts.length - 1];
+  const imgId = "existing-img-" + imageName.replace(/[^a-zA-Z0-9]/g, ''); // 파일 이름을 이용해 고유 ID 생성 및 특수문자 제거
+  const imgElement = `<div id="${imgId}" class="img-container"><img src="${imageUrl}" alt="Image preview"><button class="delete-img-btn">X</button></div>`; // 전체 URL을 src 속성에 사용
+  preview.insertAdjacentHTML('beforeend', imgElement);
+
+  // 기존 이미지 삭제 버튼 이벤트 리스너 추가
+  document.getElementById(imgId).querySelector('.delete-img-btn').addEventListener('click', function() {
+    document.getElementById(imgId).remove();
+    // existingImageArr에서 해당 이미지 URL 삭제
+    existingImageArr = existingImageArr.filter(e => e !== imageUrl);
+  });
+}
+
+// 기존 이미지 정보를 가져오는 함수 수정
+async function fetchPostData(boardId) {
+  let existingImageUrls = []; // 이미지 URL을 저장할 배열
+
+  const fetchData = () => {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        url: `/board/detail/${boardId}`,
+        type: 'GET',
+        success: function(response) {
+          // 제목, 카테고리, 내용 필드 채우기
+          $('#title-input').val(response.title);
+          $('#board-type').val(response.categoryId);
+          $('.input-container').val(response.content);
+
+          // 이미지를 existingImageUrls 배열에 넣기
+          response.imageList.forEach(function(image) {
+            existingImageUrls.push(image.imgUrl); // 전체 이미지 URL을 배열에 추가
+          });
+          resolve(existingImageUrls);
+        },
+        error: function(xhr, status, error) {
+          reject(error);
+        }
+      });
+    });
+  };
+
+  try {
+    return await fetchData();
+  } catch(error) {
+    console.error("An error occurred:", error);
+    return [];
+  }
+}
