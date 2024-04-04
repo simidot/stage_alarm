@@ -54,7 +54,10 @@ function loadData(pageNumber, sortParam) {
       }
     },
     error: function(xhr, status, error) {
-      console.error("요청 실패: ", status, error);
+      if (xhr.status === 403) {
+        alert("권한이 없습니다.");
+        window.history.back();
+      }
     }
   })
 }
@@ -162,7 +165,10 @@ function saveEditedComment(commentId) {
       commentActionsElement.style.display = 'block';
     },
     error: function(xhr, status, error) {
-      console.error('댓글 작성 실패:', status, error);
+      if (xhr.status === 403) {
+        alert("권한이 없습니다.");
+        window.history.back();
+      }
     }
   });
 }
@@ -188,46 +194,13 @@ function deleteComment(commentId) {
     },
     error: function(xhr, status, error) {
       // 요청이 실패했을 때 실행할 코드
-      console.error('댓글 삭제 실패', status, error);
-      alert('댓글 삭제에 실패하였습니다.');
+      if (xhr.status === 403) {
+        alert("권한이 없습니다.");
+        window.history.back();
+      }
     }
   });
 }
-
-// 페이지 로드 시 기존 데이터 가져오기
-/*async function fetchPostData(boardId) {
-  let existingImageInfos = [];
-
-  // Promise를 반환하는 새로운 함수 정의
-  const fetchData = () => {
-    return new Promise((resolve, reject) => {
-      $.ajax({
-        url: `/board/detail/${boardId}`,
-        type: 'GET',
-        success: function(response) {
-          // 이미지 미리보기 생성 및 기존 이미지 정보 저장
-          response.imageList.forEach(function(image) {
-            const imageUrlParts = image.imgUrl.split('/'); // URL을 '/'로 분할
-            const imageName = imageUrlParts[imageUrlParts.length - 1]; // 마지막 부분을 추출
-            existingImageInfos.push(imageName); // 배열에 저장
-          });
-          resolve(existingImageInfos); // 비동기 처리 완료 후 existingImageInfos 반환
-        },
-        error: function(xhr, status, error) {
-          reject(error); // 오류 발생 시 오류를 reject
-        }
-      });
-    });
-  };
-
-  try {
-    // fetchData 함수가 Promise를 반환하므로 await로 비동기 처리의 완료를 기다림
-    return await fetchData(); // 비동기 처리가 완료된 후 결과 반환
-  } catch(error) {
-    console.error("An error occurred:", error);
-    return []; // 오류 발생 시 빈 배열 반환
-  }
-}*/
 
 // 기존 이미지 미리보기 및 삭제 이벤트 리스너 설정 함수
 function setupExistingImagePreviewAndDelete(imageUrl) {
@@ -268,7 +241,10 @@ async function fetchPostData(boardId) {
           resolve(existingImageUrls);
         },
         error: function(xhr, status, error) {
-          reject(error);
+          if (xhr.status === 403) {
+            alert("권한이 없습니다.");
+            window.history.back();
+          }
         }
       });
     });

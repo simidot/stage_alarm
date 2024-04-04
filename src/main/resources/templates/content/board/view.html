@@ -166,13 +166,19 @@
               addCommentToPage(response);
             },
             error: function(xhr, status, error) {
-              console.error('댓글 작성 실패:', status, error);
+              if (xhr.status === 403) {
+                alert("권한이 없습니다.");
+                window.history.back();
+              }
             }
           });
         });
       },
       error: function (xhr, status, error) {
-        console.error("요청 실패: ", status, error);
+        if (xhr.status === 403) {
+          alert("권한이 없습니다.");
+          window.history.back();
+        }
       }
     });
 
@@ -214,7 +220,10 @@
           window.location.href = `/boards/${categoryId}`
         },
         error: function(xhr, status, error) {
-          console.error('게시글 작성 실패:', status, error);
+          if (xhr.status === 403) {
+            alert("권한이 없습니다.");
+            window.history.back();
+          }
         }
       })
     })
