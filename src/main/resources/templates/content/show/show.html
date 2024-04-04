@@ -151,8 +151,11 @@
                     $('.comments').prepend(commentHtml);
                 });
             },
-            error: function () {
-                console.error("Ajax 요청 실패")
+            error: function (xhr) {
+                if (xhr.status === 403) {
+                    alert("권한이 없습니다.");
+                    window.history.back();
+                }
             }
         });
 
@@ -175,7 +178,10 @@
                         window.location.href = "/shows"
                     },
                     error: function (xhr, status, error) {
-                        console.error("공연정보 삭제 실패.", error);
+                        if (xhr.status === 403) {
+                            alert("권한이 없습니다.");
+                            window.history.back();
+                        }
                     }
                 });
             }
@@ -228,8 +234,10 @@
                     }
                 },
                 error: function (xhr, status, error) {
-                    // 요청이 실패했을 때의 처리
-                    console.error("AJAX 요청 실패:", status, error);
+                    if (xhr.status === 403) {
+                        alert("권한이 없습니다.");
+                        window.history.back();
+                    }
                 }
             });
 

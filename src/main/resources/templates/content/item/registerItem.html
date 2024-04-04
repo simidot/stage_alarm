@@ -184,6 +184,7 @@
                     console.log('아이템 등록 성공:', response);
                     alert("아이템을 성공적으로 등록하였습니다.")
                     location.href = "/showItems/" + showInfoId;
+
                 },
                 error: function(xhr, status, error) {
                     console.error('아이템 등록 실패:', xhr.responseText);
