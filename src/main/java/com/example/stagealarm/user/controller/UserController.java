@@ -6,6 +6,7 @@ import com.example.stagealarm.jwt.JwtResponseDto;
 import com.example.stagealarm.user.dto.PasswordDto;
 import com.example.stagealarm.user.dto.UserDto;
 import com.example.stagealarm.user.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name="User 컨트롤러", description = "User API입니다")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
