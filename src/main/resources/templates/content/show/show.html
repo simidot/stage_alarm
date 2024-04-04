@@ -60,7 +60,7 @@
                     </div>
                 </div>
             </div>`;
-            $('.comments').prepend(commentHtml);
+            $('.comments').append(commentHtml);
 
             // 댓글 개수 업데이트
             // commentCount++;
@@ -142,7 +142,7 @@
                         </div>
                     </div>
                 </div>`;
-                    $('.comments').append(commentHtml);
+                    $('.comments').prepend(commentHtml);
                 });
             },
             error: function () {
