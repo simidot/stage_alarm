@@ -28,8 +28,8 @@
       }
 
       .board-image {
-        overflow-x: auto;
-        white-space: nowrap;
+          overflow-x: auto;
+          white-space: nowrap;
       }
 
       .board-image img {
@@ -44,8 +44,10 @@
           margin-bottom: 10px;
       }
 
-      .enroll-button-container {
+      .edit-button-container {
           margin-top: 10px;
+          display: flex;
+          margin-right: 10px;
       }
 
       .enroll-button {
@@ -85,96 +87,136 @@
       </div>
     </div>
   </div>
-  <div class="enroll-button-container">
-    <button id="write-button" class="btn btn-primary mt-2">글쓰기</button>
+  <div class="edit-button-container">
+    <button id="write-button" class="btn btn-primary mt-2 mr-2">글쓰기</button>
+    <button id="update-button" class="btn btn-secondary mr-2">수정</button>
+    <button id="delete-button" class="btn btn-secondary mr-2">삭제</button>
   </div>
 </main>
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script th:inline="javascript">
+  $(document).ready(function () {
     const boardId = getPathParam(3);
+    const categoryId = [[${categoryId}]];
 
-    $(document).ready(function () {
-        // 게시판 내용 불러오기
-        $.ajax({
-            url: `/board/detail/${boardId}`,
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (data) {
-                // 게시물 헤더 생성
-                const boardHeader = `
+    // 게시판 내용 불러오기
+    $.ajax({
+      url: `/board/detail/${boardId}`,
+      type: 'GET',
+      contentType: 'application/json',
+      success: function (data) {
+        // 게시물 헤더 생성
+        const boardHeader = `
                   <h2>${data.title}</h2>
                   <p>${data.loginId}</p>
                   <hr>
                 `;
 
-                // imageList가 있을 경우 실행
-                if (data.imageList.length > 0) {
-                    let imageHtml = `<div class="image-container">`;
-                    data.imageList.forEach(image => {
-                        imageHtml += `<img src="${image.imgUrl}" alt="Board Image" style="max-width:400px; max-height: 500px;">`;
-                    });
-                    imageHtml += `</div>`;
+        // imageList가 있을 경우 실행
+        if (data.imageList.length > 0) {
+          let imageHtml = `<div class="image-container">`;
+          data.imageList.forEach(image => {
+            imageHtml += `<img src="${image.imgUrl}" alt="Board Image" style="max-width:400px; max-height: 500px;">`;
+          });
+          imageHtml += `</div>`;
 
-                    $('.board-image').append(imageHtml);
-                }
+          $('.board-image').append(imageHtml);
+        }
 
-                // 텍스트 컨텐츠 생성
-                const boardBody = `
+        // 텍스트 컨텐츠 생성
+        const boardBody = `
                         <div>
                           <p>${data.content}</p>
                         </div>
                         <hr>
-                        <hr>
                     `;
 
-                $('.board-header').append(boardHeader);
-                $('.board-body').append(boardBody);
+        $('.board-header').append(boardHeader);
+        $('.board-body').append(boardBody);
 
-              // 댓글 컨텐츠 생성
-              const commentsHtml = displayComments(data.commentList, boardId);
-              $('.comments-section').append(commentsHtml);
+        // 댓글 컨텐츠 생성
+        const commentsHtml = displayComments(data.commentList, boardId);
+        $('.comments-section').append(commentsHtml);
 
-              // 댓글 작성 버튼 클릭 이벤트
-              $('.enroll-button').click(function() {
-                // 댓글 내용 가져오기
-                const commentContent = $('.input-container').val();
-                // 댓글 공간 확인
-                if (!commentContent.trim()) {
-                  alert('댓글 내용을 입력해주세요.');
-                  return;
-                }
+        // 댓글 작성 버튼 클릭 이벤트
+        $('.enroll-button').click(function() {
+          // 댓글 내용 가져오기
+          const commentContent = $('.input-container').val();
+          // 댓글 공간 확인
+          if (!commentContent.trim()) {
+            alert('댓글 내용을 입력해주세요.');
+            return;
+          }
 
-                // 댓글 데이터를 JSON 객체로 생성
-                const commentData = {
-                  content: commentContent
-                };
+          // 댓글 데이터를 JSON 객체로 생성
+          const commentData = {
+            content: commentContent
+          };
 
-                // 댓글 데이터를 서버로 전송
-                $.ajax({
-                  url: `/comments/${boardId}`,
-                  type: 'POST',
-                  contentType: 'application/json',
-                  data: JSON.stringify(commentData),
-                  success: function(response) {
-                    $('.input-container').val('');
-                    // 새 댓글을 페이지에 추가
-                    addCommentToPage(response);
-                  },
-                  error: function(xhr, status, error) {
-                    console.error('댓글 작성 실패:', status, error);
-                  }
-                });
-              });
+          // 댓글 데이터를 서버로 전송
+          $.ajax({
+            url: `/comments/${boardId}`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(commentData),
+            success: function(response) {
+              $('.input-container').val('');
+              // 새 댓글을 페이지에 추가
+              addCommentToPage(response);
             },
-            error: function (xhr, status, error) {
-                console.error("요청 실패: ", status, error);
+            error: function(xhr, status, error) {
+              console.error('댓글 작성 실패:', status, error);
             }
+          });
         });
-
-      // 글쓰기 버튼 클릭 이벤트
-      $('#write-button').click(function () {
-        window.location.href = '/boards/write';
-      })
+      },
+      error: function (xhr, status, error) {
+        console.error("요청 실패: ", status, error);
+      }
     });
+
+    // 글쓰기 버튼 클릭 이벤트
+    $('#write-button').click(function () {
+      const token = localStorage.getItem('jwtToken');
+      if (token === null) {
+        alert('로그인이 필요합니다.')
+        return;
+      }
+
+      window.location.href = '/boards/write';
+    })
+
+    // 수정 버튼 클릭 이벤트
+    $('#update-button').click(function () {
+      const token = localStorage.getItem('jwtToken');
+      if (token === null) {
+        alert('로그인이 필요합니다.')
+        return;
+      }
+
+      window.location.href = `/boards/rewriting/${boardId}`;
+    })
+
+    // 삭제 버튼 클릭 이벤트
+    $('#delete-button').click(function () {
+      const token = localStorage.getItem('jwtToken');
+      if (token === null) {
+        alert('로그인이 필요합니다.')
+        return;
+      }
+
+      $.ajax({
+        url: `/board/trash/${boardId}`,
+        type: 'DELETE',
+        success: function (response) {
+          alert('게시글이 삭제되었습니다.')
+          window.location.href = `/boards/${categoryId}`
+        },
+        error: function(xhr, status, error) {
+          console.error('게시글 작성 실패:', status, error);
+        }
+      })
+    })
+  });
 </script>

@@ -1,0 +1,97 @@
+.write-header-container {
+    display: flex;
+}
+
+.input-container {
+    resize: none;
+    width: 100%; /* textarea의 너비를 조정 */
+    margin-bottom: 10px;
+}
+
+#image-upload {
+    display: none;
+}
+
+.image-upload-label {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+.image-upload-label i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px; /* 십자가 아이콘 크기 */
+}
+
+#image-preview img {
+    width: 100px; /* 미리보기 이미지 크기 */
+    height: 100px;
+    border-radius: 10px;
+}
+
+.title-wrap {
+    display: flex; /* flexbox를 사용하여 내부 요소들을 가로로 정렬 */
+    gap: 20px; /* 버튼과 입력 필드 사이의 간격 */
+    padding: 10px; /* 박스 내부의 여백 */
+    border: 1px solid #ccc; /* 박스 주위의 경계선 */
+    border-radius: 5px; /* 박스의 모서리를 둥글게 */
+    align-items: center; /* 내부 요소들을 세로 중앙에 정렬 */
+    margin-bottom: 10px; /* 박스 아래 여백 */
+}
+
+.write-header-container {
+    display: flex;
+    justify-content: space-between; /* h3와 버튼을 양끝으로 분리 */
+}
+
+.input-container {
+    resize: none;
+    width: 100%; /* textarea의 너비를 조정 */
+    min-height: 500px;
+    margin-bottom: 10px;
+}
+
+#image-preview {
+    display: flex; /* Flex 컨테이너로 설정 */
+    flex-wrap: wrap; /* 이미지가 많아질 경우 다음 줄로 넘어가도록 */
+    gap: 10px; /* 이미지 사이의 간격 */
+}
+
+#image-preview img {
+    width: 100px; /* 미리보기 이미지 크기 */
+    height: 100px;
+    border-radius: 10px;
+}
+
+#title-input {
+    width: 500px;
+}
+
+.img-container {
+    position: relative;
+    display: inline-block;
+}
+.img-container img {
+    width: 100px; /* 이미지 크기 조정 */
+    height: auto;
+}
+.delete-img-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: none;
+    border-radius: 50%; /* 버튼을 동그랗게 만듦 */
+    width: 25px;
+    height: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: rgb(128, 128, 128); /* 배경색 */
+    color: white; /* 글자색 */
+}
