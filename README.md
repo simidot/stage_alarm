@@ -1179,8 +1179,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
 ## 📑 그 외 참고자료
 
-[Notion 팀 페이지]()  
-[구글 Docs]()  
-[Figma]()
+[Notion 팀 페이지](https://www.notion.so/likelion/2-b4ae698de11c4901950888a6ee4e8276)  
+[구글 Docs](https://docs.google.com/spreadsheets/d/1WacFNxTyaTTMJUTAr5o31jfDy5gTPPctyxTsqtqr4E4/edit#gid=1882734205)  
+[Figma](https://www.figma.com/file/30qML24bA9FAcJKJfDpdWA/Untitled?type=design&node-id=0-1&mode=design&t=BBJQwYdkh4aKToZn-0)
 
 
