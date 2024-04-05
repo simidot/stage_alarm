@@ -39,10 +39,10 @@
   <p>⚒️ ETC</p>
     <img src="https://img.shields.io/badge/AWS S3-569A31?style=flat-square&logo=amazon s3&logoColor=white"/>
     <img src="https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white"/>
-    <img src="https://img.shields.io/badge/Jakarta Mail-F06B66?style=flat-square&logo=[아이콘명]&logoColor=white"/>
+    <img src="https://img.shields.io/badge/Jakarta Mail-F06B66?style=flat-square&logo=jakartamail&logoColor=white"/>
     <img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white"/>
     <img src="https://img.shields.io/badge/Swagger-85EA2D?style=flat-square&logo=swagger&logoColor=white"/>
-    <img src="https://img.shields.io/badge/Erdcloud-171C36?style=flat-square&logo=[아이콘명]&logoColor=white"/>
+    <img src="https://img.shields.io/badge/Erdcloud-171C36?style=flat-square&logo=erdcloud&logoColor=white"/>
     <img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white"/>
     <img src="https://img.shields.io/badge/Notion-000000?style=flat-square&logo=notion&logoColor=white"/>
     <img src="https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=figma&logoColor=white"/>
