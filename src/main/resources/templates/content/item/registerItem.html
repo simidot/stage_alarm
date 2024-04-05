@@ -16,8 +16,8 @@
 <main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
     <div class="main-container border rounded p-3 mt-2">
         <div class="py-5 text-center">
-            <h2>아이템 등록하기</h2>
-            <p class="lead">새로운 아이템을 등록해보세요!</p>
+            <h2>굳즈 등록하기</h2>
+            <p class="lead">새로운 굳즈을 등록해보세요!</p>
         </div>
 
         <div class="row">
@@ -25,33 +25,33 @@
                 <h4 class="mb-3">아이템 정보 입력</h4>
                 <form id="itemRegistrationForm" enctype="multipart/form-data">
                     <div class="mb-3">
-                        <label for="itemName">아이템 이름</label>
+                        <label for="itemName">아이템 이름 <span class="required">*</span></label>
                         <input type="text" class="form-control" id="itemName" name="itemName" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="itemDescription">설명</label>
+                        <label for="itemDescription">설명 <span class="required">*</span></label>
                         <textarea class="form-control" id="itemDescription" name="itemDescription" required></textarea>
                     </div>
 
                     <div class="mb-3">
-                        <label for="itemPrice">가격</label>
+                        <label for="itemPrice">가격 <span class="required">*</span></label>
                         <input type="number" class="form-control" id="itemPrice" name="itemPrice" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="itemAmount">수량</label>
+                        <label for="itemAmount">수량 <span class="required">*</span></label>
                         <input type="number" class="form-control" id="itemAmount" name="itemAmount" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="itemImage">아이템 이미지</label>
+                        <label for="itemImage">아이템 이미지 <span class="required">*</span></label>
                         <input class="form-control" type="file" id="itemImage" name="itemImage" accept="image/*" placeholder="아이템 이미지">
                         <div id="imageContainer"></div>
                     </div>
 
                     <hr class="mb-4">
-                    <button class="btn btn-primary btn-lg btn-block" type="submit">아이템 등록하기</button>
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">굳즈 등록하기</button>
                 </form>
             </div>
         </div>
@@ -182,9 +182,9 @@
                 processData: false,
                 success: function(response) {
                     console.log('아이템 등록 성공:', response);
-                    alert('아이템이 성공적으로 등록되었습니다.');
-                    // 현재 페이지에서 이전 페이지로 돌아가기
-                    window.location.href = '/showItems/' + showInfoId;
+                    alert("아이템을 성공적으로 등록하였습니다.")
+                    location.href = "/showItems/" + showInfoId;
+
                 },
                 error: function(xhr, status, error) {
                     console.error('아이템 등록 실패:', xhr.responseText);
