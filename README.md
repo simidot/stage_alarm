@@ -11,7 +11,7 @@
 
 | 소개 영상 |
 |:-----:|
-|   ![i5.gif](..%2F..%2FDownloads%2Fi5.gif)    |
+|   ![i5](https://github.com/TECHIT-TEAM-i5/stage_alarm/assets/128130163/fbd350a1-4eb7-470b-a8ee-5bd5a0ea5900)    |
 
 
 
