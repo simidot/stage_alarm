@@ -17,7 +17,7 @@
 `Stage-Alarm` 서비스의 매력에 빠져보세요!
 
 
-##  🚩Project (<- 프로젝트에 관련된 자료들 넣기, 이 워딩은 나중에 삭제)
+##  🚩Project
 
 <div align="center">
   <p>💾 BACKEND</p>
