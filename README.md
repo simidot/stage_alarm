@@ -169,12 +169,15 @@ http://localhost:8080/swagger-ui/index.html
    - 주문 조회 및 취소할 수 있다.
 ---
 
+<div align="center">
 
 ##  👩🏻‍💻🧑🏻‍💻 참여자
 
 | <img src="https://github.com/fish-minkyu/fish-minkyu/assets/128130163/05ef3683-4b2d-435c-8a07-c6712221f25b" width="120" height="160"/><br/>BE 강유신 <a href="https://github.com/simidot">GitHub</a> | <img src="https://github.com/fish-minkyu/fish-minkyu/assets/128130163/70201eec-be3a-4771-9b06-6b9a7aa2557e" width="120" height="160"/><br/>BE 권혁건 <a href="https://github.com/KwonHyeokGeon">GitHub</a> | <img src="https://github.com/fish-minkyu/fish-minkyu/assets/128130163/3f56f6a8-750f-440e-a27f-d619aa30cdbb" width="120" height="160"/><br/>BE 어민규 <a href="https://github.com/fish-minkyu">GitHub</a> | <img src="https://github.com/fish-minkyu/fish-minkyu/assets/128130163/2692556c-938d-4171-b798-8f0585f28452" width="120" height="160"/><br/>BE 이강선 <a href="https://github.com/joshiaLee">GitHub</a> |
 |:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
 |                                  <strong>팀장</strong> <br> &middot; 장르 CRUD <br> &middot; 아티스트CRUD <br> &middot; 프론트 <br> &middot; Amazon S3 <br> &middot; 이메일 알림                                  |                                                                       <strong>팀원</strong> <br> &middot;공연 CRUD <br> &middot; 프론트                                                                        |                                                                     <strong>팀원</strong> <br> &middot; 게시글 CRUD <br> &middot; 프론트                                                                      |                                             <strong>팀원</strong> <br> &middot; 회원가입 & 로그인 <br> &middot; 프론트 <br> &middot; Toss API <br> &middot; 이메일 인증                                              |
+
+</div>
 
 
 ##  ⚠️ 대표 트러블 슈팅
