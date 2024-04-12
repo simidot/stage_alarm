@@ -112,7 +112,7 @@ public class JwtTokenUtils {
         // 클라이언트에게 리프레시 토큰 ID를 쿠키로 전달
         Cookie refreshTokenCookie = new Cookie("refreshTokenId", refreshTokenId);
         refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setMaxAge(30); // 하루
+        refreshTokenCookie.setMaxAge(60*60*24); // 하루
         refreshTokenCookie.setPath("/"); // 쿠키의 경로를 모든 경로로 설정
 
         return refreshTokenCookie;
