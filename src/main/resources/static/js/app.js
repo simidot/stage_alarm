@@ -71,3 +71,29 @@ $.ajaxSetup({
         }
     }
 });
+
+
+// 리프레쉬토큰으로 토큰 재발급 코드
+function refreshToken(callback) {
+    // 쿠키에서 리프레시 토큰 ID 추출 및 서버에 전송하여 새 액세스 토큰 요청
+    $.ajax({
+        url: "/auth/refresh",
+        type: "POST",
+        beforeSend: null,  // 전역 beforeSend 설정을 무시
+        success: function(data) {
+            const token = data.token;
+            localStorage.setItem('jwtToken', token); // 새 토큰 저장
+            callback(); // 사용자 정보 재로딩
+        },
+        error: function(xhr) { // 리프레시도 만료
+
+            if (xhr.status === 403) {
+                console.error("403");
+                window.location.href = '/user/login'; // 로그인 페이지로 이동
+            } else {
+                console.error("오류 발생");
+                window.location.href = '/user/login'; // 로그인 페이지로 이동
+            }
+        }
+    });
+}
