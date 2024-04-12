@@ -92,8 +92,15 @@ public class OAuth2SuccessHandler
         jwtCookie.setSecure(true); // HTTPS를 통해서만 쿠키를 전송
         jwtCookie.setPath("/"); // 사이트 전역에서 쿠키 접근 가능
 
+        // 리프레쉬토큰(쿠키) 발급
+        Cookie refreshTokenCookie = tokenUtils.generateRefreshToken(details);
+
+
         // 응답에 쿠키 추가
         response.addCookie(jwtCookie);
+        response.addCookie(refreshTokenCookie);
+
+
         // oauthClient 는 JWT 를 처리할 클라이언트측 페이지를 연결해줌
         String redirectUrl = "http://localhost:8080/user/oauthClient";
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
