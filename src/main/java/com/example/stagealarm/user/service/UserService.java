@@ -11,7 +11,9 @@ import com.example.stagealarm.user.entity.UserEntity;
 import com.example.stagealarm.user.dto.CustomUserDetails;
 import com.example.stagealarm.user.dto.UserDto;
 import com.example.stagealarm.user.repo.UserRepository;
+import io.jsonwebtoken.Claims;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -202,6 +204,50 @@ public class UserService implements UserDetailsService {
         response.setToken(jwt);
 
         return response;
+    }
+
+    // jwt 토큰을 재발급하는 메서드
+    public JwtResponseDto reissueToken(String tokenId) {
+        ValueOperations<String, String> operations = redisTemplate.opsForValue();
+        String token = operations.get(tokenId);
+        log.info(token);
+
+        String loginId = null;
+
+        // 리프레쉬 토큰이 유효한지
+        try {
+            Claims jwtClaims = jwtTokenUtils
+                    .parseClaims(token);
+            loginId = jwtClaims.getSubject();
+
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        UserDetails userDetails = loadUserByUsername(loginId);
+
+        String jwt = jwtTokenUtils.generateToken(userDetails);
+        JwtResponseDto response = new JwtResponseDto();
+        response.setToken(jwt);
+
+        return response;
+    }
+
+    // 로그인시 Refresh jwt 토큰을 발급하는 메서드
+    @Transactional
+    public Cookie issueRefreshToken(JwtRequestDto dto) {
+        // 로그인 아이디가 존재하는지
+        if (!userExists(dto.getLoginId()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+        UserDetails userDetails = loadUserByUsername(dto.getLoginId());
+
+        // 패스워드가 같은지
+        if(!passwordEncoder
+                .matches(dto.getPassword(), userDetails.getPassword()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+        return jwtTokenUtils.generateRefreshToken(userDetails);
     }
 
     // 인증번호 보내는 로직
@@ -398,4 +444,5 @@ public class UserService implements UserDetailsService {
         // 인증 성공시 UserDto 를 body 에 담아서 리턴
         return ResponseEntity.ok("success");
     }
+
 }

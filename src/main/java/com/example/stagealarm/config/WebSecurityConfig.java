@@ -50,11 +50,13 @@ public class WebSecurityConfig {
                                 "/user/oauthClient", "/user/emailDuplicate", "/user/change-password", "/user/find/id", "/user/find/pw" // 유저 뷰
                                 ).permitAll()
 
+                        .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()
+
                         // 어드민 권한 경로
                         .requestMatchers(HttpMethod.POST, "/admin/alert/send/**", "/admin/artist", "/admin/artist/all", "/artist/artist-check", "/show", "/items", "/admin/genre").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/artist/{id}", "/show/{id}/update", "/items", "/genre/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/artist/{id}", "/show/{id}", "/items/{id}", "/genre/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/user/all", "/user/{id}", "/orders", "/orders/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/user/all", "/user/{id}", "/orders", "/orders/{id}", "/admin").hasRole("ADMIN")
 
                         // 유저 권한 경로
                         .requestMatchers(HttpMethod.POST, "/artist/{id}/like", "/artist/{id}/subscribe", "/board", "/comments/{boardId}", "/comments/{boardId}/reply/{commentId}", "/show/{id}", "/orders/{id}/cancel", "/toss/confirm-payment", "/genre/{id}/subscribe").authenticated()
@@ -62,7 +64,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/user", "/board/trash/{boardId}", "/comments/trash/{commentId}").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/user", "/user/change-password").authenticated()
                         .requestMatchers(HttpMethod.GET, "/orders/{id}/payment", "/user").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/myOrder").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/myOrder", "/authenticated").authenticated()
 
 
                         // 비로그인 사용자 권한 경로

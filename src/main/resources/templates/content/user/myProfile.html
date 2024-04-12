@@ -45,31 +45,41 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function() {
-        $.ajax({
-            url: "/user",
-            type: "GET",
-            dataType: "json",
-            success: function(user) {
-                $('#profile').html(`
-                    <img src="${user.profileImg}" alt="프로필 이미지" class="profile-img">
-                    <p>로그인 ID: ${user.loginId}</p>
-                    <p>이메일: ${user.email}</p>
-                    <p>닉네임: ${user.nickname ? user.nickname : ''}</p>
-                    <p>성별: ${user.gender ? user.gender : ''}</p>
-                    <p>전화번호: ${user.phone ? user.phone : ''}</p>
-                    <p>주소: ${user.address ? user.address : ''}</p>
-                `);
-            },
-            error: function(xhr, textStatus, error) {
-                if (xhr.status === 403) {
-                    alert("권한이 없습니다.");
-                    console.log(xhr.status);
-                    window.history.back();
-                } else {
-                    console.error("오류: " + textStatus + ": " + error);
+
+        loadUserProfile();
+        function loadUserProfile() {
+            $.ajax({
+                url: "/user",
+                type: "GET",
+                dataType: "json",
+                success: function (user) {
+                    $('#profile').html(`
+                        <img src="${user.profileImg}" alt="프로필 이미지" class="profile-img">
+                        <p>로그인 ID: ${user.loginId}</p>
+                        <p>이메일: ${user.email}</p>
+                        <p>닉네임: ${user.nickname ? user.nickname : ''}</p>
+                        <p>성별: ${user.gender ? user.gender : ''}</p>
+                        <p>전화번호: ${user.phone ? user.phone : ''}</p>
+                        <p>주소: ${user.address ? user.address : ''}</p>
+                    `);
+                },
+                error: function (xhr, textStatus, error) {
+                    // 토큰 만료 -> 재발급
+                    if (xhr.status === 401) {
+                        console.log("refreshToken");
+                        refreshToken(loadUserProfile);
+                    } else if (xhr.status === 403) {
+                        alert("권한이 없습니다.");
+                        console.log(xhr.status);
+                        location.href = '/user/login';
+                    } else {
+                        console.error("오류: " + textStatus + ": " + error);
+                    }
                 }
-            }
-        });
+            });
+        }
+
+
 
         $('#editProfileBtn').click(function() {
             location.href = '/user/update';

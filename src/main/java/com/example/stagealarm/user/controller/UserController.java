@@ -8,6 +8,8 @@ import com.example.stagealarm.user.dto.UserDto;
 import com.example.stagealarm.user.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +36,15 @@ public class UserController {
     @PostMapping("/login")
     public JwtResponseDto token(
             @RequestBody
-            JwtRequestDto dto
+            JwtRequestDto dto,
+            HttpServletResponse response
     ){
         log.info("로그인 하기");
+
+        // 리프레쉬 쿠키를 응답에 담아서 리턴
+        Cookie cookie = userService.issueRefreshToken(dto);
+        response.addCookie(cookie);
+
         return userService.issueToken(dto);
 
     }
