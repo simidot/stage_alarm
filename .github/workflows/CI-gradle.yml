@@ -23,7 +23,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3.1.0
         
       - name: Test with Gradle
-        run: chmod +x ./gradlew test --console=plain
+        run: chmod +x ./gradlew test
 
   boot-jar:
     runs-on: ubuntu-latest
