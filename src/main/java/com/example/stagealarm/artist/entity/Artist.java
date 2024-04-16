@@ -5,6 +5,7 @@ import com.example.stagealarm.artist.dto.ArtistDto;
 import com.example.stagealarm.artist.dto.ArtistRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import lombok.*;
 
@@ -27,13 +28,13 @@ public class Artist extends BaseEntity {
   private String profileImg;
 
   @Builder.Default
-  @OneToMany(mappedBy = "artist")
+  @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY)
   private List<ArtistLike> likes = new ArrayList<>(); //좋아요 개수
 
-  @OneToMany(mappedBy = "artist")
+  @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY)
   private List<ArtistSubscribe> subscribes = new ArrayList<>();
 
-  @OneToMany(mappedBy = "artist")
+  @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY)
   private List<ArtistGenre> genres = new ArrayList<>();
 
 
@@ -44,7 +45,6 @@ public class Artist extends BaseEntity {
         genres.add(artistGenre.getGenre().getName());
       }
     }
-
     return genres;
   }
 

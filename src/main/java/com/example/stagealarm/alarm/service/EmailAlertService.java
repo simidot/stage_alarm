@@ -51,6 +51,7 @@ public class EmailAlertService implements AlertService {
 
     @Override
     @Async("threadPoolTaskExecutor")
+    @Transactional
     public void createAlert(Long showInfoId) {
         // 해당 공연정보에서 아티스트 관련 알림 객체 생성
         log.info("===== artist alert creation start");

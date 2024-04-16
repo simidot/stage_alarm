@@ -3,6 +3,7 @@ package com.example.stagealarm.artist.dto;
 import com.example.stagealarm.artist.entity.Artist;
 import com.example.stagealarm.artist.entity.ArtistGenre;
 import com.example.stagealarm.genre.dto.GenreDto;
+import com.example.stagealarm.show.dto.AuthorityDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ public class ArtistDto {
     private Long subscribes;
     private Boolean isSubscribed;
     private List<GenreDto> genres;
+    private String authority;
 
     public static ArtistDto fromEntity(Artist artist){
         List<GenreDto> genreDtos = artist.getGenres().stream()
@@ -50,7 +52,7 @@ public class ArtistDto {
             .build();
     }
 
-    public static ArtistDto fromEntityWithLikeStatusAndSubStatus(Artist artist, boolean isLiked, boolean isSubscribed) {
+    public static ArtistDto fromEntityWithLikeStatusAndSubStatus(Artist artist, boolean isLiked, boolean isSubscribed, String authority) {
         List<GenreDto> genreDtos = artist.getGenres().stream()
             .map(artistGenre -> GenreDto.fromEntity(artistGenre.getGenre()))
             .collect(Collectors.toList());
@@ -67,6 +69,7 @@ public class ArtistDto {
             .subscribes((long)artist.getSubscribes().size())
             .isSubscribed(isSubscribed)
             .genres(genreDtos)
+            .authority(authority)
             .build();
     }
 

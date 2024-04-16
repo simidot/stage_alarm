@@ -7,6 +7,7 @@ import com.example.stagealarm.genre.entity.GenreSubscribe;
 import com.example.stagealarm.user.dto.UserDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import lombok.*;
 
@@ -40,13 +41,13 @@ public class UserEntity extends BaseEntity {
   private String authorities;
 
 
-  @OneToMany(mappedBy = "userEntity")
+  @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY)
   private List<ArtistLike> likeList;
 
-  @OneToMany(mappedBy = "userEntity")
+  @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY)
   private List<GenreSubscribe> genreSubscribeList;
 
-  @OneToMany(mappedBy = "userEntity")
+  @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY)
   private List<ArtistSubscribe> artistSubscribeList;
 
   // authorities 빌더에서 값을 정하지 않음

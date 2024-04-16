@@ -2,6 +2,7 @@ package com.example.stagealarm.artist.repo;
 
 import com.example.stagealarm.artist.entity.Artist;
 import com.example.stagealarm.artist.entity.QArtist;
+import com.example.stagealarm.genre.entity.QGenre;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -20,6 +21,7 @@ import java.util.List;
 public class QArtistRepoImpl implements QArtistRepo{
   private final JPAQueryFactory queryFactory;
   private final QArtist qArtist = new QArtist("b");
+  private final QGenre qGenre = new QGenre("c");
 
   @Override
   public Page<Artist> searchName(String artistName, Pageable pageable) {
@@ -46,6 +48,13 @@ public class QArtistRepoImpl implements QArtistRepo{
     JPAQuery<Long> countQuery = queryFactory.select(qArtist.count())
         .from(qArtist);
     return PageableExecutionUtils.getPage(artistList, pageable, countQuery::fetchOne);
+  }
+
+  @Override
+  public List<Artist> findAllFetch() {
+    return queryFactory.selectFrom(qArtist)
+        .leftJoin(qArtist.genres).fetchJoin()
+        .fetch();
   }
 
   private BooleanExpression containsIgnoreCaseName(String artistName) {

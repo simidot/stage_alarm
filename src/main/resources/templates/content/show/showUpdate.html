@@ -17,8 +17,8 @@
 </main>
 <script>
     $(document).ready(function () {
-        var path = window.location.pathname;
-        var id = path.split('/').slice(-2, -1).pop();
+        const path = window.location.pathname;
+        const id = path.split('/').slice(-2, -1).pop();
 
 
         $.ajax({
@@ -34,7 +34,7 @@
                 const showHtml = `
                     <form id="updateShowForm" enctype="multipart/form-data">
                         <div class="card mb-3" data-comment-id="${comments.id}">
-                            <img src=${showInfo.posterImage ? showInfo.posterImage : 'https://via.placeholder.com/800x500'} class="card-img-top" alt="축제 이미지">
+                            <img src=${showInfo.posterImage ? showInfo.posterImage : 'https://via.placeholder.com/800x500'} class="card-img-top" alt="축제 이미지" style="max-width:400px; max-height: 500px;>
                             <div class="card-body position-relative">
                                 <input type="hidden" name="id" value="${showInfo.id}">
                                 <label for="title">제목</label>
@@ -62,8 +62,8 @@
         })
 
         $(document).on('click', '.save', function () {
-            var form = document.getElementById('updateShowForm');
-            var formData = new FormData(form);
+            const form = document.getElementById('updateShowForm');
+            const formData = new FormData(form);
 
             // 이미지 파일이 있는 경우에만 FormData에 추가
             if ($('#image')[0].files.length > 0) {

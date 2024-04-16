@@ -97,3 +97,44 @@ function refreshToken(callback) {
         }
     });
 }
+
+$("#image").on("change", function(){
+    const fileInput = $("#image")[0];
+    const files = fileInput.files;
+    const reg = /(.*?)\.(jpg|bmp|jpeg|png|jfif|JPG|BMP|JPEG|PNG|JFIF)$/;
+    const maxSize = 5 * 1024 * 1024;
+
+    // var file = event.target.files[0];
+    const imageContainer = $("#imageContainer");
+    imageContainer.empty();
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+        // reader.readAsDataURL(file);
+
+        reader.onload = (function (file) {
+            return function (e) {
+                // 미리보기 이미지의 크기 조절
+                const img = $("<img>").attr("src", e.target.result).css({
+                    "max-width": "200px",
+                    "max-height": "200px",
+                    "margin": "5px"  // 이미지 간격을 조절하기 위한 스타일
+                });
+                // 이미지를 이미지 컨테이너에 추가
+                imageContainer.append(img);
+            };
+        })(file);
+
+        if (!file.name.match(reg)) {
+            alert("이미지 파일만 업로드 가능합니다. ");
+            fileInput.value = "";
+            return;
+        } else if (file.size >= maxSize) {
+            alert("파일 사이즈는 5MB까지 가능합니다. ");
+            fileInput.value = "";
+            return;
+        }
+        reader.readAsDataURL(file);
+    }
+});

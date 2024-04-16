@@ -29,6 +29,9 @@ $(document).ready(function () {
     // 아티스트 구독 버튼 클릭 이벤트 처리
     $(document).on('click', '.artist-subscribe-btn', handleArtistSubscribeButtonClick);
 
+    $(document).on('click', '.artist-update-btn', redirectToUpdatePage);
+
+
     // 장르 구독 버튼 클릭 이벤트 처리
     $(document).on('click', '.genre-subscribe-btn', handleGenreSubscribeButtonClick);
 
@@ -142,6 +145,17 @@ function fetchGenres() {
             } else {
                 $likeImage.attr('src', 'images/unlike.png'); // 이미지 경로를 좋아요 해제 이미지로 변경
             }
+            console.log(artist.authority);
+            const $subscribeBtn = $artistCard.find('.artist-subscribe-btn');
+            const $updateBtn = $artistCard.find('.artist-update-btn');
+            // 아티스트 구독 또는 수정 버튼 설정
+            if (artist.authority === 'ROLE_ADMIN') {
+                    $subscribeBtn.hide();
+                    $updateBtn.show();
+            } else {
+                    $updateBtn.hide();
+                    $subscribeBtn.show();
+            }
         });
     }
 
@@ -180,7 +194,7 @@ function fillArtistTemplate(template, artist) {
     }
     // 장르 리스트를 문자열로 변환
     const genresStr = artist.genres.map(genre => genre.name).join(', ');
-    const defaultImageUrl = 'https://stage-alarm.s3.ap-northeast-2.amazonaws.com/artistImg/artistDefault.png'; // 기본 이미지 URL
+    const defaultImageUrl = 'https://stage-alarm.s3.ap-northeast-2.amazonaws.com/profileImg/user.png'; // 기본 이미지 URL
 
     console.log("genreStr: ",genresStr);
     const filledTemplate = template.replace(/{{artist.profileImg}}/g, artist.profileImg !== '' ? artist.profileImg : defaultImageUrl)
@@ -193,6 +207,9 @@ function fillArtistTemplate(template, artist) {
         .replace(/{{buttonText}}/g, artist.isSubscribed ? '구독중' : '구독');
     artistFilledTemplate = filledTemplate;
 }
+
+
+
 
 function fillGenreTemplate(template, genre) {
     genreFilledTemplate = template.replace(/{{genre.name}}/g, genre.name)
@@ -317,6 +334,11 @@ function handleArtistSubscribeButtonClick() {
             }
         }
     });
+}
+
+function redirectToUpdatePage() {
+    const id = $(this).data('artist-id');
+    window.location.href='/artists/'+id+'/update';
 }
 
 // 장르 구독 버튼 클릭 이벤트 핸들러
