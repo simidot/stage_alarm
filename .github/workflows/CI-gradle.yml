@@ -29,6 +29,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     steps:
+      - name: Make Gradlew executable
+        run: chmod +x ./gradlew
+        
       - name: Checkout repository
         uses: actions/checkout@v4
         
