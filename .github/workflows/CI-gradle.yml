@@ -23,7 +23,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3.1.0
         
       - name: Test with Gradle
-        run: ./gradlew test --console=plain
+        run: chmod +x ./gradlew test --console=plain
 
   boot-jar:
     runs-on: ubuntu-latest
@@ -42,7 +42,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3.1.0
         
       - name: Build JAR with Gradle Wrapper
-        run: ./gradlew bootJar
+        run: chmod +x ./gradlew bootJar
         
       - name: Upload JAR
         uses: actions/upload-artifact@v4
