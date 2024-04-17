@@ -2,9 +2,9 @@ name: Docker Image Delivery
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ CICD ]
   pull_request:
-    branches: [ dev ]
+    branches: [ CICD ]
   workflow_run:
     workflows:
       - "CI-gradle"
