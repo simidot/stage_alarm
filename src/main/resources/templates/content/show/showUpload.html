@@ -31,7 +31,7 @@
                         <div class="input-group">
                             <div class="input-group-text">공연명 <span class="required">*</span></div>
                             <input type="text" class="form-control" id="title" name="title" maxlength="50"
-                                   placeholder="공연명">
+                                   placeholder="공연명" required>
                         </div>
                     </div>
                     <div class="col-md-8">
@@ -39,14 +39,14 @@
                         <div class="input-group">
                             <div class="input-group-text">공연 장소 <span class="required">*</span></div>
                             <input type="text" class="form-control" id="place" name="place" maxlength="50"
-                                   placeholder="공연 장소">
+                                   placeholder="공연 장소" required>
                         </div>
                     </div>
                     <div class="col-md-8">
                         <label class="visually-hidden" for="place"></label>
                         <div class="input-group">
                             <div class="input-group-text" >공연 날짜 <span class="required">*</span></div>
-                            <input type="date" class="form-control" id=date name="date" placeholder="공연 날짜">
+                            <input type="date" class="form-control" id=date name="date" placeholder="공연 날짜" required>
                         </div>
                     </div>
                     <div class="col-md-8">
@@ -85,12 +85,12 @@
                         <label class="visually-hidden" for="price"></label>
                         <div class="input-group">
                             <div class="input-group-text">공연 가격 <span class="required">*</span></div>
-                            <input type="text" class="form-control" id=price name="price" placeholder="공연 가격" maxlength="500">
+                            <input type="text" class="form-control" id=price name="price" placeholder="공연 가격" maxlength="500" required>
                         </div>
                     </div>
                     <div class="col-md-8 mb-3">
-                        <label for="posterImage" class="light-label">공연 포스터 이미지 추가 <span class="required">*</span></label>
-                        <input class="form-control" type="file" id="posterImage" name="posterImage" accept="image/*" placeholder="공연 포스터">
+                        <label for="image" class="light-label">공연 포스터 이미지 추가 <span class="required">*</span></label>
+                        <input class="form-control" type="file" id="image" name="posterImage" accept="image/*" placeholder="공연 포스터" required>
                         <div id="imageContainer"></div>
                     </div>
                 </div>
@@ -118,7 +118,6 @@
                                             data-artist-id="{{artist.id}}"
                                             data-artist-name="{{artist.name}}"
                                             data-artist-genres="{{artist.genres}}"
-                                            data-artist-genreIds="{{artist.genreIds}}"
                                     type="button">선택</button>
                                 </div>
                             </div>

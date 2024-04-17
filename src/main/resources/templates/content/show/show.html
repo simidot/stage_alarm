@@ -21,11 +21,12 @@
         <div style="height: 4px; width: 100%" class="bg-dark my-3"></div>
         <div class="border-2 border-dark">
             <form id="commentForm" class="d-flex align-items-center">
-                <div class="form-group flex-grow-1">
-                     <textarea class="form-control form-control-lg" id="commentContent" rows="3" required
-                               placeholder="댓글을 입력하세요..."></textarea>
+                <div class="form-group flex-grow-1 mr-2 d-flex align-items-center">
+                    <label for="commentContent"></label>
+                    <textarea class="form-control" id="commentContent" required
+                              placeholder="댓글을 입력하세요..."></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg align-self-stretch">댓글 작성</button>
+                <button type="submit" class="btn btn-outline-secondary flex-grow-0 h-100">댓글 작성</button>
             </form>
         </div>
         <div style="height: 2px; width: 100%" class="bg-secondary bg-opacity-25 my-3"></div>
@@ -86,8 +87,7 @@
                 const showHtml = `
                     <div class="card mb-3" data-comment-id="${comments.id}">
                         <div class="d-flex">
-                            <button class="flex-grow-1 info-update btn btn-light">수정</button>
-                            <button class="flex-grow-1 info-delete btn btn-light" style="color: red;">삭제</button>
+
                         </div>
                         <img src=${showInfo.posterImage ? showInfo.posterImage : 'https://via.placeholder.com/500x700'} class="card-img-top" alt="축제 이미지" style="max-width:400px; max-height: 500px;">
                         <div class="card-body position-relative">
@@ -100,8 +100,11 @@
                                 <img data-show-Info-is-Liked="${showInfo.isLiked}" class="like-btn cursor-pointer" src="${showInfo.isLiked ? '/images/like.png' : '/images/unlike.png'}" alt="좋아요" style="width: 30px; height: 30px">
                                     <span class="total-like">${showInfo.totalLike}</span>
                             </p>
-                            <button class="btn btn-primary show-goods" onclick="window.location.href='/showItems/' + ${showInfo.id}">굿즈 보기</button>
-                            <button class="btn btn-primary update-goods" onclick="window.location.href='/item/register?showInfoId=' + ${showInfo.id}">굿즈 등록</button>
+
+                            <button class="flex-grow-1 info-update btn btn-outline-primary">수정</button>
+                            <button class="flex-grow-1 info-delete btn btn-outline-danger" style="color: red;">삭제</button>
+                            <button class="btn btn-outline-primary show-goods" onclick="window.location.href='/showItems/' + ${showInfo.id}">굿즈 보기</button>
+                            <button class="btn btn-outline-primary update-goods" onclick="window.location.href='/item/register?showInfoId=' + ${showInfo.id}">굿즈 등록</button>
                         </div>
                     </div>`;
 
@@ -131,13 +134,16 @@
                     const {id, loginUserId, userResponseDto: {userId, nickname}, content} = comment;
                     const showButtons = loginUserId === userId;
 
+                    const formattedContent = content.replace(/\n/g, '<br>');
+
+
                     const commentHtml = `
                 <div class="card mb-3" data-comment-id="${id}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <p class="card-text comment-user">작성자: ${nickname}</p>
-                                <p class="card-text comment-content">${content}</p>
+                                <p class="card-text comment-content">${formattedContent}</p>
                             </div>
                             <div class="btn-group">
                                 ${showButtons ? `
@@ -251,8 +257,8 @@
         $("#commentForm").submit(function (event) {
             event.preventDefault();
 
-            var commentContent = $("#commentContent").val();
-            var commentData = {content: commentContent};
+            const commentContent = $("#commentContent").val();
+            const commentData = {content: commentContent};
 
             const token = localStorage.getItem("jwtToken");
             if (token === null) {
@@ -312,17 +318,19 @@
         // 댓글 삭제
         $('.comments').on('click', '.delete', function () {
             var commentId = $(this).closest('.card').data('comment-id');
-            $.ajax({
-                url: "/comments/" + commentId,
-                type: "DELETE",
-                contentType: "application/json; charset=utf-8",
-                success: function () {
-                    window.location.reload();
-                },
-                error: function () {
-                    alert("댓글 삭제에 실패했습니다.");
-                }
-            });
+            if (confirm("댓글을 삭제하시겠습니까?")) {
+                $.ajax({
+                    url: "/comments/" + commentId,
+                    type: "DELETE",
+                    contentType: "application/json; charset=utf-8",
+                    success: function () {
+                        window.location.reload();
+                    },
+                    error: function () {
+                        alert("댓글 삭제에 실패했습니다.");
+                    }
+                });
+            }
         });
 
     });

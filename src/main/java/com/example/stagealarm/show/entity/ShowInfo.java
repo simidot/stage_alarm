@@ -3,6 +3,7 @@ package com.example.stagealarm.show.entity;
 import com.example.stagealarm.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import lombok.*;
 
@@ -44,13 +45,13 @@ public class ShowInfo extends BaseEntity {
     private String price;
 
     @Builder.Default
-    @OneToMany(mappedBy = "showInfo")
+    @OneToMany(mappedBy = "showInfo", fetch = FetchType.LAZY)
     private List<ShowLike> showLikes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "showInfo")
+    @OneToMany(mappedBy = "showInfo", fetch = FetchType.LAZY)
     private List<ShowGenre> showGenres = new ArrayList<>();
 
-    @OneToMany(mappedBy = "showInfo")
+    @OneToMany(mappedBy = "showInfo", fetch = FetchType.LAZY)
     private List<ShowArtist> showArtists = new ArrayList<>();
 
     public void addLike(ShowLike like) {

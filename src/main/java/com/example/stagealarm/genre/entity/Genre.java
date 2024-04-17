@@ -3,6 +3,7 @@ package com.example.stagealarm.genre.entity;
 import com.example.stagealarm.BaseEntity;
 import com.example.stagealarm.genre.dto.GenreDto;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import lombok.*;
 
@@ -19,7 +20,7 @@ public class Genre extends BaseEntity {
   private String name;
 
   @Builder.Default
-  @OneToMany(mappedBy = "genre")
+  @OneToMany(mappedBy = "genre", fetch = FetchType.LAZY)
   private List<GenreSubscribe> subscribes = new ArrayList<>();
 
   public static Genre fromDto(GenreDto genreDto) {

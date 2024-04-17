@@ -1,10 +1,8 @@
 package com.example.stagealarm.artist.controller;
 
-import com.example.stagealarm.artist.dto.ArtistDto;
-import com.example.stagealarm.artist.dto.ArtistRequestDto;
-import com.example.stagealarm.artist.dto.ArtistResponseDto;
-import com.example.stagealarm.artist.dto.PaginationRequest;
+import com.example.stagealarm.artist.dto.*;
 import com.example.stagealarm.artist.service.ArtistService;
+import com.example.stagealarm.genre.dto.GenreDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,8 +46,8 @@ public class ArtistController {
     }
 
     @GetMapping("/all")
-    public List<ArtistDto> getAllArtist() {
-        return artistService.searchAll();
+    public List<ShowUploadArtistDto> getAllArtist() {
+      return artistService.searchAll();
     }
 
     // 아티스트 검색

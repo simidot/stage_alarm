@@ -91,8 +91,8 @@ public class ShowInfoService {
 
         if (dto.getGenres() != null) {
             List<ShowGenre> showGenres = dto.getGenres().stream()
-                .map(genreId -> {
-                    Genre genre = genreRepository.findById(Long.valueOf(genreId))
+                .map(genreName -> {
+                    Genre genre = genreRepository.findByName(genreName)
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
                     return showGenreRepo.save(ShowGenre.builder()
                         .genre(genre)

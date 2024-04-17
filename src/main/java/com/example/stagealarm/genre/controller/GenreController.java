@@ -1,6 +1,7 @@
 package com.example.stagealarm.genre.controller;
 
 import com.example.stagealarm.genre.dto.GenreDto;
+import com.example.stagealarm.genre.dto.ShowUploadGenreDto;
 import com.example.stagealarm.genre.service.GenreService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,14 @@ public class GenreController {
         return genreService.createGenre(dto);
     }
 
-    // 모든 장르 조회
+    // 모든 장르 조회 (구독상황 반영)
     @GetMapping
-    public List<GenreDto> getAllGenre() {
+    public List<GenreDto> getAllGenreWithSubscription() {
+        return genreService.readAllWithSubscribe();
+    }
+
+    @GetMapping("/all")
+    public List<ShowUploadGenreDto> getAllGenre() {
         return genreService.readAll();
     }
 

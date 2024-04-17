@@ -2,6 +2,7 @@ package com.example.stagealarm.artist.service;
 
 import com.example.stagealarm.artist.dto.ArtistRequestDto;
 import com.example.stagealarm.artist.dto.ArtistResponseDto;
+import com.example.stagealarm.artist.dto.ShowUploadArtistDto;
 import com.example.stagealarm.artist.entity.Artist;
 import com.example.stagealarm.artist.dto.ArtistDto;
 import com.example.stagealarm.artist.entity.ArtistGenre;
@@ -45,6 +46,8 @@ public class ArtistService {
         if (file != null && !file.isEmpty()) {
             // 파일 처리 로직
             imgUrl = s3FileService.uploadIntoS3("/artistImg", file);
+        } else {
+            imgUrl = "https://stage-alarm.s3.ap-northeast-2.amazonaws.com/profileImg/user.png";
         }
         Artist artist = Artist.builder()
             .name(dto.getName())
@@ -74,13 +77,14 @@ public class ArtistService {
         return ArtistResponseDto.fromEntity(artist);
     }
 
-    // 모든 아티스트 조회
+    // 모든 아티스트 조회 (구독/좋아요 상황 반영)
     public Page<ArtistDto> searchAll(Pageable pageable) {
         Page<Artist> artistPage = qArtistRepo.findAll(pageable);
 
         // 인증된 사용자라면 좋아요한 정보를 함께 전달
         if (facade.getAuth().isAuthenticated()) {
             Long userId = facade.getUserEntity().getId();
+            String authority = facade.getUserEntity().getAuthorities();
             return artistPage.map(artist -> {
                 boolean isLiked = artist.getLikes().stream().anyMatch(
                     like -> like.getUserEntity().getId().equals(userId)
@@ -88,35 +92,18 @@ public class ArtistService {
                 boolean isSubscribed = artist.getSubscribes().stream().anyMatch(
                     subscribe -> subscribe.getUserEntity().getId().equals(userId)
                 );
-                return ArtistDto.fromEntityWithLikeStatusAndSubStatus(artist, isLiked, isSubscribed);
+                return ArtistDto.fromEntityWithLikeStatusAndSubStatus(artist, isLiked, isSubscribed, authority);
             });
         } else { // 인증되지 않은 경우는 없이 전달
             return artistPage.map(ArtistDto::fromEntity);
         }
     }
 
-    public List<ArtistDto> searchAll() {
-        List<Artist> artists = artistRepository.findAll();
+    // 모든 아티스트 조회 (구독상황 필요 없을때)
+    public List<ShowUploadArtistDto> searchAll() {
+        List<Artist> artists = qArtistRepo.findAllFetch();
 
-        // 인증된 사용자라면 좋아요한 정보를 함께 전달
-        if (facade.getAuth().isAuthenticated()) {
-            Long userId = facade.getUserEntity().getId();
-            return artists.stream()
-                .map(artist -> {
-                    boolean isLiked = artist.getLikes().stream().anyMatch(
-                        like -> like.getUserEntity().getId().equals(userId)
-                    );
-                    boolean isSubscribed = artist.getSubscribes().stream().anyMatch(
-                        subscribe -> subscribe.getUserEntity().getId().equals(userId)
-                    );
-                    return ArtistDto.fromEntityWithLikeStatusAndSubStatus(artist, isLiked, isSubscribed);
-                })
-                .collect(Collectors.toList());
-        } else { // 인증되지 않은 경우는 없이 전달
-            return artists.stream()
-                .map(ArtistDto::fromEntity)
-                .collect(Collectors.toList());
-        }
+        return artists.stream().map(ShowUploadArtistDto::fromEntity).collect(Collectors.toList());
     }
 
 
@@ -127,6 +114,8 @@ public class ArtistService {
         // 인증된 사용자라면 좋아요한 정보를 함께 전달
         if (facade.getAuth().isAuthenticated()) {
             Long userId = facade.getUserEntity().getId();
+            String authority = facade.getUserEntity().getAuthorities();
+
             return artistPage.map(artist -> {
                 boolean isLiked = artist.getLikes().stream().anyMatch(
                     like -> like.getUserEntity().getId().equals(userId)
@@ -134,7 +123,7 @@ public class ArtistService {
                 boolean isSubscribed = artist.getSubscribes().stream().anyMatch(
                     subscribe -> subscribe.getUserEntity().getId().equals(userId)
                 );
-                return ArtistDto.fromEntityWithLikeStatusAndSubStatus(artist, isLiked, isSubscribed);
+                return ArtistDto.fromEntityWithLikeStatusAndSubStatus(artist, isLiked, isSubscribed, authority);
             });
         } else { // 인증되지 않은 경우는 없이 전달
             return artistPage.map(ArtistDto::fromEntity);
