@@ -5,7 +5,11 @@ on:
     branches: [ dev ]
   pull_request:
     branches: [ dev ]
-
+  workflow_run:
+    workflows:
+      - "CI-gradle"
+    types:
+      - completed
 jobs:
   deliver:
     runs-on: ubuntu-latest
