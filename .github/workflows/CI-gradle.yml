@@ -45,8 +45,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3.1.0
 
       - name: Build JAR with Gradle Wrapper
-        run: ./gradlew clean bootJar
-
+        run: ./gradlew clean build
 #      - name: Upload JAR
 #        uses: actions/upload-artifact@v4
 #        with:
