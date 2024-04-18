@@ -11,7 +11,9 @@ import com.example.stagealarm.artist.repo.ArtistRepository;
 import com.example.stagealarm.artist.repo.QArtistRepo;
 import com.example.stagealarm.awsS3.S3FileService;
 import com.example.stagealarm.facade.AuthenticationFacade;
+import com.example.stagealarm.genre.entity.Genre;
 import com.example.stagealarm.genre.repo.GenreRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,7 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -37,6 +41,7 @@ public class ArtistService {
     private final ArtistGenreRepo artistGenreRepo;
     private final AuthenticationFacade facade;
     private final S3FileService s3FileService;
+    private final EntityManager entityManager;
 
 
     // 아티스트 저장
@@ -46,9 +51,8 @@ public class ArtistService {
         if (file != null && !file.isEmpty()) {
             // 파일 처리 로직
             imgUrl = s3FileService.uploadIntoS3("/artistImg", file);
-        } else {
-            imgUrl = "https://stage-alarm.s3.ap-northeast-2.amazonaws.com/profileImg/user.png";
         }
+
         Artist artist = Artist.builder()
             .name(dto.getName())
             .age(dto.getAge())
@@ -144,17 +148,45 @@ public class ArtistService {
 
     // 아티스트 수정 로직
     @Transactional
-    public ArtistDto update(Long id, ArtistDto dto) {
+    public ArtistResponseDto update(Long id, ArtistRequestDto dto, MultipartFile file) {
         Artist artist = artistRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Artist not found")
         );
 
+        String imgUrl = artist.getProfileImg();
+        if (file != null && !file.isEmpty()) {
+            // 파일 처리 로직
+            s3FileService.deleteFile("/artistImg", artist.getProfileImg());
+            imgUrl = s3FileService.uploadIntoS3("/artistImg", file);
+        }
+
         artist.setName(dto.getName());
         artist.setAge(dto.getAge());
         artist.setGender(dto.getGender());
-        artist.setProfileImg(dto.getProfileImg());
+        artist.setProfileImg(imgUrl);
 
-        return ArtistDto.fromEntity(artistRepository.save(artist));
+        if (dto.getGenreIds() != null) {
+            List<Long> genreIds = dto.getGenreIds();
+            // 아티스트가 현재 가진 모든 장르를 제거
+            artist.getGenres().clear();
+            artistGenreRepo.deleteByArtist(artist);
+            entityManager.flush(); // 변경 사항을 데이터베이스에 즉시 반영
+
+
+            // 새로운 장르                      할당
+            genreIds.forEach(genreId -> {
+                Genre genre = genreRepository.findById(genreId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                ArtistGenre artistGenre = ArtistGenre.builder()
+                    .artist(artist)
+                    .genre(genre)
+                    .build();
+                artistGenre.addArtist(artist);
+                artistGenreRepo.save(artistGenre);
+            });
+        }
+
+        return ArtistResponseDto.fromEntity(artistRepository.save(artist));
     }
 
     // 아티스트 삭제
