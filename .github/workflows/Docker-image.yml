@@ -1,7 +1,10 @@
 name: Docker Image Delivery
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ CICD ]
+  pull_request:
+    branches: [ CICD ]
 
 jobs:
   # 빌드가 완료되면 도커 이미지 생성 후 도커 허브에 저장
