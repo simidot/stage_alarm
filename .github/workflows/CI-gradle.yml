@@ -46,6 +46,10 @@ jobs:
 
       - name: Build JAR with Gradle Wrapper
         run: ./gradlew clean build
+
+      - name: package check
+        run: ls
+
 #      - name: Upload JAR
 #        uses: actions/upload-artifact@v4
 #        with:
