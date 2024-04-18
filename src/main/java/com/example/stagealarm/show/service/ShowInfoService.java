@@ -1,6 +1,6 @@
 package com.example.stagealarm.show.service;
 
-import com.example.stagealarm.alarm.service.AlertService;
+import com.example.stagealarm.alarm.service.EmailAlertService;
 import com.example.stagealarm.artist.entity.Artist;
 import com.example.stagealarm.artist.repo.ArtistRepository;
 import com.example.stagealarm.awsS3.S3FileService;
@@ -47,7 +47,7 @@ public class ShowInfoService {
     private final GenreRepository genreRepository;
     private final ShowGenreRepo showGenreRepo;
     private final ShowArtistRepo showArtistRepo;
-    private final AlertService alertService;
+    private final EmailAlertService emailAlertService;
 
     // 공연 정보 등록
     @Transactional
@@ -75,14 +75,14 @@ public class ShowInfoService {
         if (dto.getArtists() != null) {
             // 검색된 아티스트/장르 찾아서 show와 artist/genre 연결지어주는 엔티티 객체 생성 후 저장
             List<ShowArtist> showArtists = dto.getArtists().stream()
-                .map(artistId -> {
-                    Artist artist = artistRepository.findById(Long.valueOf(artistId))
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-                    return showArtistRepo.save(ShowArtist.builder()
-                        .artist(artist)
-                        .showInfo(saved)
-                        .build());
-                }).toList();
+                    .map(artistId -> {
+                        Artist artist = artistRepository.findById(artistId)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                        return showArtistRepo.save(ShowArtist.builder()
+                                .artist(artist)
+                                .showInfo(saved)
+                                .build());
+                    }).toList();
             for (ShowArtist showArtist : showArtists) {
                 saved.addShowArtists(showArtist);
             }
@@ -91,20 +91,20 @@ public class ShowInfoService {
 
         if (dto.getGenres() != null) {
             List<ShowGenre> showGenres = dto.getGenres().stream()
-                .map(genreName -> {
-                    Genre genre = genreRepository.findByName(genreName)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-                    return showGenreRepo.save(ShowGenre.builder()
-                        .genre(genre)
-                        .showInfo(saved)
-                        .build());
-                }).toList();
+                    .map(genreName -> {
+                        Genre genre = genreRepository.findByName(genreName)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                        return showGenreRepo.save(ShowGenre.builder()
+                                .genre(genre)
+                                .showInfo(saved)
+                                .build());
+                    }).toList();
             for (ShowGenre showGenre : showGenres) {
                 saved.addShowGenres(showGenre);
             }
         }
         ShowInfo finalSaved = showInfoRepository.save(saved);
-        alertService.createAlert(finalSaved.getId());
+        emailAlertService.createAlert(finalSaved.getId());
 
         return ShowInfoResponseDto.fromEntity(finalSaved, userEntity);
     }

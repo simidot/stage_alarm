@@ -25,9 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -54,28 +52,28 @@ public class ArtistService {
         }
 
         Artist artist = Artist.builder()
-            .name(dto.getName())
-            .age(dto.getAge())
-            .gender(dto.getGender())
-            .profileImg(imgUrl)
-            .genres(new ArrayList<>())
-            .build();
+                .name(dto.getName())
+                .age(dto.getAge())
+                .gender(dto.getGender())
+                .profileImg(imgUrl)
+                .genres(new ArrayList<>())
+                .build();
         artist = artistRepository.save(artist);
         Artist finalArtist = artist;
 
         if (dto.getGenreIds() != null) {
             List<Long> genreIds = dto.getGenreIds();
             genreIds.stream()
-                .map(genreId -> genreRepository.findById(genreId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)))
-                .map(genre -> {
-                    ArtistGenre artistGenre = ArtistGenre.builder()
-                        .genre(genre)
-                        .build();
-                    artistGenre.addArtist(finalArtist); // addArtist 메서드를 사용하여 아티스트와의 연관 관계 설정
-                    return artistGenre;
-                })
-                .forEach(artistGenreRepo::save);
+                    .map(genreId -> genreRepository.findById(genreId)
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)))
+                    .map(genre -> {
+                        ArtistGenre artistGenre = ArtistGenre.builder()
+                                .genre(genre)
+                                .build();
+                        artistGenre.addArtist(finalArtist); // addArtist 메서드를 사용하여 아티스트와의 연관 관계 설정
+                        return artistGenre;
+                    })
+                    .forEach(artistGenreRepo::save);
         }
 
         return ArtistResponseDto.fromEntity(artist);
@@ -91,10 +89,10 @@ public class ArtistService {
             String authority = facade.getUserEntity().getAuthorities();
             return artistPage.map(artist -> {
                 boolean isLiked = artist.getLikes().stream().anyMatch(
-                    like -> like.getUserEntity().getId().equals(userId)
+                        like -> like.getUserEntity().getId().equals(userId)
                 );
                 boolean isSubscribed = artist.getSubscribes().stream().anyMatch(
-                    subscribe -> subscribe.getUserEntity().getId().equals(userId)
+                        subscribe -> subscribe.getUserEntity().getId().equals(userId)
                 );
                 return ArtistDto.fromEntityWithLikeStatusAndSubStatus(artist, isLiked, isSubscribed, authority);
             });
@@ -122,10 +120,10 @@ public class ArtistService {
 
             return artistPage.map(artist -> {
                 boolean isLiked = artist.getLikes().stream().anyMatch(
-                    like -> like.getUserEntity().getId().equals(userId)
+                        like -> like.getUserEntity().getId().equals(userId)
                 );
                 boolean isSubscribed = artist.getSubscribes().stream().anyMatch(
-                    subscribe -> subscribe.getUserEntity().getId().equals(userId)
+                        subscribe -> subscribe.getUserEntity().getId().equals(userId)
                 );
                 return ArtistDto.fromEntityWithLikeStatusAndSubStatus(artist, isLiked, isSubscribed, authority);
             });
@@ -176,11 +174,11 @@ public class ArtistService {
             // 새로운 장르                      할당
             genreIds.forEach(genreId -> {
                 Genre genre = genreRepository.findById(genreId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
                 ArtistGenre artistGenre = ArtistGenre.builder()
-                    .artist(artist)
-                    .genre(genre)
-                    .build();
+                        .artist(artist)
+                        .genre(genre)
+                        .build();
                 artistGenre.addArtist(artist);
                 artistGenreRepo.save(artistGenre);
             });

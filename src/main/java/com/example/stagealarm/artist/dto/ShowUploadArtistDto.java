@@ -17,10 +17,10 @@ public class ShowUploadArtistDto {
 
   public static ShowUploadArtistDto fromEntity(Artist artist) {
     return ShowUploadArtistDto.builder()
-        .id(artist.getId())
-        .name(artist.getName())
-        .genres(artist.getGenresString(artist.getGenres()))
-        .build();
+            .id(artist.getId())
+            .name(artist.getName())
+            .genres(artist.getGenresString(artist.getGenres()))
+            .build();
   }
 
 }
