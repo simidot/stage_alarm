@@ -45,7 +45,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v3.1.0
 
       - name: make application-dev.yml
-        if: contains(github.ref, 'develop')
         run: |
           cd ./src/main/resources
           touch ./application-dev.yml
