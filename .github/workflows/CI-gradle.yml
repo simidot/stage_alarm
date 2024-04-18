@@ -45,13 +45,13 @@ jobs:
         uses: gradle/actions/setup-gradle@v3.1.0
 
       - name: Build JAR with Gradle Wrapper
-        run: ./gradlew bootJar --console=plain
+        run: ./gradlew clean bootJar
 
-      - name: Upload JAR
-        uses: actions/upload-artifact@v4
-        with:
-          name: artifact-stage
-          path: build/libs/*.jar
+#      - name: Upload JAR
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: artifact-stage
+#          path: build/libs/*.jar
 
   deliver:
     runs-on: ubuntu-latest
