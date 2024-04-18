@@ -55,6 +55,7 @@ jobs:
   # 빌드가 완료되면 도커 이미지 생성 후 도커 허브에 저장
   deliver:
     runs-on: ubuntu-latest
+    needs: boot-jar
     steps:
       - uses: actions/checkout@v4
       - name: Set Image Tag
