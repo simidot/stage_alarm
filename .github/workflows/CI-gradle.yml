@@ -50,7 +50,7 @@ jobs:
       - name: Upload JAR
         uses: actions/upload-artifact@v4
         with:
-          name: artifact
+          name: artifact-stage
           path: build/libs/*.jar
 
   deliver:
@@ -65,7 +65,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
-          name: artifact
+          name: artifact-stage
           path: build/libs
 
       - name: Build the Docker image
