@@ -5,6 +5,7 @@ on:
     branches: [ CICD ]
   pull_request:
     branches: [ CICD ]
+
 # 테스트를 우선 진행
 jobs:
   test:
@@ -24,6 +25,7 @@ jobs:
 
       - name: Test with Gradle
         run: ./gradlew test --console=plain
+
   # 테스트를 통과하면 JAR파일 빌드하여 ARTIFACT에 저장
   boot-jar:
     runs-on: ubuntu-latest
@@ -52,31 +54,37 @@ jobs:
         with:
           name: artifact
           path: build/libs/*.jar
+
   # 빌드가 완료되면 도커 이미지 생성 후 도커 허브에 저장
   deliver:
     runs-on: ubuntu-latest
     needs: boot-jar
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set Image Tag
         id: image-tag
-        run: echo "TAG=$(date +%s)-ci" >> "$GITHUB_OUTPUT"
-      - name: download artifact
+        run: echo "TAG=$(date +%s)-ci" >> "$GITHUB_ENV"
+
+      - name: Download artifact
         uses: actions/download-artifact@v3
         with:
           name: artifact
-          path: ./
+          path: ./build/libs/
+
       - name: Build the Docker image
         env:
           TAG: ${{ steps.image-tag.outputs.TAG }}
-        run: docker build . --file Dockerfile --tag "${{ secrets.DOCKERHUB_USERNAME }}/todo-boot:$TAG"
+        run: docker build . --file Dockerfile --tag "${{ secrets.DOCKERHUB_USERNAME }}/todo-boot:$TAG" ./build/libs/
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Push the Docker Image
         env:
           TAG: ${{ steps.image-tag.outputs.TAG }}
         run: docker push "${{ secrets.DOCKERHUB_USERNAME }}/todo-boot:$TAG"
-
