@@ -61,6 +61,9 @@ jobs:
         id: image-tag
         run: echo "TAG=$(date +%s)-ci" >> "$GITHUB_OUTPUT"
 
+      - name: package check
+        run: ls
+
       - name: Build the Docker image
         env:
           TAG: ${{ steps.image-tag.outputs.TAG }}
