@@ -2,7 +2,6 @@ package com.example.stagealarm.artist.repo;
 
 import com.example.stagealarm.artist.entity.Artist;
 import com.example.stagealarm.artist.entity.QArtist;
-import com.example.stagealarm.genre.entity.QGenre;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -20,41 +19,41 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QArtistRepoImpl implements QArtistRepo{
   private final JPAQueryFactory queryFactory;
-  private final QArtist qArtist = new QArtist("b");
-  private final QGenre qGenre = new QGenre("c");
+  private final QArtist qArtist = new QArtist("qArtist");
 
   @Override
   public Page<Artist> searchName(String artistName, Pageable pageable) {
     List<Artist> artistList = queryFactory.selectFrom(qArtist)
-        .where(containsIgnoreCaseName(artistName))
-        .orderBy(qArtist.name.asc())
-        .offset(pageable.getOffset())
-        .limit(pageable.getPageSize())
-        .fetch();
+            .where(containsIgnoreCaseName(artistName))
+            .orderBy(qArtist.name.asc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
     JPAQuery<Long> countQuery = queryFactory
-        .select(qArtist.count())
-        .from(qArtist)
-        .where(containsIgnoreCaseName(artistName)); // 조건 추가
+            .select(qArtist.count())
+            .from(qArtist)
+            .where(containsIgnoreCaseName(artistName)); // 조건 추가
     return PageableExecutionUtils.getPage(artistList, pageable, countQuery::fetchOne);
   }
 
   @Override
   public Page<Artist> findAll(Pageable pageable) {
     List<Artist> artistList = queryFactory.selectFrom(qArtist)
-        .orderBy(qArtist.name.asc())
-        .offset(pageable.getOffset())
-        .limit(pageable.getPageSize())
-        .fetch();
+            .orderBy(qArtist.name.asc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
     JPAQuery<Long> countQuery = queryFactory.select(qArtist.count())
-        .from(qArtist);
+            .from(qArtist);
     return PageableExecutionUtils.getPage(artistList, pageable, countQuery::fetchOne);
   }
+
 
   @Override
   public List<Artist> findAllFetch() {
     return queryFactory.selectFrom(qArtist)
-        .leftJoin(qArtist.genres).fetchJoin()
-        .fetch();
+            .leftJoin(qArtist.genres).fetchJoin()
+            .fetch();
   }
 
   private BooleanExpression containsIgnoreCaseName(String artistName) {

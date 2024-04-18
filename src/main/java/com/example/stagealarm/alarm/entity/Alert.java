@@ -26,6 +26,7 @@ public class Alert extends BaseEntity {
   private ShowInfo showInfo;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @Setter
   private ArtistSubscribe artistSubscribe;
 
   @ManyToOne(fetch = FetchType.LAZY)

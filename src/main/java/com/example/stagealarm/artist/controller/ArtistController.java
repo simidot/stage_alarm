@@ -2,7 +2,6 @@ package com.example.stagealarm.artist.controller;
 
 import com.example.stagealarm.artist.dto.*;
 import com.example.stagealarm.artist.service.ArtistService;
-import com.example.stagealarm.genre.dto.GenreDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +25,10 @@ public class ArtistController {
     // 아티스트 추가
     @PostMapping
     public ResponseEntity<ArtistResponseDto> addArtist(
-        @RequestPart("dto")
-        ArtistRequestDto dto,
-        @RequestPart(name = "file", required = false)
-        MultipartFile file
+            @RequestPart("dto")
+            ArtistRequestDto dto,
+            @RequestPart(name = "file", required = false)
+            MultipartFile file
     ) {
         // 관리자 권한 일때
         return ResponseEntity.ok(artistService.join(dto, file));
@@ -39,25 +38,25 @@ public class ArtistController {
     @GetMapping
     public Page<ArtistDto> getAllArtistWithPage(PaginationRequest paginationRequest) {
         Pageable pageable = PageRequest.of(
-            paginationRequest.getPage(),
-            paginationRequest.getSize()
+                paginationRequest.getPage(),
+                paginationRequest.getSize()
         );
         return artistService.searchAll(pageable);
     }
 
     @GetMapping("/all")
     public List<ShowUploadArtistDto> getAllArtist() {
-      return artistService.searchAll();
+        return artistService.searchAll();
     }
 
     // 아티스트 검색
     @GetMapping("/search")
     public Page<ArtistDto> searchArtistName(
-        @RequestParam(name = "param") String param, PaginationRequest paginationRequest
+            @RequestParam(name = "param") String param, PaginationRequest paginationRequest
     ) {
         Pageable pageable = PageRequest.of(
-            paginationRequest.getPage(),
-            paginationRequest.getSize()
+                paginationRequest.getPage(),
+                paginationRequest.getSize()
         );
         return artistService.searchByArtistName(param, pageable);
     }

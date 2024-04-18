@@ -9,9 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AlertDto {
-    private Long userId;
-    private Long showId;
     private String title;
     private String email;
-    private String content;
+    private String message;
 }

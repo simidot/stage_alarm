@@ -21,7 +21,7 @@ public class ArtistSubscribeController {
 
   @PostMapping
   public ResponseEntity<ArtistSubscribeDto> subscribe(
-      @PathVariable("id") Long artistId
+          @PathVariable("id") Long artistId
   ) {
     return ResponseEntity.ok(subscribeService.subscribeArtist(artistId));
   }

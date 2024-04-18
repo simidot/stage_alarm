@@ -1,5 +1,7 @@
 package com.example.stagealarm.user.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +26,16 @@ public class UserViewController {
 
     // 로그아웃
     @GetMapping("/user/logout")
-    public String logout() {
+    public String logout(HttpServletResponse response) {
+        // 쿠키 생성 및 삭제를 위한 쿠키 객체 생성
+        Cookie refreshToken = new Cookie("refreshTokenId", null); // 삭제할 쿠키 이름과 값(null)
+        refreshToken.setHttpOnly(true); // 스크립트 접근 방지
+        refreshToken.setMaxAge(0); // 쿠키의 유효기간을 0초로 설정하여 즉시 만료
+        refreshToken.setPath("/"); // 쿠키 경로 설정
+
+        // 쿠키를 응답에 추가하여 클라이언트 측에서 삭제되도록 함
+        response.addCookie(refreshToken);
+
         return "content/user/logout";
     }
 

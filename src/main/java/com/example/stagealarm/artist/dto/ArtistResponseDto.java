@@ -3,7 +3,6 @@ package com.example.stagealarm.artist.dto;
 import com.example.stagealarm.artist.entity.Artist;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -21,12 +20,12 @@ public class ArtistResponseDto {
 
   public static ArtistResponseDto fromEntity(Artist artist){
     return ArtistResponseDto.builder()
-        .id(artist.getId())
-        .name(artist.getName())
-        .age(artist.getAge())
-        .gender(artist.getGender())
-        .profileImg(artist.getProfileImg())
-        .genres(artist.getGenresString(artist.getGenres()))
-        .build();
+            .id(artist.getId())
+            .name(artist.getName())
+            .age(artist.getAge())
+            .gender(artist.getGender())
+            .profileImg(artist.getProfileImg())
+            .genres(artist.getGenresString(artist.getGenres()))
+            .build();
   }
 }

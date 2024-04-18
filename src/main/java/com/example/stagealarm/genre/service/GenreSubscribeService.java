@@ -7,7 +7,6 @@ import com.example.stagealarm.genre.entity.GenreSubscribe;
 import com.example.stagealarm.genre.repo.GenreRepository;
 import com.example.stagealarm.genre.repo.GenreSubscribeRepo;
 import com.example.stagealarm.user.entity.UserEntity;
-import com.example.stagealarm.user.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -48,10 +47,10 @@ public class GenreSubscribeService {
         }
         genreRepository.save(genre);
 
-      return GenreSubscribeDto.builder()
-            .subscribes((long) genre.getSubscribes().size())
-            .userId(userEntity.getId())
-            .genreId(genreId)
-            .build();
+        return GenreSubscribeDto.builder()
+                .subscribes((long) genre.getSubscribes().size())
+                .userId(userEntity.getId())
+                .genreId(genreId)
+                .build();
     }
 }

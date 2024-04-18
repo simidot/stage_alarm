@@ -3,7 +3,6 @@ package com.example.stagealarm.genre.dto;
 import com.example.stagealarm.genre.entity.Genre;
 import lombok.*;
 
-import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -16,8 +15,8 @@ public class ShowUploadGenreDto {
 
   public static ShowUploadGenreDto fromEntity(Genre genre) {
     return ShowUploadGenreDto.builder()
-        .id(genre.getId())
-        .name(genre.getName())
-        .build();
+            .id(genre.getId())
+            .name(genre.getName())
+            .build();
   }
 }
