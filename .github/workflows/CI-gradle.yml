@@ -55,6 +55,9 @@ jobs:
       - name: Build JAR with Gradle Wrapper
         run: ./gradlew clean build
 
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+
       - name: Set Image Tag
         id: image-tag
         run: echo "TAG=$(date +%s)-ci" >> "$GITHUB_OUTPUT"
