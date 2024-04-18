@@ -5,7 +5,7 @@ FROM amazoncorretto:17 AS builder
 WORKDIR /app
 
 # JAR 파일을 복사합니다. 해당 경로와 파일 이름은 CI/CD 파이프라인 설정에 따라 변경될 수 있습니다.
-COPY build/libs/*-SNAPSHOT.jar app.jar
+COPY /var/lib/docker/tmp/buildkit-mount2537970854/build/libs/*-SNAPSHOT.jar app.jar
 
 # 두 번째 단계: 빌더 stage에서 만들어진 JAR 파일을 가져와서 실행 환경을 구성합니다.
 FROM amazoncorretto:17
