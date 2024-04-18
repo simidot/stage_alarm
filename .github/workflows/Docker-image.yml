@@ -7,7 +7,6 @@ on:
     branches: [ CICD ]
 
 jobs:
-  # 빌드가 완료되면 도커 이미지 생성 후 도커 허브에 저장
   deliver:
     runs-on: ubuntu-latest
     steps:
@@ -26,6 +25,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Push the Docker Image
         env:
           TAG: ${{ steps.image-tag.outputs.TAG }}
