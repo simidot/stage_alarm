@@ -4,8 +4,8 @@ FROM amazoncorretto:17 AS builder
 # 작업할 경로 설정
 WORKDIR /app
 
-# 빌드된 JAR 파일을 아티팩트에서 가져옴
-COPY ./artifact.jar app.jar
+# 빌드된 JAR 파일을 가져옴
+COPY ./build/libs/artifact.jar app.jar
 
 FROM amazoncorretto:17
 
