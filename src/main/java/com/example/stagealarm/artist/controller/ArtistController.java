@@ -73,14 +73,16 @@ public class ArtistController {
     }
 
     // 아티스트 수정
-    @PutMapping("/{id}")
-    public ArtistDto updateArtist(
+    @PatchMapping("/{id}")
+    public ResponseEntity<ArtistResponseDto> updateArtist(
             @PathVariable("id")
             Long id,
-            @RequestBody
-            ArtistDto dto
+            @RequestPart("dto")
+            ArtistRequestDto dto,
+            @RequestPart(name = "file", required = false)
+            MultipartFile file
     ){
-        return artistService.update(id, dto);
+        return ResponseEntity.ok(artistService.update(id,dto, file));
     }
 
     // 아티스트 삭제

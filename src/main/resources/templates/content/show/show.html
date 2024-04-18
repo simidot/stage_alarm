@@ -101,7 +101,7 @@
                                     <span class="total-like">${showInfo.totalLike}</span>
                             </p>
 
-                            <button class="flex-grow-1 info-update btn btn-outline-primary">수정</button>
+<!--                            <button class="flex-grow-1 info-update btn btn-outline-primary">수정</button>-->
                             <button class="flex-grow-1 info-delete btn btn-outline-danger" style="color: red;">삭제</button>
                             <button class="btn btn-outline-primary show-goods" onclick="window.location.href='/showItems/' + ${showInfo.id}">굿즈 보기</button>
                             <button class="btn btn-outline-primary update-goods" onclick="window.location.href='/item/register?showInfoId=' + ${showInfo.id}">굿즈 등록</button>
@@ -115,12 +115,12 @@
                 function toggleButtons() {
                     console.log(authority)
                     if (authority.authority === "ROLE_ADMIN") {
-                        $(".info-update").show(); // 수정 버튼 보이기
+                        // $(".info-update").show(); // 수정 버튼 보이기
                         $(".info-delete").show(); // 삭제 버튼 보이기
                         $(".update-goods").show(); // 굿즈 등록 버튼 보이기
                         $(".show-goods").hide(); // 굿즈 보기 버튼 숨기기
                     } else {
-                        $(".info-update").hide(); // 수정 버튼 숨기기
+                        // $(".info-update").hide(); // 수정 버튼 숨기기
                         $(".info-delete").hide(); // 삭제 버튼 숨기기
                         $(".update-goods").hide(); // 굿즈 등록 버튼 숨기기
                         $(".show-goods").show(); // 굿즈 보기 버튼 보이기
@@ -165,14 +165,14 @@
             }
         });
 
-        // update 페이지로 이동시키는 메서드
-        function redirectToUpdatePage() {
-            window.location.href = '/shows/' + id + '/update';
-        }
+        // // update 페이지로 이동시키는 메서드
+        // function redirectToUpdatePage() {
+        //     window.location.href = '/shows/' + id + '/update';
+        // }
 
-        $(document).on("click", ".info-update", function () {
-            redirectToUpdatePage();
-        });
+        // $(document).on("click", ".info-update", function () {
+        //     redirectToUpdatePage();
+        // });
 
 
         $(document).on("click", ".info-delete", function () {

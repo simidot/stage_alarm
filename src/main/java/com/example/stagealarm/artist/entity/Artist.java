@@ -3,10 +3,7 @@ package com.example.stagealarm.artist.entity;
 import com.example.stagealarm.BaseEntity;
 import com.example.stagealarm.artist.dto.ArtistDto;
 import com.example.stagealarm.artist.dto.ArtistRequestDto;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -34,7 +31,7 @@ public class Artist extends BaseEntity {
   @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY)
   private List<ArtistSubscribe> subscribes = new ArrayList<>();
 
-  @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<ArtistGenre> genres = new ArrayList<>();
 
 
