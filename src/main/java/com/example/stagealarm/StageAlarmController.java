@@ -14,5 +14,8 @@ public class StageAlarmController {
         return "content/main";
     }
 
-
+    @GetMapping("/test")
+    public String hi() {
+        return "hello";
+    }
 }
