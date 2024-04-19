@@ -1,43 +1,3 @@
-$("#posterImage").on("change", function(){
-    const fileInput = $("#posterImage")[0];
-    const files = fileInput.files;
-    const reg = /(.*?)\.(jpg|bmp|jpeg|png|jfif|JPG|BMP|JPEG|PNG|JFIF)$/;
-    const maxSize = 5 * 1024 * 1024;
-
-    // var file = event.target.files[0];
-    const imageContainer = $("#imageContainer");
-    imageContainer.empty();
-
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const reader = new FileReader();
-        // reader.readAsDataURL(file);
-
-        reader.onload = (function (file) {
-            return function (e) {
-                // 미리보기 이미지의 크기 조절
-                var img = $("<img>").attr("src", e.target.result).css({
-                    "max-width": "200px",
-                    "max-height": "200px",
-                    "margin": "5px"  // 이미지 간격을 조절하기 위한 스타일
-                });
-                // 이미지를 이미지 컨테이너에 추가
-                imageContainer.append(img);
-            };
-        })(file);
-
-        if (!file.name.match(reg)) {
-            alert("이미지 파일만 업로드 가능합니다. ");
-            fileInput.value = "";
-            return;
-        } else if (file.size >= maxSize) {
-            alert("파일 사이즈는 5MB까지 가능합니다. ");
-            fileInput.value = "";
-            return;
-        }
-        reader.readAsDataURL(file);
-    }
-});
 
 // 기존에 추가된 아티스트 목록을 저장할 배열
 let foundArtists = [];
@@ -55,28 +15,22 @@ $(document).ready(function () {
         type: "GET",
         success: function (response) {
             $.each(response, function (index, artist) {
+                console.log("artist genre: ", artist.genres);
                 let genresHtml = '';
-                let genreIdsHtml = ''; // 장르의 ID를 저장할 배열
                 $.each(artist.genres, function (index, genre) {
-                    genresHtml += genre.name + ', '; // 장르의 이름을 문자열로 추가
-                    genreIdsHtml += genre.id + ', '; // 장르의 ID를 배열에 추가
+                    console.log("genre name: ", genre.toString());
+                    genresHtml += genre + ', '; // 장르의 이름을 문자열로 추가
                 });
-                // 마지막 쉼표 제거
+                // // 마지막 쉼표 제거
                 genresHtml = genresHtml.slice(0, -2);
                 console.log("genresHtml : ", genresHtml);
-
-                genreIdsHtml = genreIdsHtml.slice(0, -2);
-                console.log("gerneIdsString : ", genreIdsHtml);
 
                 // 장르의 ID들을 쉼표로 연결하여 문자열로 저장
                 // let genresIdsString = genresIds.join(',');
                 let filledTemplate = artistTemplate.replace(/{{artist.id}}/g, artist.id)
                     .replace(/{{artist.name}}/g, artist.name)
                     .replace(/{{artist.name}}/g, artist.name)
-                    .replace(/{{artist.genres}}/g, genresHtml)
-                    .replace(/{{artist.genreIds}}/g, genreIdsHtml); // 장르의 ID 문자열을 치환
-                console.log("genresHtml : ", genresHtml);
-                console.log("gerneIdsString : ", genreIdsHtml);
+                    .replace(/{{artist.genres}}/g, genresHtml);
                 artistListHtml += filledTemplate;
                 foundArtists.push(artist.name);
             });
@@ -109,7 +63,7 @@ $(document).ready(function () {
     });
 
     $.ajax({
-        url: "/genre",
+        url: "/genre/all",
         type: "GET",
         success: function (response) {
             // 장르 정보를 반복하여 HTML에 추가
@@ -138,28 +92,30 @@ $(document).on('click', '.select-artist-btn', function () {
     const artistName = $(this).data('artist-name');
     const artistId = $(this).data('artist-id');
     let artistGenresData = $(this).data('artist-genres');
-    let artistGenreIdsData = $(this).data('artist-genreIds');
+    // let artistGenreIdsData = $(this).data('artist-genreIds');
 
     let artistGenres = artistGenresData ? artistGenresData.split(',') : [];
-    let artistGenreIds = artistGenreIdsData ? artistGenreIdsData.split(',') : [];
+    // let artistGenreIds = artistGenreIdsData ? artistGenreIdsData.split(',') : [];
 
     // 아티스트 중복 체크
     const isDuplicateArtist = selectedArtists.some(artist => artist.name === artistName);
 
     if (!isDuplicateArtist) {
         console.log("중복되지 않은 아티스트: ", artistName);
+        console.log("중복되지 않은 아티스트의 장르: ", artistGenresData);
         selectedArtists.push({name: artistName, id: artistId});
 
         // 이 아티스트의 모든 장르를 선택된 장르 배열에 추가
         artistGenres.forEach((genre, index) => {
-            const genreId = artistGenreIds[index]?.trim();
-            if (genreId) {
+            const genreName = artistGenres[index]?.trim();
+            if (genreName) {
                 genre = genre.trim();
 
-                const isDuplicateGenre = selectedGenres.some(selectedGenre => selectedGenre.id === genreId);
+                const isDuplicateGenre = selectedGenres.some(selectedGenre => selectedGenre.name === genreName);
                 if (!isDuplicateGenre) {
                     console.log("중복되지 않은 장르: ", genre);
-                    selectedGenres.push({name: genre, id: genreId});
+                    selectedGenres.push({name: genre});
+                    console.log("")
                 }
             }
         });
@@ -171,16 +127,14 @@ $(document).on('click', '.select-artist-btn', function () {
 
 $(document).on('click', '.select-genre-btn', function () {
     const genreName = $(this).data('genre-name');
-    const genreId = $(this).data('genre-id');
 
     // 장르 중복 체크
-    const isDuplicateGenre = selectedGenres.some(genre => genre.id === genreId);
+    const isDuplicateGenre = selectedGenres.some(genre => genre.name === genreName);
 
     if (!isDuplicateGenre) {
         console.log('중복되지 않은 장르: ', genreName);
         selectedGenres.push({
             name: genreName,
-            id: genreId
         });
     }
 
@@ -208,7 +162,8 @@ $('#addNewArtistBtn').click(function() {
 
     // DTO 객체 생성 (예시 데이터)
     const artistRequestDto = {
-        name: newArtistName
+        name: newArtistName,
+        genreIds: []
     };
     console.log("new artist", newArtistName);
 
@@ -232,6 +187,7 @@ $('#addNewArtistBtn').click(function() {
             let filledTemplate = artistTemplate.replace(/{{artist.id}}/g, response.id); // artist.id를 템플릿에 추가
             filledTemplate = filledTemplate.replace(/{{artist.name}}/g, response.name);
             filledTemplate = filledTemplate.replace(/{{artist.name}}/g, response.name); // 버튼의 data-artist-name 속성에도 적용
+            filledTemplate = filledTemplate.replace(/{{artist.genres}}/g, null);
             artistListHtml += filledTemplate;
             console.log('새 아티스트 추가:', newArtistName);
             $('#artistList').html(artistListHtml);
@@ -255,9 +211,9 @@ $('#showInfoForm').on('submit', function (e) {
     }
 
     const formData = new FormData();
-    const posterImgInput = document.getElementById('posterImage');
+    const posterImgInput = document.getElementById('image');
     formData.append('file', posterImgInput.files[0]);
-    const genreIds = selectedGenres.map(genre => genre.id);
+    const genreNames = selectedGenres.map(genre => genre.name);
     const artistIds = selectedArtists.map(artist => artist.id);
 
     const showData = {
@@ -270,7 +226,7 @@ $('#showInfoForm').on('submit', function (e) {
         ticketVendor: $('#ticketVendor').val(),
         price: $('#price').val(),
         artists: artistIds,
-        genres: genreIds
+        genres: genreNames
     };
     formData.append('dto', new Blob([JSON.stringify(showData)], {type: 'application/json'}));
 

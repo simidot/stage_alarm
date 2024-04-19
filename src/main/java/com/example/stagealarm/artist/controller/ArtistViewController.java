@@ -9,4 +9,9 @@ public class ArtistViewController {
     public String artistUpload() {
         return "content/artist/artistUpload";
     }
+
+    @GetMapping("/artists/{id}/update")
+    public String artistUpdate() {
+        return "content/artist/artistUpdate";
+    }
 }

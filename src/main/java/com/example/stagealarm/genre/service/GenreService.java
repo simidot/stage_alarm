@@ -2,6 +2,7 @@ package com.example.stagealarm.genre.service;
 
 import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.genre.dto.GenreDto;
+import com.example.stagealarm.genre.dto.ShowUploadGenreDto;
 import com.example.stagealarm.genre.entity.Genre;
 import com.example.stagealarm.genre.repo.GenreRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ public class GenreService {
     }
 
     // 모든 장르 조회
-    public List<GenreDto> readAll() {
+    public List<GenreDto> readAllWithSubscribe() {
         List<Genre> genres = genreRepository.findAll();
 
         // 인증된 사용자라면 구독 정보를 함께 전달
@@ -54,6 +55,12 @@ public class GenreService {
                     .map(GenreDto::fromEntity)
                     .collect(Collectors.toList());
         }
+    }
+
+    // 모든 장르 조회 (조회만)
+    public List<ShowUploadGenreDto> readAll() {
+        List<Genre> genres = genreRepository.findAll();
+        return genres.stream().map(ShowUploadGenreDto::fromEntity).collect(Collectors.toList());
     }
 
     // id로 장르 조회

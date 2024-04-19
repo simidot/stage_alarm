@@ -1,9 +1,6 @@
 package com.example.stagealarm.artist.controller;
 
-import com.example.stagealarm.artist.dto.ArtistDto;
-import com.example.stagealarm.artist.dto.ArtistRequestDto;
-import com.example.stagealarm.artist.dto.ArtistResponseDto;
-import com.example.stagealarm.artist.dto.PaginationRequest;
+import com.example.stagealarm.artist.dto.*;
 import com.example.stagealarm.artist.service.ArtistService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +25,10 @@ public class ArtistController {
     // 아티스트 추가
     @PostMapping
     public ResponseEntity<ArtistResponseDto> addArtist(
-        @RequestPart("dto")
-        ArtistRequestDto dto,
-        @RequestPart(name = "file", required = false)
-        MultipartFile file
+            @RequestPart("dto")
+            ArtistRequestDto dto,
+            @RequestPart(name = "file", required = false)
+            MultipartFile file
     ) {
         // 관리자 권한 일때
         return ResponseEntity.ok(artistService.join(dto, file));
@@ -41,25 +38,25 @@ public class ArtistController {
     @GetMapping
     public Page<ArtistDto> getAllArtistWithPage(PaginationRequest paginationRequest) {
         Pageable pageable = PageRequest.of(
-            paginationRequest.getPage(),
-            paginationRequest.getSize()
+                paginationRequest.getPage(),
+                paginationRequest.getSize()
         );
         return artistService.searchAll(pageable);
     }
 
     @GetMapping("/all")
-    public List<ArtistDto> getAllArtist() {
+    public List<ShowUploadArtistDto> getAllArtist() {
         return artistService.searchAll();
     }
 
     // 아티스트 검색
     @GetMapping("/search")
     public Page<ArtistDto> searchArtistName(
-        @RequestParam(name = "param") String param, PaginationRequest paginationRequest
+            @RequestParam(name = "param") String param, PaginationRequest paginationRequest
     ) {
         Pageable pageable = PageRequest.of(
-            paginationRequest.getPage(),
-            paginationRequest.getSize()
+                paginationRequest.getPage(),
+                paginationRequest.getSize()
         );
         return artistService.searchByArtistName(param, pageable);
     }
@@ -75,14 +72,16 @@ public class ArtistController {
     }
 
     // 아티스트 수정
-    @PutMapping("/{id}")
-    public ArtistDto updateArtist(
+    @PatchMapping("/{id}")
+    public ResponseEntity<ArtistResponseDto> updateArtist(
             @PathVariable("id")
             Long id,
-            @RequestBody
-            ArtistDto dto
+            @RequestPart("dto")
+            ArtistRequestDto dto,
+            @RequestPart(name = "file", required = false)
+            MultipartFile file
     ){
-        return artistService.update(id, dto);
+        return ResponseEntity.ok(artistService.update(id,dto, file));
     }
 
     // 아티스트 삭제

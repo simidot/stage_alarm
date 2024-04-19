@@ -14,8 +14,10 @@ import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.image.entity.Image;
 import com.example.stagealarm.image.repo.ImageRepository;
 import com.example.stagealarm.user.entity.UserEntity;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -26,7 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Slf4j
 @Service
@@ -38,7 +40,7 @@ public class BoardService {
   private final QBoardRepo qBoardRepo;
   private final S3FileService s3FileService;
   private final ImageRepository imageRepository;
-
+  private final JPAQueryFactory jpaQueryFactory;
 
   // Create
   @Transactional

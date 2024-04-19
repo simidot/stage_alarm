@@ -7,7 +7,6 @@ import com.example.stagealarm.user.dto.PasswordDto;
 import com.example.stagealarm.user.dto.UserDto;
 import com.example.stagealarm.user.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -145,7 +144,7 @@ public class UserController {
     public void checkEmailAuth(
             @RequestParam("email")
             String email
-    ) throws MessagingException {
+    ){
         userService.sendEmail(email);
     }
 

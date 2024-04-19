@@ -79,19 +79,6 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
 
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: youshin.dev@gmail.com
-    password: tdin xdoe suwi fbok
-    default-encoding: utf-8
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-    protocol: smtp
 
   data:
     redis:
@@ -99,6 +86,12 @@ spring:
       port: 11256
       username: default
       password: kU4u2b3vhKeFTVzBnVGbZOyd5jzYunX6
+
+  rabbitmq:
+    username: zwdlynvc
+    password: 9kjJYkQxwL6Bzy1_sXzO-fwki1vEMNsz
+    host: dingo-01.rmq.cloudamqp.com
+    virtual-host: zwdlynvc
 
 jwt:
   secret: aaaabbbsdifqbvaesoioegwaaaabbbsdifqbvaesoioegwaaaabbbsdifqbvaes

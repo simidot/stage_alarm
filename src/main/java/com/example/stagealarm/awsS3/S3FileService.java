@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -102,11 +101,11 @@ public class S3FileService {
 
             try (InputStream inputStream = multipartFile.getInputStream()) {
                 amazonS3.putObject(
-                    new PutObjectRequest(bucket + folder,
-                        filename,
-                        inputStream,
-                        metadata)
-                        .withCannedAcl(CannedAccessControlList.PublicRead)
+                        new PutObjectRequest(bucket + folder,
+                                filename,
+                                inputStream,
+                                metadata)
+                                .withCannedAcl(CannedAccessControlList.PublicRead)
                 );
                 // 성공적 업로드시 imgUrlList에 추가
                 imgUrlList = amazonS3.getUrl(bucket + folder, filename).toString();

@@ -1,44 +1,3 @@
-$("#profileImg").on("change", function(){
-    const fileInput = $("#profileImg")[0];
-    const files = fileInput.files;
-    const reg = /(.*?)\.(jpg|bmp|jpeg|png|jfif|JPG|BMP|JPEG|PNG|JFIF)$/;
-    const maxSize = 5 * 1024 * 1024;
-
-    // var file = event.target.files[0];
-    const imageContainer = $("#imageContainer");
-    imageContainer.empty();
-
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const reader = new FileReader();
-        // reader.readAsDataURL(file);
-
-        reader.onload = (function (file) {
-            return function (e) {
-                // 미리보기 이미지의 크기 조절
-                var img = $("<img>").attr("src", e.target.result).css({
-                    "max-width": "200px",
-                    "max-height": "200px",
-                    "margin": "5px"  // 이미지 간격을 조절하기 위한 스타일
-                });
-                // 이미지를 이미지 컨테이너에 추가
-                imageContainer.append(img);
-            };
-        })(file);
-
-        if (!file.name.match(reg)) {
-            alert("이미지 파일만 업로드 가능합니다. ");
-            fileInput.value = "";
-            return;
-        } else if (file.size >= maxSize) {
-            alert("파일 사이즈는 5MB까지 가능합니다. ");
-            fileInput.value = "";
-            return;
-        }
-        reader.readAsDataURL(file);
-    }
-});
-
 let foundGenres = [];
 let genreListHtml= '';
 const genreTemplate = $('#genreList').html();
@@ -46,7 +5,7 @@ let selectedGenres = [];
 let selectedGenreIds = [];
 $(document).ready(function () {
     $.ajax({
-        url: "/genre",
+        url: "/genre/all",
         type: "GET",
         success: function (response) {
             // 장르 정보를 반복하여 HTML에 추가
@@ -71,6 +30,24 @@ $(document).ready(function () {
     });
 });
 
+// 삭제 버튼 클릭 이벤트 처리
+$(document).on('click', '.remove-genre-btn', function () {
+    const genreName = $(this).data('genre-name');
+    const genreId = $(this).data('genre-id');
+
+    // 선택된 장르 목록에서 해당 장르 제거
+    const index = selectedGenres.indexOf(genreName);
+    if (index !== -1) {
+        selectedGenres.splice(index, 1);
+        selectedGenreIds.splice(index, 1);
+    }
+
+    // 선택된 장르 목록 다시 표시
+    $('#selectedGenreName').text(selectedGenres.join(', '));
+    $(this).removeClass('remove-genre-btn').addClass('select-genre-btn').text('선택');
+
+});
+
 $(document).on('click', '.select-genre-btn', function () {
     const genreName = $(this).data('genre-name');
     const genreId = $(this).data('genre-id');
@@ -84,6 +61,8 @@ $(document).on('click', '.select-genre-btn', function () {
 
     // 선택된 모든 장르의 이름을 표시
     $('#selectedGenreName').text(selectedGenres.join(', ')); // 선택된 모든 장르 이름을 쉼표로 구분하여 표시
+    $(this).removeClass('select-genre-btn').addClass('remove-genre-btn').text('삭제');
+
 });
 
 let checkedArtistName = null;
@@ -130,7 +109,7 @@ $('#artistForm').on('submit', function(e) {
     // FormData 객체 생성
     const formData = new FormData();
     // 프로필 이미지 파일 추가
-    const profileImgInput = document.getElementById('profileImg');
+    const profileImgInput = document.getElementById('image');
     formData.append('file', profileImgInput.files[0]);
     const gender = $("input[name='gender']:checked").val();
 
@@ -154,6 +133,7 @@ $('#artistForm').on('submit', function(e) {
         data: formData, // formData 객체를 직접 전달합니다.
         success: function (response) {
             console.log('아티스트 등록 성공 : ', response);
+            alert("아티스트 정보가 등록되었습니다.");
             location.href = '/subscribe';
         },
         error: function (xhr, status, error) {

@@ -1,26 +1,27 @@
 package com.example.stagealarm.user.service;
 
-import com.example.stagealarm.alarm.service.EmailAuthService;
 import com.example.stagealarm.awsS3.S3FileService;
 import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.jwt.JwtRequestDto;
 import com.example.stagealarm.jwt.JwtResponseDto;
 import com.example.stagealarm.jwt.JwtTokenUtils;
 import com.example.stagealarm.user.dto.PasswordDto;
+import com.example.stagealarm.user.dto.UserMailDto;
 import com.example.stagealarm.user.entity.UserEntity;
 import com.example.stagealarm.user.dto.CustomUserDetails;
 import com.example.stagealarm.user.dto.UserDto;
 import com.example.stagealarm.user.repo.UserRepository;
+import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -45,9 +46,13 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtils jwtTokenUtils;
     private final AuthenticationFacade authFacade;
-    private final EmailAuthService emailAlertService;
     private final StringRedisTemplate redisTemplate;
     private final S3FileService s3FileService;
+
+    // RabbitMQ 사용
+    private final RabbitTemplate rabbitTemplate;
+    private final Queue authQueue;
+    private final Gson gson;
 
     // Security 위한 메서드 구현
     @Override
@@ -251,39 +256,38 @@ public class UserService implements UserDetailsService {
     }
 
     // 인증번호 보내는 로직
-    public void sendEmail(String email) throws MessagingException {
+    public void sendEmail(String email){
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
         Random random = new Random();
         String code = String.valueOf(1000000 + random.nextInt(9000000));
         // 레디스에 인증 코드 저장 및 만료 시간 5분으로 설정
         operations.set(email, code, 5, TimeUnit.MINUTES);
 
-        emailAlertService.
-                sendMail(email,
-                        "스테이지알람 이메일 인증 코드입니다",
-                        "귀하의 인증 코드는: " + code + " 입니다.");
+        UserMailDto userMailDto = UserMailDto.builder()
+                .email(email)
+                .subject("스테이지알람 이메일 인증 코드입니다.")
+                .text("귀하의 인증 코드는: " + code + " 입니다.")
+                .build();
+        // 인증 큐로 전송
+        rabbitTemplate.convertAndSend(authQueue.getName(), gson.toJson(userMailDto));
+
     }
 
 
-    @Async("threadPoolTaskExecutor")
     @Transactional
     public void sendPwEmail(String email) {
         // 이메일 전송 로직
         String tempPassword = generateTempPassword(10);
-        try {
-            // 이메일 전송
-            emailAlertService.sendMail(email,
-                    "스테이지알람 임시 비밀번호 입니다",
-                    "귀하의 임시 비밀번호는: " + tempPassword + " 입니다.\n로그인 후 빠른 시일 내에 비밀번호를 수정하시길 바랍니다.");
+        UserMailDto userMailDto = UserMailDto.builder()
+                .email(email)
+                .subject("스테이지알람 임시 비밀번호 입니다")
+                .text("귀하의 임시 비밀번호는: " + tempPassword + " 입니다.\n로그인 후 빠른 시일 내에 비밀번호를 수정하시길 바랍니다.")
+                .build();
 
+        // 인증 큐로 전송
+        rabbitTemplate.convertAndSend(authQueue.getName(), gson.toJson(userMailDto));
 
-        } catch (MessagingException e) {
-            // 예외 처리 로직
-            log.error("Failed to send temporary password email to {}", email, e);
-        } finally {
-            // 임시 비밀번호로 비밀번호 변경
-            changeTempPassword(email, tempPassword);
-        }
+        changeTempPassword(email, tempPassword);
     }
 
     public void changeTempPassword(String email, String tempPassword) {
