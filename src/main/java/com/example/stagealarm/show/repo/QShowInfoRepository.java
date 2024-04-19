@@ -74,7 +74,7 @@ public class QShowInfoRepository {
                         // 프론트에서 받아온 sort와 order
                         sortable,
                         // sortbinder : querydsl객체로 변환하는 역할
-                        SortBinder.of("createdAt", showInfo.createdAt),
+                        SortBinder.of("createdAt", showInfo.date),
                         SortBinder.of("like", showLike.showInfo.id.count())
                 ))
                 .offset(pageable.getOffset())
