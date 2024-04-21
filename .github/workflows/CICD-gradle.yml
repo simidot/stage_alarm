@@ -52,6 +52,9 @@ jobs:
       - name: Build JAR with Gradle Wrapper
         run: ./gradlew clean build
 
+      - name: package check
+        run: ls
+
       - name: Set Image Tag
         id: image-tag
         run: echo "TAG=$(date +%s)-ci" >> "$GITHUB_OUTPUT"
