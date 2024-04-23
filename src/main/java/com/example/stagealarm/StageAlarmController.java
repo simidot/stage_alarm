@@ -18,4 +18,9 @@ public class StageAlarmController {
     public String hi() {
         return "hello";
     }
+
+    @GetMapping("/healthcheck")
+    public String healthcheck() {
+        return "OK";
+    }
 }
