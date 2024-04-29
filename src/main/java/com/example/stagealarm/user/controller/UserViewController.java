@@ -15,7 +15,7 @@ public class UserViewController {
     public String myProfile(
 
     ){
-        return "/content/user/myProfile";
+        return "content/user/myProfile";
     }
 
     // 로그인 화면
