@@ -18,7 +18,7 @@ $(document).ready(function () {
         success: function (data) {
 
 
-            let profileImgUrl = data.profileImg ? data.profileImg : 'https://stage-alarm.s3.ap-northeast-2.amazonaws.com/profileImg/user.png';
+            let profileImgUrl = data.profileImg ? data.profileImg : 'https://stage-alarm.s3.ap-northeast-2.amazonaws.com/defaultImg/user.png';
             let filledTemplate = artistTemplate.replace(/{{artist.id}}/g, data.id);
             filledTemplate = filledTemplate.replace(/{{profileImg}}/g, profileImgUrl);
             filledTemplate = filledTemplate.replace(/{{artist.name}}/g, data.name);

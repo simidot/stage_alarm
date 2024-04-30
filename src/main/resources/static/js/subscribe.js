@@ -194,7 +194,7 @@ function fillArtistTemplate(template, artist) {
     }
     // 장르 리스트를 문자열로 변환
     const genresStr = artist.genres.map(genre => genre.name).join(', ');
-    const defaultImageUrl = 'https://stage-alarm.s3.ap-northeast-2.amazonaws.com/profileImg/user.png'; // 기본 이미지 URL
+    const defaultImageUrl = 'https://stage-alarm.s3.ap-northeast-2.amazonaws.com/defaultImg/user.png'; // 기본 이미지 URL
 
     console.log("genreStr: ",genresStr);
     const filledTemplate = template.replace(/{{artist.profileImg}}/g, artist.profileImg !== '' ? artist.profileImg : defaultImageUrl)

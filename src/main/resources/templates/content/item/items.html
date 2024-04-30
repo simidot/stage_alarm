@@ -11,41 +11,42 @@
 <body>
 <main role="main" class="ml-sm-auto px-md-4" style="height: auto; min-height: 1500px; margin-bottom: 70px; display: flex; flex-direction: column;">
   <div class="main-container border rounded p-3 mt-2" style="flex: 1;">
-    <div id="item-list" class="container mt-5">
-      <!-- 상품 목록은 여기에 동적으로 로드됩니다 -->
+    <div class="container mt-5">
+      <h3 class="text-center">전체 굿즈</h3>
+      <hr>
+      <div class="row mt-5">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <div id="itemList" class="mt-5">
+                <div class="row justify-content-start">
+                  <script type="text/template" id="itemCardTemplate">
+                    <div class="col-md-4 item-card" data-item-id="{{item.id}}">
+                      <div class="card">
+                        <img src="{{item.itemImage}}" class="card-img-top img-thumbnail mb-3" alt="Item Image" style="width:200px; height:250px">
+                        <div class="card-body">
+                          <h5 class="card-title">{{item.name}}</h5>
+                          <p class="card-text">공연 이름: {{item.showName}}</p>
+                          <p class="card-text">가격: {{item.price}}</p>
+                          <p class="card-text">재고: {{item.amount}}</p>
+                          <a href="/item?id={{item.id}}" class="btn btn-primary">사러가기</a>
+                        </div>
+                      </div>
+                      </div>
+                  </script>
+                </div>
+              </div>
+              <nav aria-label="Page navigation example" class="mt-5 d-flex justify-content-center">
+                <ul class="pagination">
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </main>
-<script>
-  $(document).ready(function () {
-    $.ajax({
-      url: "/items",
-      type: "GET",
-      success: function(data) {
-        var $itemList = $('#item-list');
-        $.each(data, function(index, item) {
-          var itemCard =
-                  '<div class="col-md-4">' +
-                  '<div class="card">' +
-                  '<img src="' + item.itemImg + '" class="card-img-top p-3" alt="Item Image">' +
-                  '<div class="card-body">' +
-                  '<h5 class="card-title">' + item.name + '</h5>' +
-                  '<p class="card-text">공연 이름: ' + item.showName + '</p>' +
-                  '<p class="card-text">가격: ' + item.price + '</p>' +
-                  '<p class="card-text">재고: ' + item.amount + '</p>' +
-                  '<a href="/item?id=' + item.id + '" class="btn btn-primary">사러가기</a>' +
-                  '</div>' +
-                  '</div>' +
-                  '</div>';
-
-          $itemList.append(itemCard);
-        });
-      },
-      error: function (xhr, status, error) {
-        console.error("AJAX 요청 실패:", status, error);
-      }
-    });
-  });
-</script>
+<script th:src="@{/js/items.js}"></script>
 </body>
 </html>
