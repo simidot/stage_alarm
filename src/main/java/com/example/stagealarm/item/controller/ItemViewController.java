@@ -44,7 +44,7 @@ public class ItemViewController {
         showInfoIdCookie.setMaxAge(24 * 60 * 60); // 1일 동안 유효
         response.addCookie(showInfoIdCookie); // 응답에 쿠키 추가
 
-        return "/content/item/showItems";
+        return "content/item/showItems";
     }
 
     // 아이템 개별 조회
