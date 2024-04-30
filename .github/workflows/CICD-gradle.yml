@@ -123,6 +123,12 @@ jobs:
       - name: Push Latest
         run: docker push "${{ secrets.REGISTRY }}/main-server:latest"
 
+      # Kubernetes 설정
+      - name: Create .ncloud directory and configure file
+        run: |
+          mkdir -p $HOME/.ncloud
+          touch $HOME/.ncloud/configure
+
       - name: Install ncp-iam-authenticator
         run: |
           curl -o ncp-iam-authenticator -L https://github.com/NaverCloudPlatform/ncp-iam-authenticator/releases/latest/download/ncp-iam-authenticator_linux_amd64
