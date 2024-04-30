@@ -128,6 +128,9 @@ jobs:
         run: |
           mkdir -p $HOME/.ncloud
           touch $HOME/.ncloud/configure
+          echo "ncloud_access_key_id=${{ secrets.REGISTRY_USERNAME }}" >> $HOME/.ncloud/configure
+          echo "ncloud_secret_access_key=${{ secrets.REGISTRY_PASSWORD }}" >> $HOME/.ncloud/configure
+          echo "ncloud_api_url = https://ncloud.apigw.ntruss.com" >> $HOME/.ncloud/configure
 
       - name: Install ncp-iam-authenticator
         run: |
