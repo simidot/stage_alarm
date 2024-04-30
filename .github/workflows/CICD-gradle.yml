@@ -1,8 +1,10 @@
 name: CI/CD Pipeline
 
 on:
-  pull_request:
+  push:
     branches: [ dev ]
+#  pull_request:
+#    branches: [ dev ]
 # 테스트를 우선 진행
 jobs:
   test:
@@ -42,11 +44,19 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3.1.0
 
-      - name: make application-dev.yml
+#      - name: make application-dev.yml
+#        run: |
+#          cd ./src/main/resources
+#          touch ./application-dev.yml
+#          echo "${{ secrets.YAML_DEV }}" > ./application-dev.yml
+#        shell: bash
+
+      # kube ci-cd test
+      - name: make application.yaml
         run: |
           cd ./src/main/resources
-          touch ./application-dev.yml
-          echo "${{ secrets.YAML_DEV }}" > ./application-dev.yml
+          touch ./application.yaml
+          echo "${{ secrets.YAML_DEV }}" > ./application.yaml
         shell: bash
 
       - name: Build JAR with Gradle Wrapper
@@ -59,29 +69,57 @@ jobs:
         id: image-tag
         run: echo "TAG=$(date +%s)-ci" >> "$GITHUB_OUTPUT"
 
+#      - name: Build the Docker image
+#        env:
+#          TAG: ${{ steps.image-tag.outputs.TAG }}
+#        run: docker build . --file Dockerfile --tag "${{ secrets.DOCKERHUB_USERNAME }}/todo-boot:$TAG"
+#
+#      - name: Login to Docker Hub
+#        uses: docker/login-action@v3
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#      - name: Push the Docker Image
+#        env:
+#          TAG: ${{ steps.image-tag.outputs.TAG }}
+#        run: docker push "${{ secrets.DOCKERHUB_USERNAME }}/todo-boot:$TAG"
+#
+#      - name: Tag Image as Latest
+#        env:
+#          TAG: ${{ steps.image-tag.outputs.TAG }}
+#        run: |
+#            docker tag "${{ secrets.DOCKERHUB_USERNAME }}/todo-boot:$TAG" \
+#            "${{ secrets.DOCKERHUB_USERNAME }}/todo-boot:latest"
+#
+#      - name: Push Latest
+#        run: docker push "${{ secrets.DOCKERHUB_USERNAME }}/todo-boot:latest"
+
+      # kube ci-cd test
       - name: Build the Docker image
         env:
           TAG: ${{ steps.image-tag.outputs.TAG }}
-        run: docker build . --file Dockerfile --tag "${{ secrets.DOCKERHUB_USERNAME }}/todo-boot:$TAG"
+        run: docker build . --file Dockerfile --tag "${{ secrets.REGISTRY }}/main-server:$TAG"
 
-      - name: Login to Docker Hub
+      - name: Login to Custom Registry
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ${{ secrets.REGISTRY }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Push the Docker Image
         env:
           TAG: ${{ steps.image-tag.outputs.TAG }}
-        run: docker push "${{ secrets.DOCKERHUB_USERNAME }}/todo-boot:$TAG"
+        run: docker push "${{ secrets.REGISTRY }}/main-server:$TAG"
 
       - name: Tag Image as Latest
         env:
           TAG: ${{ steps.image-tag.outputs.TAG }}
         run: |
-            docker tag "${{ secrets.DOCKERHUB_USERNAME }}/todo-boot:$TAG" \
-            "${{ secrets.DOCKERHUB_USERNAME }}/todo-boot:latest"
+          docker tag "${{ secrets.REGISTRY }}/main-server:$TAG" \
+          "${{ secrets.REGISTRY }}/main-server:latest"
 
       - name: Push Latest
-        run: docker push "${{ secrets.DOCKERHUB_USERNAME }}/todo-boot:latest"
+        run: docker push "${{ secrets.REGISTRY }}/main-server:latest"
 
