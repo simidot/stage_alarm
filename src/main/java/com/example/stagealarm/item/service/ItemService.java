@@ -5,8 +5,12 @@ import com.example.stagealarm.item.entity.Status;
 import com.example.stagealarm.item.dto.ItemDto;
 import com.example.stagealarm.item.entity.Item;
 import com.example.stagealarm.item.repo.ItemRepository;
+import com.example.stagealarm.item.repo.QItemRepo;
 import com.example.stagealarm.show.repo.ShowInfoRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,24 +22,19 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ItemService {
     private final ItemRepository itemRepository;
     private final ShowInfoRepository showInfoRepository;
     private final S3FileService s3FileService;
-    public ItemService(ItemRepository itemRepository,
-                       ShowInfoRepository showInfoRepository,
-                       S3FileService s3FileService) {
-        this.itemRepository = itemRepository;
-        this.showInfoRepository = showInfoRepository;
-        this.s3FileService = s3FileService;
+    private final QItemRepo qItemRepo;
 
-    }
     // 모든 아이템 보기(관리자)
-    public List<ItemDto> readAll() {
-        return itemRepository.findAll().stream()
-                .map(ItemDto::fromEntity)
-                .collect(Collectors.toList());
+    public Page<ItemDto> readAll(Pageable pageable) {
+        Page<Item> itemPage = qItemRepo.findAll(pageable);
+
+        return itemPage.map(ItemDto::fromEntity);
     }
 
     // id로 아이템 찾기
@@ -114,9 +113,9 @@ public class ItemService {
     }
 
 
-    public List<ItemDto> searchByShowInfoId(Long showInfoId) {
-        return itemRepository.findAllByShowInfoId(showInfoId)
-                .stream().map(ItemDto::fromEntity).collect(Collectors.toList());
+    public Page<ItemDto> searchByShowInfoId(Long showInfoId, Pageable pageable) {
+        Page<Item> itemPage = qItemRepo.findAllByShowInfoId(showInfoId, pageable);
+        return itemPage.map(ItemDto::fromEntity);
     }
 }
 

@@ -1,10 +1,15 @@
 package com.example.stagealarm.item.controller;
 
+import com.example.stagealarm.artist.dto.PaginationRequest;
 import com.example.stagealarm.item.dto.ItemDto;
 import com.example.stagealarm.item.service.ItemService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,17 +24,20 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("items")
-    public List<ItemDto> readAll() {
-        log.info("readAll");
-        return itemService.readAll();
+    public Page<ItemDto> readAll(@PageableDefault(size = 5) PaginationRequest paginationRequest) {
+        Pageable pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize());
+
+        return itemService.readAll(pageable);
     }
 
     @GetMapping("{showInfoId}/items")
-    public List<ItemDto> readAllByShowInfo(
-            @PathVariable("showInfoId")
-            Long showInfoId
-    ){
-        return itemService.searchByShowInfoId(showInfoId);
+    public Page<ItemDto> readAllByShowInfo(
+        @PathVariable("showInfoId")
+        Long showInfoId,
+        @PageableDefault(size = 5) PaginationRequest paginationRequest
+    ) {
+        Pageable pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize());
+        return itemService.searchByShowInfoId(showInfoId, pageable);
     }
 
     @GetMapping("items/{id}")
