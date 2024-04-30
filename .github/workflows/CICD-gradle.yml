@@ -123,3 +123,17 @@ jobs:
       - name: Push Latest
         run: docker push "${{ secrets.REGISTRY }}/main-server:latest"
 
+      - name: Set up Kubectl
+        uses: azure/setup-kubectl@v1
+
+      - name: Load Kubeconfig
+        uses: azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl set image deployment/main-deployment main-deployment="${{ secrets.REGISTRY }}/main-server:latest"
+          kubectl rollout restart deployment/main-deployment
+
