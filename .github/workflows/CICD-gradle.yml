@@ -129,7 +129,7 @@ jobs:
           chmod +x ./ncp-iam-authenticator
           mkdir -p $HOME/bin
           cp ./ncp-iam-authenticator $HOME/bin/ncp-iam-authenticator
-          echo "export PATH=\$PATH:\$HOME/bin" >> $GITHUB_ENV
+          echo "$HOME/bin" >> $GITHUB_PATH
 
       - name: Set up Kubectl
         uses: azure/setup-kubectl@v1
