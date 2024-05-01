@@ -24,7 +24,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
     private final UserService userService;
     private final AuthenticationFacade facade;
@@ -160,7 +160,7 @@ public class UserController {
     }
 
     // 비밀번호 인증번호 확인
-    @PostMapping("/email-pwAuth")
+    @PostMapping("/email/pw/auth")
     public ResponseEntity<String> checkEmailPwCode(
             @RequestParam("email")
             String email,
@@ -171,7 +171,7 @@ public class UserController {
     }
 
     // 임시비밀번호 발급
-    @PostMapping("/email-tempPwSend")
+    @PostMapping("/email/temp/send")
     public void sendTempPw(
             @RequestParam("email")
             String email
@@ -180,7 +180,7 @@ public class UserController {
     }
 
     // 이메일로 아이디 찾기
-    @PostMapping("/email-findId")
+    @PostMapping("/email/find/id")
     public ResponseEntity<UserDto> findIdByEmail(
             @RequestParam("email")
             String email,

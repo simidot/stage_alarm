@@ -35,12 +35,12 @@
 
         function checkAuthenticationStatus() {
             $.ajax({
-                url: '/user/auth/status',
+                url: '/users/auth/status',
                 type: 'GET',
                 success: function(response) {
                     let menuHtml = '';
                     if (response.isAuthenticated) {
-                        menuHtml = '<a href="/userInfo">mypage</a><a href="/user/logout">logout</a>';
+                        menuHtml = '<a href="/user/info">mypage</a><a href="/user/logout">logout</a>';
                     } else {
                         menuHtml = '<a href="/user/login">login</a>';
                     }

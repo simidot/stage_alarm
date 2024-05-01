@@ -57,7 +57,7 @@ public class OAuth2SuccessHandler
             // 중복된 이메일이 있을 경우, 과거에 가입한 sns 가 아닐시 중복 알림 페이지로 리다이렉트
             String sns= userService.searchByEmail(email).getLoginId().split(":")[0];
             if(!Objects.equals(provider, sns)){
-                String duplicateEmailPage = "http://localhost:8080/user/emailDuplicate";
+                String duplicateEmailPage = "http://localhost:8080/user/email-duplicate";
                 getRedirectStrategy().sendRedirect(request, response, duplicateEmailPage);
                 return;
             }
@@ -102,7 +102,7 @@ public class OAuth2SuccessHandler
 
 
         // oauthClient 는 JWT 를 처리할 클라이언트측 페이지를 연결해줌
-        String redirectUrl = "http://localhost:8080/user/oauthClient";
+        String redirectUrl = "https://stage-alarm.shop/user/oauth";
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
         // 토큰을 -> 쿠키 -> 리다이렉트
     }
