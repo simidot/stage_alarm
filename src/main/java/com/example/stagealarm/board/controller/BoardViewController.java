@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/boards")
+@RequestMapping("/board")
 @RequiredArgsConstructor
 public class BoardViewController {
   private final CategoryService categoryService;
@@ -35,7 +35,7 @@ public class BoardViewController {
     return "content/board/view";
   }
 
-  @GetMapping("/write")
+  @GetMapping("/new-post")
   public String boardWrite() {
     return "content/board/write";
   }

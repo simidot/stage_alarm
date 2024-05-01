@@ -19,7 +19,7 @@ import java.util.List;
 @Tag(name = "Board 컨트롤러", description = "Board API입니다.")
 @Slf4j
 @RestController
-@RequestMapping("/board")
+@RequestMapping("/boards")
 @RequiredArgsConstructor
 public class BoardController {
   private final BoardService boardService;
