@@ -49,7 +49,7 @@
         loadUserProfile();
         function loadUserProfile() {
             $.ajax({
-                url: "/user",
+                url: "/users",
                 type: "GET",
                 dataType: "json",
                 success: function (user) {
@@ -90,7 +90,7 @@
         });
 
         $('#myOrdersBtn').click(function() {
-            location.href = '/myOrders';
+            location.href = '/my-order';
         });
     });
 </script>
