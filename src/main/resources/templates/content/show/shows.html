@@ -58,7 +58,7 @@
         // 제목 검색결과
         function sendAjaxRequest(title, pageNumber) {
             $.ajax({
-                url: "/show",
+                url: "/shows",
                 type: "GET",
                 contentType: 'application/json; charset=utf-8',
                 data: {
@@ -88,7 +88,7 @@
                         <div class="card-body">
                             <h5 class="card-title">${showInfo.title}</h5>
                             <p class="card-text">${showInfo.date}</p>
-                            <a href="shows/${showInfo.id}" class="btn btn-primary">상세보기</a>
+                            <a href="show/${showInfo.id}" class="btn btn-primary">상세보기</a>
                         </div>
                     </div>
                 </div>`;
@@ -162,7 +162,7 @@
         // 기본 로딩 화면
         function fetchData(sort, order, page) {
             $.ajax({
-                url: "/show",
+                url: "/shows",
                 type: "GET",
                 contentType: 'application/json; charset=utf-8',
                 data: {
@@ -172,6 +172,8 @@
                     order: order
                 },
                 success: function (data) {
+                    // pushHistoryState(sort, order, pageNumber);
+
                     const $showInfo = $('#showList');
                     const $showList = $('#showList .row');
                     const $pagination = $('.pagination');
@@ -192,7 +194,7 @@
                         <div class="card-body">
                             <h5 class="card-title">${showInfo.title}</h5>
                             <p class="card-text">${showInfo.date}</p>
-                            <a href="shows/${showInfo.id}" class="btn btn-primary">상세보기</a>
+                            <a href="show/${showInfo.id}" class="btn btn-primary">상세보기</a>
                         </div>
                         <div class="card-footer d-flex mt-2 justify-content-between">
                             <img class="liked" src="${showInfo.isLiked === true ? '/images/like.png' : '/images/unlike.png'}" style="width: 30px; height: 30px" alt="">
@@ -261,7 +263,22 @@
                 }
             });
         }
+
+    //     window.addEventListener('popstate', function(event) {
+    //         // 이전 상태로 돌아가는 로직 구현
+    //         // 예를 들어, 이전에 저장한 페이지 번호와 검색어를 사용하여 fetchData 함수 호출
+    //         const state = event.state;
+    //         if (state) {
+    //             fetchData(state.sort, state.order, state.page);
+    //         }
+    //     });
+    //
+    //
     });
+    // function pushHistoryState(sort, order, page) {
+    //     const stateObj = { sort: sort, order: order, page: page };
+    //     history.pushState(stateObj, '', window.location.href.split('?')[0] + '?page=' + page);
+    // }
 
 </script>
 
