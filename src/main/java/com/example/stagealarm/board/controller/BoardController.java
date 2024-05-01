@@ -59,9 +59,10 @@ public class BoardController {
   public BoardDto rewrite(
     @PathVariable("boardId") Long boardId,
     @RequestBody List<MultipartFile> files,
+    @RequestBody List<String> existingImages,
     @RequestPart BoardDto dto
   ) {
-    return boardService.reWriteBoard(files, boardId, dto);
+    return boardService.reWriteBoard(files, existingImages, boardId, dto);
   }
 
   // Delete

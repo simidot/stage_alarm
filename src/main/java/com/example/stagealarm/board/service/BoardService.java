@@ -28,6 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -114,11 +115,12 @@ public class BoardService {
   @Transactional
   public BoardDto reWriteBoard(
       List<MultipartFile> files,
+      List<String> existingImages,
       Long boardId,
       BoardDto dto
   ) {
     BoardDto result = updateBoard(boardId, dto);
-    Boolean imageResult = updateImage(boardId, files);
+    Boolean imageResult = updateImage(boardId, files, existingImages);
     log.info("S3 uploaded: {}", imageResult);
 
     return result;
@@ -222,7 +224,8 @@ public class BoardService {
   // Update - Image만 수정
   public Boolean updateImage(
       Long boardId,
-      List<MultipartFile> files
+      List<MultipartFile> files,
+      List<String> existingImages
   ) {
     try {
       // 해당 board 가져오기
@@ -233,25 +236,31 @@ public class BoardService {
       UserEntity targetUser = auth.getUserEntity();
 
       // 권한 확인
-      if (!targetUser.getId().equals(targetBoard.getUserEntity().getId()))
+      if (!targetUser.getId().equals(targetBoard.getUserEntity().getId())) {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+      }
 
       List<Image> targetImages = imageRepository.findAllByBoard_Id(boardId);
 
-      // 기존 이미지가 있다면 삭제
-      if (!targetImages.isEmpty()) {
-        for (Image image : targetImages) {
-          // S3에서 이미지 파일 삭제
-          String filename = image.getImgUrl().substring(image.getImgUrl().lastIndexOf("/") + 1);
-          s3FileService.deleteFile("/boardImg", filename);
-        }
+      // 기존 이미지 중 유지되어야 할 이미지 처리
+      if (existingImages != null && !existingImages.isEmpty()) {
+        List<Image> imagesToKeep = targetImages.stream()
+            .filter(image -> existingImages.contains(image.getImgUrl().substring(image.getImgUrl().lastIndexOf("/") + 1)))
+            .collect(Collectors.toList());
 
-        // 데이터베이스에서 이미지 항목 삭제
-        imageRepository.deleteAll(targetImages);
-        targetBoard.getImageList().clear(); // Board 엔티티의 이미지 리스트도 클리어
+        targetImages.removeAll(imagesToKeep); // 유지 대상이 아닌 이미지들 추출
       }
 
-      // 새로운 파일이 있으면 업로드 후 데이터베이스에 저장
+      // 삭제 대상 이미지 처리 (유지되어야 할 이미지를 제외한 나머지)
+      if (!targetImages.isEmpty()) {
+        for (Image image : targetImages) {
+          String filename = image.getImgUrl().substring(image.getImgUrl().lastIndexOf("/") + 1);
+          s3FileService.deleteFile("/boardImg", filename); // S3에서 이미지 파일 삭제
+          imageRepository.delete(image); // 데이터베이스에서 이미지 항목 삭제
+        }
+      }
+
+      // 새로운 파일들 업로드 후 데이터베이스에 저장
       if (files != null && !files.isEmpty()) {
         List<String> uploadedUrls = s3FileService.uploadIntoS3("/boardImg", files);
 
