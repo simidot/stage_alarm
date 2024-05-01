@@ -246,7 +246,7 @@ public class BoardService {
       if (existingImages != null && !existingImages.isEmpty()) {
         List<Image> imagesToKeep = targetImages.stream()
             .filter(image -> existingImages.contains(image.getImgUrl().substring(image.getImgUrl().lastIndexOf("/") + 1)))
-            .collect(Collectors.toList());
+            .toList();
 
         targetImages.removeAll(imagesToKeep); // 유지 대상이 아닌 이미지들 추출
       }
@@ -256,6 +256,7 @@ public class BoardService {
         for (Image image : targetImages) {
           String filename = image.getImgUrl().substring(image.getImgUrl().lastIndexOf("/") + 1);
           s3FileService.deleteFile("/boardImg", filename); // S3에서 이미지 파일 삭제
+          image.setBoard(null);
           imageRepository.delete(image); // 데이터베이스에서 이미지 항목 삭제
         }
       }

@@ -55,13 +55,15 @@ public class BoardController {
   }
 
   // Update
-  @PutMapping("/rewriting/{boardId}")
+  @PutMapping(value = "/rewriting/{boardId}", consumes = "multipart/form-data")
   public BoardDto rewrite(
-    @PathVariable("boardId") Long boardId,
-    @RequestBody List<MultipartFile> files,
-    @RequestBody List<String> existingImages,
-    @RequestPart BoardDto dto
+      @PathVariable("boardId") Long boardId,
+      @RequestParam(value = "files", required = false) List<MultipartFile> files,
+      @RequestParam(value = "existingImages", required = false) List<String> existingImages,
+      @RequestPart("dto") BoardDto dto
   ) {
+
+    log.info("existingImages: {}", existingImages);
     return boardService.reWriteBoard(files, existingImages, boardId, dto);
   }
 

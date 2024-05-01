@@ -72,7 +72,9 @@
           const reader = new FileReader();
           reader.onload = function(e) {
             const preview = document.getElementById('image-preview');
+            //todo 나중에 imgId를 좀 더 효율적으로 리팩토링! (같은 이미지는 중복해서 업로드를 할 수 없음)
             const imgId = "img-" + file.name.replace(/[^a-zA-Z0-9]/g, ''); // 파일 이름을 이용해 고유 ID 생성 및 특수문자 제거
+            // const imgId = file.name.split('.')[0];
             const imgElement = `<div id="${imgId}" class="img-container"><img src="${e.target.result}" alt="Image preview"><button class="delete-img-btn">X</button></div>`;
             preview.insertAdjacentHTML('beforeend', imgElement);
 
@@ -119,13 +121,13 @@
 
       // AJAX 요청
       $.ajax({
-        url: '/board',
+        url: '/boards',
         type: 'POST',
         data: formData,
         processData: false,
         contentType: false,
         success: function(response) {
-          window.location.href = `/boards/${categoryId}`
+          window.location.href = `/board/${categoryId}`
         },
         error: function(xhr, status, error) {
           if (xhr.status === 403) {
