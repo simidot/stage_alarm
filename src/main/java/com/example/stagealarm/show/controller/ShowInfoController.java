@@ -20,7 +20,7 @@ import java.util.List;
 
 @Tag(name = "ShowInfo 컨트롤러", description = "ShowInfo API입니다.")
 @RestController
-@RequestMapping("/show")
+@RequestMapping("/shows")
 @RequiredArgsConstructor
 public class ShowInfoController {
     private final ShowInfoService showInfoService;

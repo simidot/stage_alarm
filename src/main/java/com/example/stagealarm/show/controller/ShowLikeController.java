@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/show/{id}/like")
+@RequestMapping("/shows/{id}/likes")
 @RequiredArgsConstructor
 public class ShowLikeController {
     private final ShowLikeService showLikeService;
