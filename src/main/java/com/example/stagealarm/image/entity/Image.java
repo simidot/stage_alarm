@@ -15,7 +15,7 @@ public class Image extends BaseEntity {
   @Column(nullable = false)
   private String imgUrl;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JsonBackReference
   @Setter
   private Board board;

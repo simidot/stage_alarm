@@ -256,7 +256,6 @@ public class BoardService {
         for (Image image : targetImages) {
           String filename = image.getImgUrl().substring(image.getImgUrl().lastIndexOf("/") + 1);
           s3FileService.deleteFile("/boardImg", filename); // S3에서 이미지 파일 삭제
-          image.setBoard(null);
           imageRepository.delete(image); // 데이터베이스에서 이미지 항목 삭제
         }
       }
