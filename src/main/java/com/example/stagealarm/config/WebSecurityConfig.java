@@ -43,11 +43,11 @@ public class WebSecurityConfig {
 
 
                         // 유저 권한
-                        .requestMatchers(HttpMethod.GET, "/authenticated","/users", "/users/all", "users/{id}").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/shows/{id}/likes", "/shows/{id}", "/users/email/temp/send").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/shows/{id}/likes", "/comments/{id}", "/users",
-                                "/users/{id}").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/authenticated","/users", "/users/all", "users/{id}", "/boards/{categoryId}", "/boards/detail/{boardId}", "/boards/title", "/boards/content").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/shows/{id}/likes", "/shows/{id}", "/users/email/temp/send", "/boards").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/shows/{id}/likes", "/comments/{id}", "/users", "/users/{id}", "/boards/trash/{boardId}").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/comments/{id}", "/users", "/users/change-password").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/boards/rewriting/{boardId}").authenticated()
 
                         // 어드민 권한
                         .requestMatchers(HttpMethod.GET, "admin").hasRole("ADMIN")
