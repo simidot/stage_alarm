@@ -55,7 +55,7 @@ public class BoardController {
   }
 
   // Update
-  @PutMapping(value = "/rewriting/{boardId}", consumes = "multipart/form-data")
+  @PutMapping(value = "/{boardId}", consumes = "multipart/form-data")
   public BoardDto rewrite(
       @PathVariable("boardId") Long boardId,
       @RequestParam(value = "files", required = false) List<MultipartFile> files,
@@ -68,7 +68,7 @@ public class BoardController {
   }
 
   // Delete
-  @DeleteMapping("/trash/{boardId}")
+  @DeleteMapping("/{boardId}")
   public void erase(
     @PathVariable("boardId") Long boardId
   ) {

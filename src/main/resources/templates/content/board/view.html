@@ -223,6 +223,7 @@
         return;
       }
 
+      // update-view로 이동
       window.location.href = `/board/rewriting/${boardId}`;
     })
 
@@ -235,7 +236,7 @@
       }
 
       $.ajax({
-        url: `/boards/trash/${boardId}`,
+        url: `/boards/${boardId}`,
         type: 'DELETE',
         success: function (response) {
           alert('게시글이 삭제되었습니다.')

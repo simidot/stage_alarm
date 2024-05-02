@@ -1,6 +1,8 @@
 # Stage-Alarm
 
-- 프로젝트 기간: 2024.03.13 ~ 04.04
+- 프로젝트 기간: 2024.03.13 ~ 05.03
+  - 1차 프로젝트 기간: 03.13 ~ 04.04
+  - 2차 프로젝트 기간: 04.08 ~ 05.03
 - 참여 인원: BE 4명
 
 
@@ -11,7 +13,7 @@
 
 | 소개 영상 |
 |:-----:|
-|   ![i5](https://github.com/TECHIT-TEAM-i5/stage_alarm/assets/128130163/fbd350a1-4eb7-470b-a8ee-5bd5a0ea5900)    |
+|   ![i5](https://github.com/TECHIT-TEAM-i5/stage_alarm/assets/128130163/fbd350a1-4eb7-470b-a8ee-5bd5a0ea5900)   |
 
 
 
@@ -34,6 +36,7 @@
     <img src="https://img.shields.io/badge/JsonWebToken-000000?style=flat-square&logo=JSON Web Tokens&logoColor=white"/>
     <img src="https://img.shields.io/badge/Querydsl-white?style=flat-square&logo=querydsl&logoColor=white"/>
     <img src="https://img.shields.io/badge/JPA-088142?style=flat-square&logo=jpa&logoColor=white"/>
+<img src="https://img.shields.io/badge/HTTP Interface-008FC7?style=flat-square&logo=jpa&logoColor=white"/>
   <p>🖥️ FRONTEND</p>
     <img src="https://img.shields.io/badge/HTML-E34F26?style=flat-square&logo=html5&logoColor=white"/>
     <img src="https://img.shields.io/badge/CSS-1572B6?style=flat-square&logo=css3&logoColor=white"/>
@@ -53,7 +56,29 @@
     <img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white"/>
     <img src="https://img.shields.io/badge/Notion-000000?style=flat-square&logo=notion&logoColor=white"/>
     <img src="https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=figma&logoColor=white"/>
+  <br>
+    <img src="https://img.shields.io/badge/Amazon EC2-FF9900?style=flat-square&logo=amazonec2&logoColor=white"/>
+    <img src="https://img.shields.io/badge/Naver Cloud Platform-057B00?style=flat-square&logo=&logoColor=white"/>
+    <img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white"/>
+    <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white"/>
+    <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=flat-square&logo=kubernetes&logoColor=white"/>
+    <img src="https://img.shields.io/badge/nGrinder-E6502A?style=flat-square&logo=ngrinder&logoColor=white"/>
+    <img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white"/>
+    <img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white"/>
+    <img src="https://img.shields.io/badge/RabbitMQ-FF6600?style=flat-square&logo=rabbitmq&logoColor=white"/>
 </div>
+
+<details>
+<summary><strong>기획 과정</strong></summary>
+
+![ERD](image/ERD.png)
+</details>
+
+<details>
+<summary><strong>아키텍처</strong></summary>
+
+![ERD](image/ERD.png)
+</details>
 
 <details>
 <summary><strong>ERD</strong></summary>
@@ -68,6 +93,23 @@ http://localhost:8080/swagger-ui/index.html
 
 
 ![API 명세서](image/API%20명세서.png)
+</details>
+
+<details>
+<summary><strong>nGrinder 테스트 결과</strong></summary>
+
+- 결과 그래프
+
+![ERD](image/ERD.png)
+
+- 상세 그래프
+
+</details>
+
+<details>
+<summary><strong>모니터링(Grafana + Prometheus)</strong></summary>
+
+![monitoring](image/monitoring.png)
 </details>
 
 
@@ -175,7 +217,7 @@ http://localhost:8080/swagger-ui/index.html
 
 | <img src="https://github.com/fish-minkyu/fish-minkyu/assets/128130163/05ef3683-4b2d-435c-8a07-c6712221f25b" width="120" height="160"/><br/>BE 강유신 <a href="https://github.com/simidot">GitHub</a> | <img src="https://github.com/fish-minkyu/fish-minkyu/assets/128130163/70201eec-be3a-4771-9b06-6b9a7aa2557e" width="120" height="160"/><br/>BE 권혁건 <a href="https://github.com/KwonHyeokGeon">GitHub</a> | <img src="https://github.com/fish-minkyu/fish-minkyu/assets/128130163/3f56f6a8-750f-440e-a27f-d619aa30cdbb" width="120" height="160"/><br/>BE 어민규 <a href="https://github.com/fish-minkyu">GitHub</a> | <img src="https://github.com/fish-minkyu/fish-minkyu/assets/128130163/2692556c-938d-4171-b798-8f0585f28452" width="120" height="160"/><br/>BE 이강선 <a href="https://github.com/joshiaLee">GitHub</a> |
 |:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-|                                  <strong>팀장</strong> <br> &middot; 장르 CRUD <br> &middot; 아티스트CRUD <br> &middot; 프론트 <br> &middot; Amazon S3 <br> &middot; 이메일 알림                                  |                                                                       <strong>팀원</strong> <br> &middot;공연 CRUD <br> &middot; 프론트                                                                        |                                                                     <strong>팀원</strong> <br> &middot; 게시글 CRUD <br> &middot; 프론트                                                                      |                                             <strong>팀원</strong> <br> &middot; 회원가입 & 로그인 <br> &middot; 프론트 <br> &middot; Toss API <br> &middot; 이메일 인증                                              |
+|                                <strong>1차 팀장</strong> <br> &middot; 장르 CRUD <br> &middot; 아티스트CRUD <br> &middot; 프론트 <br> &middot; Amazon S3 <br> &middot; 이메일 알림                                 |                                       <strong>팀원</strong> <br> &middot;공연 CRUD <br> &middot; 프론트 <br> &middot; AWS CI/CD <br> &middot; Grafana & Prometheus 모니터링                                        |                                            <strong>팀원</strong> <br> &middot; 게시글 CRUD <br> &middot; 프론트 <br> &middot; nGrinder 부하 테스트 <br> &middot; NCP 배포                                            |                     <strong>2차 팀장</strong> <br> &middot; 회원가입 & 로그인 <br> &middot; 프론트 <br> &middot; Toss API <br> &middot; 이메일 인증 <br> &middot; 크롤링 <br> &middot; Kubernetes 배포                     |
 
 </div>
 

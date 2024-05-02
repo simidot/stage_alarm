@@ -36,7 +36,7 @@ public class BoardCommentController {
   }
 
   // Update
-  @PutMapping("/rewriting/{commentId}")
+  @PutMapping("/{commentId}")
   public BoardCommentDto rewrite(
     @PathVariable("commentId") Long commentId,
     @RequestBody BoardCommentDto dto
@@ -45,7 +45,7 @@ public class BoardCommentController {
   }
 
   // Delete
-  @DeleteMapping("/trash/{commentId}")
+  @DeleteMapping("/{commentId}")
   public void erase(
     @PathVariable("commentId") Long commentId
   ) {
