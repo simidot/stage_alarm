@@ -26,7 +26,7 @@ public class ItemViewController {
     }
 
     // 아이템 전체 조회
-    @GetMapping("/allItems")
+    @GetMapping("/item/all")
     public String items() {
         return "content/item/items";
     }

@@ -32,7 +32,7 @@ public class OrderController {
     }
 
     // 내 주문 찾기
-    @GetMapping("myOrder")
+    @GetMapping("my-orders")
     public List<ItemOrderDto> readAllByUser(
     ){
         return service.searAllByUserId();

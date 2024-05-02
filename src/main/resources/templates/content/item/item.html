@@ -47,7 +47,7 @@
   $(document).ready(function() {
     // 쿼리파라미터 추출
     const itemId = new URLSearchParams(window.location.search).get('id');
-    const clientKey = 'test_ck_ma60RZblrqNP0PZ5wnXR8wzYWBn1';
+    const clientKey = 'test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm';
     const paymentWidget = PaymentWidget(clientKey, PaymentWidget.ANONYMOUS);
 
     $.get(`/items/${itemId}`, function(body) {
@@ -60,11 +60,16 @@
       $('#item-amount').attr('max', body.amount);
       calculateTotalPrice(); // Initial total price calculation
 
-      paymentWidget.renderPaymentMethods('#payment-method', {
-        value: body.price,
-        currency: 'KRW',
-        country: 'KR'
-      }, { variantKey: 'widgetA' });
+      paymentWidget.renderPaymentMethods(
+              "#payment-method",
+              {
+                value: body.price,
+                currency: "KRW",
+                country: "KR",
+              },
+              // { variantKey: "widgetA" }
+              { variantKey: "DEFAULT" }
+      );
 
       paymentWidget.renderAgreement('#agreement', { variantKey: 'AGREEMENT' });
     }).fail(function() {
