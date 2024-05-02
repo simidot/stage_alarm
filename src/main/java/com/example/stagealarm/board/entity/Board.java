@@ -38,7 +38,7 @@ public class Board  extends BaseEntity {
   @JsonManagedReference
   private List<Image> imageList;
 
-  @OneToMany(mappedBy = "board",fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "board",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<BoardComment> commentList = new ArrayList<>();
 
   public void addImage(Image image) {
