@@ -41,13 +41,13 @@ public class WebSecurityConfig {
 
                         // 유저 권한
                         .requestMatchers(HttpMethod.GET, "/authenticated","/users", "/users/all",
-                                "users/{id}", "/boards/{categoryId}", "/boards/detail/{boardId}",
-                                "/boards/title", "/boards/content", "/my-orders" ,"/orders/{id}/payment").authenticated()
+                                "users/{id}", "/my-orders" ,"/orders/{id}/payment").authenticated()
                         .requestMatchers(HttpMethod.POST, "/shows/{id}/likes", "/shows/{id}", "/users/email/temp/send",
-                                "/boards", "/toss/confirm-payment", "/orders/{id}/cancel").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/shows/{id}/likes", "/comments/{id}", "/users", "/users/{id}", "/boards/trash/{boardId}").authenticated()
+                                "/boards", "/comments/{boardId}", "/comments/{boardId}/reply/{commentId}",
+                            "/toss/confirm-payment", "/orders/{id}/cancel").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/shows/{id}/likes", "/comments/{id}", "/users", "/users/{id}", "/boards/trash/{boardId}", "/comments/trash/{commentId}").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/comments/{id}", "/users", "/users/change-password").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/boards/rewriting/{boardId}").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/boards/rewriting/{boardId}", "/comments/rewriting/{commentId}").authenticated()
 
                         // 어드민 권한
                         .requestMatchers(HttpMethod.GET, "/admin", "/orders", "/orders/{id}").hasRole("ADMIN")
