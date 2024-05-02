@@ -62,22 +62,60 @@
     <img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white"/>
     <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white"/>
     <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=flat-square&logo=kubernetes&logoColor=white"/>
+  <br>
     <img src="https://img.shields.io/badge/nGrinder-E6502A?style=flat-square&logo=ngrinder&logoColor=white"/>
     <img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white"/>
     <img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white"/>
     <img src="https://img.shields.io/badge/RabbitMQ-FF6600?style=flat-square&logo=rabbitmq&logoColor=white"/>
+    <img src="https://img.shields.io/badge/Selenium-43B02A?style=flat-square&logo=selenium&logoColor=white"/>
+    <img src="https://img.shields.io/badge/Jsoup-304CB2?style=flat-square&logo=jsoup&logoColor=white"/>
 </div>
 
 <details>
 <summary><strong>기획 과정</strong></summary>
 
-![ERD](image/ERD.png)
+
+<p style="font-size: 20px">매주 평일, 오후 13:00에 간단한 회의 진행(기획 아이템 토의, 진행상황 & 특이사항 공유)</p>
+
+![conference](image/coffee-chat.png)
+
+---
+
+<p style="font-size: 20px">팀 규칙</p>
+
+![tean-rule](image/team-rule.png)
+
+---
+ 
+<p style="font-size: 20px">역할 분배 (출처. Google-docs)</p>
+
+![google](image/google-docs.png)  
+
+---
+
+![code-convention](image/code-convention.png)
+
+---
+
+![git-branch](image/git-branch.png)
+
+---
+ 
+![discussion](image/discusstion.png)
+
+---
+ 
+![justice](image/request.png)
 </details>
 
 <details>
 <summary><strong>아키텍처</strong></summary>
 
-![ERD](image/ERD.png)
+- Version. A (Kubernetes 서버 환경)
+![version-a](image/version-a.png)
+
+- Version. B (AWS EC2 CI/CD)
+![version-b](image/version-b.png)
 </details>
 
 <details>
@@ -92,24 +130,56 @@
 http://localhost:8080/swagger-ui/index.html
 
 
-![API 명세서](image/API%20명세서.png)
+![API 명세서](image/api-명세서.png)
 </details>
 
 <details>
 <summary><strong>nGrinder 테스트 결과</strong></summary>
 
-- 결과 그래프
+<p style="font-size: 20px">결과 그래프</p>
 
-![ERD](image/ERD.png)
+![nGrinder-result](image/nGrinder-result.png)
 
-- 상세 그래프
+`실험 조건`  
+Vusers: 3000  
+Run time: 3m  
+배포 서버 스팩: CPU 2개, 메모리 8GB
 
+
+`실험 목적`  
+ 쿠버네티스를 통해 구현한 오토 스케일링(Autoscaling), 로드 밸런싱(load balancing) 기능과  
+함께 배포한 서버들의 부하 테스트를 한 실험이다.
+
+ 본 실험의 목적은 배포된 서버의 개수에 따라 감당할 수 있는 부하량을 측정하기 위함이며  
+배포된 서버가 많을 수록 부하를 고르게 분산할 수 있어 안정적이고 성능 향상을 할 수 있다는 것을 증명하기 위함이다.
+
+---
+
+<p style="font-size: 20px">상세 그래프</p>
+
+`서버 1개`
+![single-test](image/single-test.png)
+
+---
+`서버 2개`
+![double-test](image/double-test.png)
+
+---
+`서버 3개`
+![triple-test](image/triple-test.png)  
+
+---
+`서버 4개`
+![quadruple-test](image/quadruple-test.png)
 </details>
 
 <details>
 <summary><strong>모니터링(Grafana + Prometheus)</strong></summary>
 
 ![monitoring](image/monitoring.png)
+
+모니터링 데이터를 수집하고 저장하여 시각화하였다.  
+(CPU 사용률, 메모리 사용률, HTTP 트래픽 감시 등등)
 </details>
 
 
