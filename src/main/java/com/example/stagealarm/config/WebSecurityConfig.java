@@ -43,7 +43,8 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/authenticated","/users", "/users/all",
                                 "users/{id}", "/my-orders" ,"/orders/{id}/payment").authenticated()
                         .requestMatchers(HttpMethod.POST, "/shows/{id}/likes", "/shows/{id}", "/users/email/temp/send",
-                                "/boards", "/toss/confirm-payment", "/orders/{id}/cancel",
+                                "/boards", "/comments/{boardId}", "/comments/{boardId}/reply/{commentId}",
+                                "/toss/confirm-payment", "/orders/{id}/cancel",
                                 "/artists/{id}/like", "/artists/{id}/subscribe").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/shows/{id}/likes", "/comments/{id}", "/users", "/users/{id}", "/boards/trash/{boardId}").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/comments/{id}", "/users", "/users/change-password").authenticated()
