@@ -45,16 +45,19 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/shows/{id}/likes", "/shows/{id}", "/users/email/temp/send",
                                 "/boards", "/comments/{boardId}", "/comments/{boardId}/reply/{commentId}",
                                 "/toss/confirm-payment", "/orders/{id}/cancel",
-                                "/artists/{id}/like", "/artists/{id}/subscribe").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/shows/{id}/likes", "/comments/{id}", "/users", "/users/{id}", "/boards/trash/{boardId}").authenticated()
+                                "/artists/{id}/like", "/artists/{id}/subscribe", "/genres/{id}/subscribe").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/shows/{id}/likes", "/comments/{id}", "/users",
+                                "/users/{id}", "/boards/trash/{boardId}").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/comments/{id}", "/users", "/users/change-password").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/boards/rewriting/{boardId}", "/comments/rewriting/{commentId}").authenticated()
 
                         // 어드민 권한
                         .requestMatchers(HttpMethod.GET, "/admin", "/orders", "/orders/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/show/{id}/update", "/shows/{id}", "/items", "/artists/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/shows", "/items", "/artists", "/artists/artist-check").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/shows/{id}", "/items/{id}", "/artists/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/shows", "/items", "/artists", "/artists/artist-check",
+                                "/genres").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/shows/{id}", "/items/{id}", "/artists/{id}", "/genres/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/genres/{id}").hasRole("ADMIN")
 
                         .anyRequest()
                         .permitAll()
