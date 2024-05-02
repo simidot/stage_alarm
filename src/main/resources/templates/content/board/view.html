@@ -160,7 +160,7 @@
             function comments() {
               // 댓글 데이터를 서버로 전송
               $.ajax({
-                url: `/comments/${boardId}`,
+                url: `/board-comments/${boardId}`,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(commentData),

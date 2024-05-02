@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "BoardComment 컨트롤러", description = "BoardComment API입니다.")
 @Slf4j
 @RestController
-@RequestMapping("/comments")
+@RequestMapping("/board-comments")
 @RequiredArgsConstructor
 public class BoardCommentController {
   private final BoardCommentService boardCommentService;
