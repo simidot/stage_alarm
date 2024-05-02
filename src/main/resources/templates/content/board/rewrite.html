@@ -57,14 +57,10 @@
   $(document).ready(function () {
     const boardId = [[${boardId}]];
     let imageFiles = []; // 이미지 파일들을 저장할 전역 배열
-
     let deletedImageNames = []; // 삭제된 이미지 이름을 저장할 배열
 
     // 페이지 로드 시 기존 데이터 가져오기 함수 호출 후 처리
     fetchPostData(boardId).then(existingImageUrls => {
-
-      console.log("existingImageUrls " + existingImageUrls.length)
-
       if (existingImageUrls.length > 0) {
         existingImageUrls.forEach(imageUrl => {
           // 기존 이미지 정보를 객체 형태로 추가
@@ -76,8 +72,6 @@
 
           // 기존 이미지 미리보기 추가
           setupExistingImagePreviewAndDelete(imageUrl, deletedImageNames);
-
-          // 여기다가 로직을 추가해야 할 것 같음
         });
       }
     })
@@ -90,17 +84,10 @@
           const file = files[i];
           imageFiles.push(file); // 전역 배열에 파일 추가
 
-          console.log('imageFiles', imageFiles)
-
           const reader = new FileReader();
           reader.onload = function(e) {
             const preview = document.getElementById('image-preview');
             const imgId = "img-" + file.name.replace(/[^a-zA-Z0-9]/g, ''); // 파일 이름을 이용해 고유 ID 생성 및 특수문자 제거
-
-            console.log("file: ", file)
-            console.log("file.name: ", file.name)
-            console.log("new imgId: ", imgId)
-
             const imgElement = `<div id="${imgId}" class="img-container">
                                   <img src="${e.target.result}" alt="Image preview"><button class="delete-img-btn">X</button>
                                 </div>`;
@@ -116,20 +103,6 @@
     $('.image-upload-label').click(function() {
       $('#image-upload').click();
     });
-
-
-
-    function addDeleteEventListener(imageObject, imgId) {
-      document.getElementById(imgId).querySelector('.delete-img-btn').addEventListener('click', function() {
-        // 미리보기에서 이미지 컨테이너 삭제
-        document.getElementById(imgId).remove();
-        deletedImageNames = imageFiles.filter(f => {
-          if (f.type === 'existing') {
-            deletedImageNames.push(f.name);
-          }
-        })
-      });
-    }
 
     // "등록" 버튼 클릭 이벤트
     $('#write-button').click(function (e) {
@@ -166,23 +139,33 @@
         "content": content
       })], {type: "application/json"}));
 
-      // AJAX 요청
-      $.ajax({
-        url: `/boards/rewriting/${boardId}`,
-        type: 'PUT',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-          window.location.href = `/board/${categoryId}`
-        },
-        error: function(xhr, status, error) {
-          if (xhr.status === 403) {
-            alert("권한이 없습니다.");
-            window.history.back();
+      rewrite()
+      function rewrite() {
+        // AJAX 요청
+        $.ajax({
+          url: `/boards/rewriting/${boardId}`,
+          type: 'PUT',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            window.location.href = `/board/${categoryId}`
+          },
+          error: function (xhr, textStatus, error) {
+            // 토큰 만료 -> 재발급
+            if (xhr.status === 401) {
+              console.log("refreshToken");
+              refreshToken(rewrite);
+            } else if (xhr.status === 403) {
+              alert("권한이 없습니다.");
+              console.log(xhr.status);
+              window.history.back();
+            } else {
+              console.error("오류: " + textStatus + ": " + error);
+            }
           }
-        }
-      });
+        });
+      }
     });
   });
 </script>

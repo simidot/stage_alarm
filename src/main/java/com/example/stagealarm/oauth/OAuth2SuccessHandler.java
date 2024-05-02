@@ -57,7 +57,7 @@ public class OAuth2SuccessHandler
             // 중복된 이메일이 있을 경우, 과거에 가입한 sns 가 아닐시 중복 알림 페이지로 리다이렉트
             String sns= userService.searchByEmail(email).getLoginId().split(":")[0];
             if(!Objects.equals(provider, sns)){
-                String duplicateEmailPage = "http://localhost:8080/user/email-duplicate";
+                String duplicateEmailPage = "https://stage-alarm.shop/user/email-duplicate";
                 getRedirectStrategy().sendRedirect(request, response, duplicateEmailPage);
                 return;
             }

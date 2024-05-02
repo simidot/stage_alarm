@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/genre/{id}/subscribe")
+@RequestMapping("/genres/{id}/subscribe")
 public class GenreSubscribeController {
     private final GenreSubscribeService subscribeService;
 

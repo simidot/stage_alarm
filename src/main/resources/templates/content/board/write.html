@@ -119,23 +119,33 @@
         "content": content
       })], {type: "application/json"}));
 
-      // AJAX 요청
-      $.ajax({
-        url: '/boards',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-          window.location.href = `/board/${categoryId}`
-        },
-        error: function(xhr, status, error) {
-          if (xhr.status === 403) {
-            alert("권한이 없습니다.");
-            window.history.back();
+      write();
+      function write() {
+        // AJAX 요청
+        $.ajax({
+          url: '/boards',
+          type: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            window.location.href = `/board/${categoryId}`
+          },
+          error: function (xhr, textStatus, error) {
+            // 토큰 만료 -> 재발급
+            if (xhr.status === 401) {
+              console.log("refreshToken");
+              refreshToken(write);
+            } else if (xhr.status === 403) {
+              alert("권한이 없습니다.");
+              console.log(xhr.status);
+              window.history.back();
+            } else {
+              console.error("오류: " + textStatus + ": " + error);
+            }
           }
-        }
-      });
+        });
+      }
     });
   });
 </script>

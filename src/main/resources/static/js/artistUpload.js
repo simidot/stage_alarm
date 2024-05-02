@@ -5,7 +5,7 @@ let selectedGenres = [];
 let selectedGenreIds = [];
 $(document).ready(function () {
     $.ajax({
-        url: "/genre/all",
+        url: "/genres/all",
         type: "GET",
         success: function (response) {
             // 장르 정보를 반복하여 HTML에 추가

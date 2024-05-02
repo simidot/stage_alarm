@@ -1,5 +1,20 @@
 $(document).ready(function () {
 
+    $.ajax({
+        type: 'GET',
+        url: '/authenticated',
+        success: function(response) {
+            console.log('Permission granted');
+            // 성공하면 그대로 진행시켜서 기존 로직이 흘러가게 한다.
+        },
+        error: function(xhr, status, error) {
+            console.error('Permission denied:', xhr.responseText);
+            alert('권한이 없습니다.');
+            // 그림에서 3. reject 됐을때 바로 뒤로가는 부분
+            location.href = '/' // 알림창을 띄우고 메인페이지로 이동
+        }
+    });
+
     fetchArtists(0);
     fetchGenres();
 
@@ -39,7 +54,7 @@ $(document).ready(function () {
     function fetchArtists(page){
     const size = 9;
     $.ajax({
-        url: "/artist",
+        url: "/artists",
         type: "GET",
         data: {
             "page": page,
@@ -73,7 +88,7 @@ $(document).ready(function () {
         const page = 0;
         const size = 9;
         $.ajax({
-            url: "/artist/search",
+            url: "/artists/search",
             type: "GET",
             data: {
                 "param": searchParam,
@@ -107,7 +122,7 @@ $(document).ready(function () {
 
 function fetchGenres() {
     $.ajax({
-        url: "/genre",
+        url: "/genres",
         type: "GET",
         success: function (data) {
             renderGenres(data);
@@ -281,7 +296,7 @@ function handleLikeButtonClick() {
 
     // 좋아요 AJAX 요청
     $.ajax({
-        url: "/artist/" + artistId + "/like",
+        url: "/artists/" + artistId + "/like",
         type: "POST",
         contentType: "application/json",
         success: function (data) {
@@ -319,7 +334,7 @@ function handleArtistSubscribeButtonClick() {
 
     // 아티스트 구독 AJAX 요청
     $.ajax({
-        url: "/artist/" + artistId + "/subscribe",
+        url: "/artists/" + artistId + "/subscribe",
         type: "POST",
         contentType: "application/json",
         success: function (data) {
@@ -338,7 +353,7 @@ function handleArtistSubscribeButtonClick() {
 
 function redirectToUpdatePage() {
     const id = $(this).data('artist-id');
-    window.location.href='/artists/'+id+'/update';
+    window.location.href='/artist/'+id+'/update';
 }
 
 // 장르 구독 버튼 클릭 이벤트 핸들러
@@ -356,7 +371,7 @@ function redirectToUpdatePage() {
 
         // 장르 구독 상태를 서버에 업데이트하는 AJAX 요청
         $.ajax({
-            url: "/genre/" + genreId + "/subscribe",
+            url: "/genres/" + genreId + "/subscribe",
             type: "POST",
             contentType: "application/json",
             success: function (data) {
