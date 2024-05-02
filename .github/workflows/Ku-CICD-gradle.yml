@@ -1,8 +1,8 @@
 name: CI/CD Pipeline
 
 on:
-#  push:
-#    branches: [ dev ]
+ push:
+   branches: [ test ]
 #  pull_request:
 #    branches: [ dev ]
 # 테스트를 우선 진행
