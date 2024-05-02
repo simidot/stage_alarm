@@ -10,7 +10,7 @@ function loadData(pageNumber, sortParam) {
   const categoryId = getPathParam(2); // URL에서 categoryId 추출
 
   $.ajax({
-    url: `/board/${categoryId}`,
+    url: `/boards/${categoryId}`,
     type: 'GET',
     contentType: 'application/json',
     data: {
@@ -30,7 +30,7 @@ function loadData(pageNumber, sortParam) {
         const boardRow = `
                     <tr>
                         <td>${board.id}</td>
-                        <td><a href="/boards/view/${board.id}" class="boardTitle" style="color: black">${board.title}</a></td>
+                        <td><a href="/board/view/${board.id}" class="boardTitle" style="color: black">${board.title}</a></td>
                         <td>${board.writer}</td>
                         <td>${board.createdAt}</td>
                         <td>${board.views}</td>
@@ -203,19 +203,21 @@ function deleteComment(commentId) {
 }
 
 // 기존 이미지 미리보기 및 삭제 이벤트 리스너 설정 함수
-function setupExistingImagePreviewAndDelete(imageUrl) {
+function setupExistingImagePreviewAndDelete(imageUrl, deletedImageNames) {
   const preview = document.getElementById('image-preview');
   const imageUrlParts = imageUrl.split('/');
   const imageName = imageUrlParts[imageUrlParts.length - 1];
-  const imgId = "existing-img-" + imageName.replace(/[^a-zA-Z0-9]/g, ''); // 파일 이름을 이용해 고유 ID 생성 및 특수문자 제거
+  const imgId = imageName.split('.')[0];
   const imgElement = `<div id="${imgId}" class="img-container"><img src="${imageUrl}" alt="Image preview"><button class="delete-img-btn">X</button></div>`; // 전체 URL을 src 속성에 사용
   preview.insertAdjacentHTML('beforeend', imgElement);
 
   // 기존 이미지 삭제 버튼 이벤트 리스너 추가
   document.getElementById(imgId).querySelector('.delete-img-btn').addEventListener('click', function() {
     document.getElementById(imgId).remove();
-    // existingImageArr에서 해당 이미지 URL 삭제
-    existingImageArr = existingImageArr.filter(e => e !== imageUrl);
+    // // existingImageArr에서 해당 이미지 URL 삭제
+    // existingImageArr = existingImageArr.filter(e => e !== imageUrl);
+    deletedImageNames.push(imgId);
+    console.log("deleteImageNames: ", deletedImageNames)
   });
 }
 
@@ -226,7 +228,7 @@ async function fetchPostData(boardId) {
   const fetchData = () => {
     return new Promise((resolve, reject) => {
       $.ajax({
-        url: `/board/detail/${boardId}`,
+        url: `/boards/detail/${boardId}`,
         type: 'GET',
         success: function(response) {
           // 제목, 카테고리, 내용 필드 채우기

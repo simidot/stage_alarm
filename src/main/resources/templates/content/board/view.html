@@ -102,7 +102,7 @@
 
     // 게시판 내용 불러오기
     $.ajax({
-      url: `/board/detail/${boardId}`,
+      url: `/boards/detail/${boardId}`,
       type: 'GET',
       contentType: 'application/json',
       success: function (data) {
@@ -190,7 +190,7 @@
         return;
       }
 
-      window.location.href = '/boards/write';
+      window.location.href = '/board/new-post';
     })
 
     // 수정 버튼 클릭 이벤트
@@ -201,7 +201,7 @@
         return;
       }
 
-      window.location.href = `/boards/rewriting/${boardId}`;
+      window.location.href = `/board/rewriting/${boardId}`;
     })
 
     // 삭제 버튼 클릭 이벤트
@@ -213,11 +213,11 @@
       }
 
       $.ajax({
-        url: `/board/trash/${boardId}`,
+        url: `/boards/trash/${boardId}`,
         type: 'DELETE',
         success: function (response) {
           alert('게시글이 삭제되었습니다.')
-          window.location.href = `/boards/${categoryId}`
+          window.location.href = `/board/${categoryId}`
         },
         error: function(xhr, status, error) {
           if (xhr.status === 403) {

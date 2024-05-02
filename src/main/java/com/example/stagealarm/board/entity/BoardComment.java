@@ -23,8 +23,10 @@ public class BoardComment extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   private UserEntity userEntity;
+
   @ManyToOne(fetch = FetchType.LAZY)
   private Board board;
+
   @ManyToOne(fetch = FetchType.LAZY)
   private BoardComment parentComment;
 

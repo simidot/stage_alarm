@@ -19,7 +19,7 @@ import java.util.List;
 @Tag(name = "Board 컨트롤러", description = "Board API입니다.")
 @Slf4j
 @RestController
-@RequestMapping("/board")
+@RequestMapping("/boards")
 @RequiredArgsConstructor
 public class BoardController {
   private final BoardService boardService;
@@ -55,13 +55,16 @@ public class BoardController {
   }
 
   // Update
-  @PutMapping("/rewriting/{boardId}")
+  @PutMapping(value = "/rewriting/{boardId}", consumes = "multipart/form-data")
   public BoardDto rewrite(
-    @PathVariable("boardId") Long boardId,
-    @RequestBody List<MultipartFile> files,
-    @RequestPart BoardDto dto
+      @PathVariable("boardId") Long boardId,
+      @RequestParam(value = "files", required = false) List<MultipartFile> files,
+      @RequestParam(value = "existingImages", required = false) List<String> existingImages,
+      @RequestPart("dto") BoardDto dto
   ) {
-    return boardService.reWriteBoard(files, boardId, dto);
+
+    log.info("existingImages: {}", existingImages);
+    return boardService.reWriteBoard(files, existingImages, boardId, dto);
   }
 
   // Delete

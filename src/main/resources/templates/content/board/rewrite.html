@@ -58,7 +58,9 @@
     const boardId = [[${boardId}]];
     let imageFiles = []; // 이미지 파일들을 저장할 전역 배열
 
-// 페이지 로드 시 기존 데이터 가져오기 함수 호출 후 처리
+    let deletedImageNames = []; // 삭제된 이미지 이름을 저장할 배열
+
+    // 페이지 로드 시 기존 데이터 가져오기 함수 호출 후 처리
     fetchPostData(boardId).then(existingImageUrls => {
 
       console.log("existingImageUrls " + existingImageUrls.length)
@@ -73,33 +75,12 @@
           });
 
           // 기존 이미지 미리보기 추가
-          setupExistingImagePreviewAndDelete(imageUrl);
+          setupExistingImagePreviewAndDelete(imageUrl, deletedImageNames);
+
+          // 여기다가 로직을 추가해야 할 것 같음
         });
       }
     })
-
-    console.log("imageFiles with existingFile " + imageFiles)
-
-    // 아이콘 클릭 시, 숨겨진 파일 입력 필드 트리거
-    $('.image-upload-label').click(function() {
-      $('#image-upload').click();
-    });
-
-    function addDeleteEventListener(imageObject, imgId) {
-      document.getElementById(imgId).querySelector('.delete-img-btn').addEventListener('click', function() {
-        // 미리보기에서 이미지 컨테이너 삭제
-        document.getElementById(imgId).remove();
-        // 전역 배열에서 해당 이미지 객체 삭제
-        imageFiles = imageFiles.filter(f => {
-          if (f.type === "new") {
-            return f.name.replace(/[^a-zA-Z0-9]/g, '') !== imageObject.name.replace(/[^a-zA-Z0-9]/g, '');
-          } else {
-            // 기존 이미지의 경우
-            return imgId !== "existing-img-" + f.name.replace(/[^a-zA-Z0-9]/g, '');
-          }
-        });
-      });
-    }
 
     // 이미지 추가 시, 미리보기 및 배열에 저장
     document.getElementById('image-upload').addEventListener('change', function(e) {
@@ -109,20 +90,46 @@
           const file = files[i];
           imageFiles.push(file); // 전역 배열에 파일 추가
 
+          console.log('imageFiles', imageFiles)
+
           const reader = new FileReader();
           reader.onload = function(e) {
             const preview = document.getElementById('image-preview');
             const imgId = "img-" + file.name.replace(/[^a-zA-Z0-9]/g, ''); // 파일 이름을 이용해 고유 ID 생성 및 특수문자 제거
-            const imgElement = `<div id="${imgId}" class="img-container"><img src="${e.target.result}" alt="Image preview"><button class="delete-img-btn">X</button></div>`;
-            preview.insertAdjacentHTML('beforeend', imgElement);
 
-            // 이미지 삭제 버튼 이벤트 리스너 추가
-            addDeleteEventListener(file, imgId);
+            console.log("file: ", file)
+            console.log("file.name: ", file.name)
+            console.log("new imgId: ", imgId)
+
+            const imgElement = `<div id="${imgId}" class="img-container">
+                                  <img src="${e.target.result}" alt="Image preview"><button class="delete-img-btn">X</button>
+                                </div>`;
+            preview.insertAdjacentHTML('beforeend', imgElement);
           };
+
           reader.readAsDataURL(file);
         }
       }
     });
+
+    // 아이콘 클릭 시, 숨겨진 파일 입력 필드 트리거
+    $('.image-upload-label').click(function() {
+      $('#image-upload').click();
+    });
+
+
+
+    function addDeleteEventListener(imageObject, imgId) {
+      document.getElementById(imgId).querySelector('.delete-img-btn').addEventListener('click', function() {
+        // 미리보기에서 이미지 컨테이너 삭제
+        document.getElementById(imgId).remove();
+        deletedImageNames = imageFiles.filter(f => {
+          if (f.type === 'existing') {
+            deletedImageNames.push(f.name);
+          }
+        })
+      });
+    }
 
     // "등록" 버튼 클릭 이벤트
     $('#write-button').click(function (e) {
@@ -142,12 +149,12 @@
       // 이미지 파일들을 formData에 추가
       if (imageFiles.length > 0) {
         for (let i = 0; i < imageFiles.length; i++) {
-          // todo 서버에서 기존 이미지를 받았으면 update를 하지 않는 로직 수정 필요
-          if (imageFiles[i].type === "existing") {
-            // 기존 이미지의 경우, 파일 대신 파일 정보를 추가
+          // 삭제되지 않은 기존 이미지만을 체크합니다.
+          if (imageFiles[i].type === "existing" && !deletedImageNames.includes(imageFiles[i].name.split('.')[0])) {
+            console.log('existingImages :', imageFiles[i].name.split('.')[0])
             formData.append('existingImages', imageFiles[i].name);
-          } else {
-            // 새 이미지 파일의 경우
+          } else if (imageFiles[i].type !== "existing") {
+            // 새 이미지 파일
             formData.append('files', imageFiles[i]);
           }
         }
@@ -161,13 +168,13 @@
 
       // AJAX 요청
       $.ajax({
-        url: `/board/rewriting/${boardId}`,
+        url: `/boards/rewriting/${boardId}`,
         type: 'PUT',
         data: formData,
         processData: false,
         contentType: false,
         success: function(response) {
-          window.location.href = `/boards/${categoryId}`
+          window.location.href = `/board/${categoryId}`
         },
         error: function(xhr, status, error) {
           if (xhr.status === 403) {
