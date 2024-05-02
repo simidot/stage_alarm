@@ -100,87 +100,109 @@
     const boardId = getPathParam(3);
     const categoryId = [[${categoryId}]];
 
-    // 게시판 내용 불러오기
-    $.ajax({
-      url: `/boards/detail/${boardId}`,
-      type: 'GET',
-      contentType: 'application/json',
-      success: function (data) {
-        // 게시물 헤더 생성
-        const boardHeader = `
+    view();
+    function view() {
+      // 게시판 내용 불러오기
+      $.ajax({
+        url: `/boards/detail/${boardId}`,
+        type: 'GET',
+        contentType: 'application/json',
+        success: function (data) {
+          // 게시물 헤더 생성
+          const boardHeader = `
                   <h2>${data.title}</h2>
                   <p>${data.loginId}</p>
                   <hr>
                 `;
 
-        // imageList가 있을 경우 실행
-        if (data.imageList.length > 0) {
-          let imageHtml = `<div class="image-container">`;
-          data.imageList.forEach(image => {
-            imageHtml += `<img src="${image.imgUrl}" alt="Board Image" style="max-width:400px; max-height: 500px;">`;
-          });
-          imageHtml += `</div>`;
+          // imageList가 있을 경우 실행
+          if (data.imageList.length > 0) {
+            let imageHtml = `<div class="image-container">`;
+            data.imageList.forEach(image => {
+              imageHtml += `<img src="${image.imgUrl}" alt="Board Image" style="max-width:400px; max-height: 500px;">`;
+            });
+            imageHtml += `</div>`;
 
-          $('.board-image').append(imageHtml);
-        }
+            $('.board-image').append(imageHtml);
+          }
 
-        // 텍스트 컨텐츠 생성
-        const boardBody = `
+          // 텍스트 컨텐츠 생성
+          const boardBody = `
                         <div>
                           <p>${data.content}</p>
                         </div>
                         <hr>
                     `;
 
-        $('.board-header').append(boardHeader);
-        $('.board-body').append(boardBody);
+          $('.board-header').append(boardHeader);
+          $('.board-body').append(boardBody);
 
-        // 댓글 컨텐츠 생성
-        const commentsHtml = displayComments(data.commentList, boardId);
-        $('.comments-section').append(commentsHtml);
+          // 댓글 컨텐츠 생성
+          const commentsHtml = displayComments(data.commentList, boardId);
+          $('.comments-section').append(commentsHtml);
 
-        // 댓글 작성 버튼 클릭 이벤트
-        $('.enroll-button').click(function() {
-          // 댓글 내용 가져오기
-          const commentContent = $('.input-container').val();
-          // 댓글 공간 확인
-          if (!commentContent.trim()) {
-            alert('댓글 내용을 입력해주세요.');
-            return;
-          }
+          // 댓글 작성 버튼 클릭 이벤트
+          $('.enroll-button').click(function() {
+            // 댓글 내용 가져오기
+            const commentContent = $('.input-container').val();
+            // 댓글 공간 확인
+            if (!commentContent.trim()) {
+              alert('댓글 내용을 입력해주세요.');
+              return;
+            }
 
-          // 댓글 데이터를 JSON 객체로 생성
-          const commentData = {
-            content: commentContent
-          };
+            // 댓글 데이터를 JSON 객체로 생성
+            const commentData = {
+              content: commentContent
+            };
 
-          // 댓글 데이터를 서버로 전송
-          $.ajax({
-            url: `/comments/${boardId}`,
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(commentData),
-            success: function(response) {
-              $('.input-container').val('');
-              // 새 댓글을 페이지에 추가
-              addCommentToPage(response);
-            },
-            error: function(xhr, status, error) {
-              if (xhr.status === 403) {
-                alert("권한이 없습니다.");
-                window.history.back();
-              }
+            comments();
+            function comments() {
+              // 댓글 데이터를 서버로 전송
+              $.ajax({
+                url: `/comments/${boardId}`,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(commentData),
+                success: function(response) {
+                  $('.input-container').val('');
+                  // 새 댓글을 페이지에 추가
+                  addCommentToPage(response);
+                },
+                error: function (xhr, textStatus, error) {
+                  // 토큰 만료 -> 재발급
+                  if (xhr.status === 401) {
+                    console.log("refreshToken");
+                    refreshToken(comments);
+                  } else if (xhr.status === 403) {
+                    alert("권한이 없습니다.");
+                    console.log(xhr.status);
+                    window.history.back();
+                  } else {
+                    console.error("오류: " + textStatus + ": " + error);
+                  }
+                }
+              });
             }
           });
-        });
-      },
-      error: function (xhr, status, error) {
-        if (xhr.status === 403) {
-          alert("권한이 없습니다.");
-          window.history.back();
+        },
+        error: function (xhr, textStatus, error) {
+          // 토큰 만료 -> 재발급
+          if (xhr.status === 401) {
+            console.log("refreshToken");
+            refreshToken(view);
+          } else if (xhr.status === 403) {
+            alert("권한이 없습니다.");
+            console.log(xhr.status);
+            window.history.back();
+          } else {
+            console.error("오류: " + textStatus + ": " + error);
+          }
         }
-      }
-    });
+      });
+    }
+
+
 
     // 글쓰기 버튼 클릭 이벤트
     $('#write-button').click(function () {
