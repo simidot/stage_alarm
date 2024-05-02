@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class UserViewController {
 
     // 사용자 정보 확인
-    @GetMapping("/userInfo")
+    @GetMapping("/user/info")
     public String myProfile(
 
     ){
@@ -52,13 +52,13 @@ public class UserViewController {
     }
 
     // 소셜 로그인
-    @GetMapping("/user/oauthClient")
+    @GetMapping("/user/oauth")
     public String oauthLogin(){
         return "content/user/oauthClient";
     }
 
     // 소셜 로그인 중복 이메일 방지
-    @GetMapping("/user/emailDuplicate")
+    @GetMapping("/user/email-duplicate")
     public String emailDuplicate() {
         return "content/user/emailDuplicate";
     }

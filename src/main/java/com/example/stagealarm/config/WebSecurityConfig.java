@@ -39,6 +39,22 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         // 모든 경로는 접근 가능하다.
+
+
+
+                        // 유저 권한
+                        .requestMatchers(HttpMethod.GET, "/authenticated","/users", "/users/all", "users/{id}").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/shows/{id}/likes", "/shows/{id}", "/users/email/temp/send").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/shows/{id}/likes", "/comments/{id}", "/users",
+                                "/users/{id}").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/comments/{id}", "/users", "/users/change-password").authenticated()
+
+                        // 어드민 권한
+                        .requestMatchers(HttpMethod.GET, "admin").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/show/{id}/update", "/shows/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/shows").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/shows/{id}").hasRole("ADMIN")
+
                         .anyRequest()
                         .permitAll()
                 )

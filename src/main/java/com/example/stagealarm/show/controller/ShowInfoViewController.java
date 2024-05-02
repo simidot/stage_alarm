@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/shows")
+@RequestMapping("/show")
 public class ShowInfoViewController {
     @GetMapping
     public String readAll() {
@@ -18,7 +18,7 @@ public class ShowInfoViewController {
         return "content/show/show";
     }
 
-    @GetMapping("/showInfo")
+    @GetMapping("/show-Info")
     public String create() {
         return "content/show/showUpload";
     }

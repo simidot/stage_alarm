@@ -54,7 +54,7 @@
             const email = $('#email').val();
             // 이메일 인증번호를 사용자에게 보내는 요청
             $.ajax({
-                url: '/user/email-send', // 이메일 인증번호 전송 요청 URL
+                url: '/users/email-send', // 이메일 인증번호 전송 요청 URL
                 type: 'POST',
                 data: { email: email },
                 success: function(response) {
@@ -76,7 +76,7 @@
             const verificationCode = $('#verificationCode').val();
             // 이메일과 인증번호를 서버로 전송하여 검증하는 요청
             $.ajax({
-                url: '/user/email-findId', // 이메일 인증 검증 요청 URL
+                url: '/users/email/find/id', // 이메일 인증 검증 요청 URL
                 type: 'POST',
                 data: {
                     email: email,
