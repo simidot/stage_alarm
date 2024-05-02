@@ -169,7 +169,7 @@ public class ShowInfoService {
                             showInfo.getDate(),
                             endDate,
                             randomColor,
-                            "shows/" + showInfo.getId()
+                            "show/" + showInfo.getId()
                     );
                 })
                 .collect(Collectors.toList());
