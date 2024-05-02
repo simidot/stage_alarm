@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/artist/{id}/like")
+@RequestMapping("/artists/{id}/like")
 public class ArtistLikeController {
     private final ArtistLikeService likeService;
 

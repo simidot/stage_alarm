@@ -5,12 +5,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class ArtistViewController {
-    @GetMapping("/artists")
+    @GetMapping("/artist")
     public String artistUpload() {
         return "content/artist/artistUpload";
     }
 
-    @GetMapping("/artists/{id}/update")
+    @GetMapping("/artist/{id}/update")
     public String artistUpdate() {
         return "content/artist/artistUpdate";
     }

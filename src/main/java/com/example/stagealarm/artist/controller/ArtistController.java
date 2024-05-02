@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/artist")
+@RequestMapping("/artists")
 public class ArtistController {
     private final ArtistService artistService;
 

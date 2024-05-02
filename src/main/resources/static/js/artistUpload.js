@@ -77,7 +77,7 @@ $('#checkArtist').on('click', function(e) {
     // 예시 URL 및 결과 처리 로직, 실제 구현에 맞게 수정 필요
     $.ajax({
         type: "POST",
-        url: "/artist/artist-check",
+        url: "/artists/artist-check",
         data: { "artistName": artistName },
         success: function(res) {
             if (!res) {
@@ -127,7 +127,7 @@ $('#artistForm').on('submit', function(e) {
 
     $.ajax({
         type: 'POST',
-        url: '/artist',
+        url: '/artists',
         contentType: false, // contentType을 false로 설정하여 jQuery가 자동으로 multipart/form-data 형식으로 요청을 설정하도록 합니다.
         processData: false,
         data: formData, // formData 객체를 직접 전달합니다.

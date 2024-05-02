@@ -12,7 +12,7 @@ $(document).ready(function () {
     const id = path.split('/').slice(-2, -1).pop();
 
     $.ajax({
-        url: "/artist/" + id,
+        url: "/artists/" + id,
         type: "GET",
         contentType: "application/json; charset=utf-8",
         success: function (data) {
@@ -137,7 +137,7 @@ $(document).ready(function () {
         formData.append('dto', new Blob([JSON.stringify(dto)], {type: 'application/json'}));
 
         $.ajax({
-            url: "/artist/" + id,
+            url: "/artists/" + id,
             type: "PATCH",
             contentType: false,
             processData: false,
