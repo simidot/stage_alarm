@@ -38,22 +38,22 @@ public class WebSecurityConfig {
                 // csrf 보안 헤제
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // 모든 경로는 접근 가능하다.
-
-
 
                         // 유저 권한
-                        .requestMatchers(HttpMethod.GET, "/authenticated","/users", "/users/all", "users/{id}", "/boards/{categoryId}", "/boards/detail/{boardId}", "/boards/title", "/boards/content").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/shows/{id}/likes", "/shows/{id}", "/users/email/temp/send", "/boards").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/authenticated","/users", "/users/all",
+                                "users/{id}", "/boards/{categoryId}", "/boards/detail/{boardId}",
+                                "/boards/title", "/boards/content", "/my-orders" ,"/orders/{id}/payment").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/shows/{id}/likes", "/shows/{id}", "/users/email/temp/send",
+                                "/boards", "/toss/confirm-payment", "/orders/{id}/cancel").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/shows/{id}/likes", "/comments/{id}", "/users", "/users/{id}", "/boards/trash/{boardId}").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/comments/{id}", "/users", "/users/change-password").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/boards/rewriting/{boardId}").authenticated()
 
                         // 어드민 권한
-                        .requestMatchers(HttpMethod.GET, "admin").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/show/{id}/update", "/shows/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/shows").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/shows/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/admin", "/orders", "/orders/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/show/{id}/update", "/shows/{id}", "/items").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/shows", "/items").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/shows/{id}", "/items/{id}").hasRole("ADMIN")
 
                         .anyRequest()
                         .permitAll()
