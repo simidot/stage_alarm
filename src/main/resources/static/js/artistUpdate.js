@@ -35,7 +35,7 @@ $(document).ready(function () {
             }
 
             $.ajax({
-                url: "/genre/all",
+                url: "/genres/all",
                 type: "GET",
                 success: function (response) {
                     $.each(response, function (index, genre) {
