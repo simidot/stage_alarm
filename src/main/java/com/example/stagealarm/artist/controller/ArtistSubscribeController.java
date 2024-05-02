@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/artist/{id}/subscribe")
+@RequestMapping("/artists/{id}/subscribe")
 public class ArtistSubscribeController {
   private final ArtistSubscribeService subscribeService;
 
