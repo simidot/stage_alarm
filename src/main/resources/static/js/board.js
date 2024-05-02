@@ -147,7 +147,7 @@ function saveEditedComment(commentId) {
 
   // update 요청
   $.ajax({
-    url: `/comments/rewriting/${commentId}`,
+    url: `/board-comments/${commentId}`,
     type: 'PUT',
     contentType: 'application/json',
     data: JSON.stringify(commentData),
@@ -181,7 +181,7 @@ function deleteComment(commentId) {
   }
   // "확인"을 선택한 경우, AJAX 요청으로 댓글 삭제 처리
   $.ajax({
-    url: `/comments/trash/${commentId}`, // URL에 commentId 변수를 포함
+    url: `/board-comments/${commentId}`, // URL에 commentId 변수를 포함
     type: 'DELETE', // HTTP 메소드는 DELETE로 설정
     success: function(response) {
       // 댓글이 성공적으로 삭제되었을 때, 페이지 리디렉션 대신 DOM에서 해당 댓글 제거

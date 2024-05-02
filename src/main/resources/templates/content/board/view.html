@@ -160,7 +160,7 @@
             function comments() {
               // 댓글 데이터를 서버로 전송
               $.ajax({
-                url: `/comments/${boardId}`,
+                url: `/board-comments/${boardId}`,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(commentData),
@@ -223,6 +223,7 @@
         return;
       }
 
+      // update-view로 이동
       window.location.href = `/board/rewriting/${boardId}`;
     })
 
@@ -235,7 +236,7 @@
       }
 
       $.ajax({
-        url: `/boards/trash/${boardId}`,
+        url: `/boards/${boardId}`,
         type: 'DELETE',
         success: function (response) {
           alert('게시글이 삭제되었습니다.')

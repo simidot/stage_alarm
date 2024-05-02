@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "BoardComment 컨트롤러", description = "BoardComment API입니다.")
 @Slf4j
 @RestController
-@RequestMapping("/comments")
+@RequestMapping("/board-comments")
 @RequiredArgsConstructor
 public class BoardCommentController {
   private final BoardCommentService boardCommentService;
@@ -36,7 +36,7 @@ public class BoardCommentController {
   }
 
   // Update
-  @PutMapping("/rewriting/{commentId}")
+  @PutMapping("/{commentId}")
   public BoardCommentDto rewrite(
     @PathVariable("commentId") Long commentId,
     @RequestBody BoardCommentDto dto
@@ -45,7 +45,7 @@ public class BoardCommentController {
   }
 
   // Delete
-  @DeleteMapping("/trash/{commentId}")
+  @DeleteMapping("/{commentId}")
   public void erase(
     @PathVariable("commentId") Long commentId
   ) {
