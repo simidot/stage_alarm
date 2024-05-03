@@ -111,6 +111,12 @@
 <details>
 <summary><strong>아키텍처</strong></summary>
 
+MSA 아키텍처로 구성
+
+1. Main Server
+2. Crawling Server
+3. Alarm Server
+
 - Version. A (Kubernetes 서버 환경)
 ![version-a](image/version-a.png)
 
