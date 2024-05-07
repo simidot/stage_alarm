@@ -48,11 +48,10 @@ public class CategoryService {
 
   // Read
     // read category
-  public String readCategoryName(Long categoryId) {
-    Category targetCategory = categoryRepository.findById(categoryId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+  public Category readCategory(Long categoryId) {
 
-    return targetCategory.getCategory();
+    return categoryRepository.findById(categoryId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
   }
 
 

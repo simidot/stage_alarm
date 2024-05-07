@@ -16,18 +16,35 @@
           border-top: 2px solid green; /* 테이블 위에 초록색 밑줄 추가 */
           border-bottom: 2px solid green; /* 테이블 아래에 초록색 밑줄 추가 */
       }
+
       th, td {
           text-align: center;
           padding: 8px;
           border-bottom: 1px solid #ccc; /* 각 행 사이에 선 추가 */
       }
+
       thead {
           border-bottom: 1px solid #ccc;
       }
+
       .sort-buttons {
           text-align: center;
           display: flex;
           justify-content: flex-end;
+      }
+
+      .search-bar {
+          display: flex;
+          align-items: center; /* 요소들을 세로 방향으로 중앙 정렬 */
+      }
+
+      .search-bar select, .search-bar input, .search-bar button{
+          height: 40px; /* select와 input의 높이 일치 */
+          margin-right: 3px; /* 요소 간 간격 조정 */
+      }
+
+      .search-bar select {
+          width: 120px; /* select의 가로 길이 조정 */
       }
   </style>
 </head>
@@ -36,7 +53,7 @@
   <div class="main-container border rounded p-3 mt-2" style="flex: 1;"> <!-- 메인컨텐츠 주변 보더라인 잡기-->
       <div>
         <div>
-          <h3><strong>[[${category}]]</strong></h3>
+          <h3><strong>[[${category.category}]]</strong></h3>
           <div class="sort-buttons" style="margin-bottom: 10px">
             <button id="date-sort" style="margin-right: 2px" class="btn btn-secondary mr-2">작성일 순</button>
             <button id="views-sort" class="btn btn-secondary mr-2">조회 순</button>
@@ -58,7 +75,7 @@
         </table>
       </div>
     <div style="display: flex; justify-content: flex-end;">
-      <button id="write-board" style="margin-top: 10px;" class="btn btn-primary mt-2">글쓰기</button>
+      <button id="write-board" class="btn btn-primary mt-2">글쓰기</button>
     </div>
 
     <!-- 페이지네이션을 중앙에 배치하기 위한 컨테이너 -->
@@ -67,6 +84,15 @@
         <!-- 페이지네이션 항목 -->
       </ul>
     </nav>
+    <hr>
+    <div class="search-bar" style="text-align: center; justify-content: center;">
+      <select id="search-type" class="mr-1">
+        <option>제목</option>
+        <option>내용</option>
+      </select>
+      <input id="search-content" type="text" placeholder="검색어를 입력해주세요">
+      <button class="search-btn">검색</button>
+    </div>
     </div>
   </main>
 
@@ -114,6 +140,74 @@
       e.preventDefault();
       let page = $(this).text() - 1; // 페이지 번호는 0부터 시작하므로 -1
       window.location.search = `?page=${page}`; // URL에 페이지 번호 추가
+    });
+
+    // 검색 버튼 클릭 이벤트
+    $(`.search-btn`).click(function () {
+      const searchType = $('#search-type').val();
+      const searchText = $('#search-content').val().trim();
+      let searchData = {
+        categoryId: [[${category.id}]],
+        page: 0,
+        size: 20,
+        sortParam: sortParam
+      };
+      let searchUrl;
+
+      if (searchText === '') {
+        // 현재 페이지 새로고침
+        location.reload();
+      } else if (searchType === "제목") {
+        searchUrl = '/boards/title'
+        searchData['title'] = searchText;
+      } else {
+        searchUrl = '/boards/content'
+        searchData['content'] = searchText;
+      }
+
+      $.ajax({
+        url: searchUrl,
+        type: 'GET',
+        contentType: 'application/json',
+        data: searchData,
+        success: function (data) {
+          const $boardList = $('.boardList');
+          const $pagination = $('.pagination');
+          // 초기화
+          $boardList.empty();
+          $pagination.empty();
+
+          // 받아온 데이터로 게시글 목록 업데이트
+          $.each(data.content, function(index, board) {
+            const boardRow = `
+                    <tr>
+                        <td>${board.id}</td>
+                        <td><a href="/board/view/${board.id}" class="boardTitle" style="color: black">${board.title}</a></td>
+                        <td>${board.loginId}</td>
+                        <td>${board.createdAt}</td>
+                        <td>${board.views}</td>
+                    </tr>
+                `;
+            $boardList.append(boardRow); // 생성한 행을 '.boardList'에 추가합니다.
+          });
+
+          // 페이지네이션 생성
+          const totalPages = data.totalPages;
+          console.log("totalPages "+ totalPages)
+          for (let i = 0; i < totalPages; i++) {
+            const pageNumber = i + 1;
+            const $pageItem = $('<li class="page-item"><a class="page-link" href="#" style="color: black">' + pageNumber + '</a></li>');
+            $pageItem.click(function (e) {
+              e.preventDefault();
+              loadData(i, sortParam);
+            });
+            $pagination.append($pageItem);
+            console.log("pagination "+$pagination.html());
+          }
+        },
+        error: function (xhr, status, error) {
+        }
+      });
     });
   });
 </script>

@@ -8,7 +8,9 @@ import com.example.stagealarm.image.entity.Image;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public class BoardDto {
   private Long userId;
   private String loginId;
   private Long categoryId;
-  private LocalDateTime createdAt;
+  private String createdAt;
   private List<Image> imageList;
   private List<BoardCommentDto> commentList;
 
@@ -38,6 +40,17 @@ public class BoardDto {
       }
     }
 
+    LocalDateTime createdAt = entity.getCreatedAt();
+    LocalDate today = LocalDate.now();
+    String formattedDate;
+    // 오늘 생성된 게시물인 경우 날짜와 시간 모두 표시
+    if (createdAt.toLocalDate().isEqual(today)) {
+      formattedDate = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    } else {
+      // 어제 이전에 생성된 게시물인 경우 날짜만 표시
+      formattedDate = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
     return new BoardDto(
       entity.getId(),
       entity.getTitle(),
@@ -47,7 +60,7 @@ public class BoardDto {
       entity.getUserEntity().getId(),
       entity.getUserEntity().getLoginId(),
       entity.getCategory().getId(),
-      entity.getCreatedAt(),
+      formattedDate,
       entity.getImageList(),
       commentDtos
     );
