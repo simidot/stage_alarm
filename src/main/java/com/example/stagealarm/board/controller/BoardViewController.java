@@ -22,7 +22,7 @@ public class BoardViewController {
       @PathVariable("categoryId") Long categoryId,
       Model model
   ) {
-    model.addAttribute("category", categoryService.readCategoryName(categoryId));
+    model.addAttribute("category", categoryService.readCategory(categoryId));
     return "content/board/category";
   }
 
