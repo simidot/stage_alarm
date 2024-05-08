@@ -117,20 +117,6 @@
       $('#image-upload').click();
     });
 
-
-
-    function addDeleteEventListener(imageObject, imgId) {
-      document.getElementById(imgId).querySelector('.delete-img-btn').addEventListener('click', function() {
-        // 미리보기에서 이미지 컨테이너 삭제
-        document.getElementById(imgId).remove();
-        deletedImageNames = imageFiles.filter(f => {
-          if (f.type === 'existing') {
-            deletedImageNames.push(f.name);
-          }
-        })
-      });
-    }
-
     // "등록" 버튼 클릭 이벤트
     $('#write-button').click(function (e) {
       e.preventDefault(); // 폼 전송 기본 이벤트 방지
