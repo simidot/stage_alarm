@@ -41,7 +41,7 @@ function loadData(pageNumber, sortParam) {
 
       // 페이지네이션 생성
       const totalPages = data.totalPages;
-      console.log("totalPages "+ totalPages)
+
       for (let i = 0; i < totalPages; i++) {
         const pageNumber = i + 1;
         const $pageItem = $('<li class="page-item"><a class="page-link" href="#" style="color: black">' + pageNumber + '</a></li>');
@@ -67,16 +67,19 @@ function displayComments(commentList, boardId, depth = 0) {
   let commentsHtml = '';
   commentList.forEach(comment => {
     // 댓글과 대댓글 여백 구분
-    const marginStyle = `style="margin-left: ${depth * 20}px"`;
+    const marginStyle = `style="margin-left: ${depth * 50}px"`;
 
-// 댓글 or 대댓글 HTML
+    // 댓글 or 대댓글 HTML
     commentsHtml += `
       <div id="comment-${comment.id}" class="comment" ${marginStyle}>
         <p><strong>${comment.loginId}</strong></p>
         <p id="comment-content-${comment.id}">${comment.content}</p>
-        <div class="comment-footer" style="display: flex; justify-content: space-between; align-items: center;">
-          <p class="comment-date">${comment.createdAt}</p>
-          <div id="comment-actions-${comment.id}"> 
+        <div class="comment-footer" style="display: flex; justify-content: space-between">
+          <div style="display: flex;">
+            <p class="comment-date" style="margin-right: 5px">${comment.createdAt}</p>
+            ${depth === 0 ? `<a type="button" onclick="addReply('${comment.id}', '${boardId}')">답글 쓰기</a>` : ''}
+          </div>
+          <div id="comment-actions-${comment.id}" style="margin-left: auto">             
             <button type="button" class="btn btn-secondary mr-2" onclick="editComment('${comment.id}')">수정</button>
             <button type="button" class="btn btn-secondary mr-2" onclick="deleteComment('${comment.id}')">삭제</button>
           </div>
@@ -87,21 +90,24 @@ function displayComments(commentList, boardId, depth = 0) {
 
     // 대댓글이 있는 경우 재귀적으로 처리
     if (comment.childComments.length > 0) {
-      commentsHtml += displayComments(comment.childComments, depth + 1);
+      commentsHtml += displayComments(comment.childComments, boardId, depth + 1);
     }
   });
   return commentsHtml;
 }
 
-function addCommentToPage(comment) {
+function addCommentToPage(comment, boardId) {
   // 새 댓글 HTML 생성
   const newCommentHtml = `
-    <div id="comment-${comment.id}" class="comment" style="margin-left: ${comment.depth * 20}px">
+    <div id="comment-${comment.id}" class="comment">
       <p><strong>${comment.loginId}</strong></p>
       <p id="comment-content-${comment.id}">${comment.content}</p>
-      <div class="comment-footer" style="display: flex; justify-content: space-between; align-items: center;">
-        <p class="comment-date">${comment.createdAt}</p>
-        <div id="comment-actions-${comment.id}"> 
+      <div class="comment-footer" style="display: flex; justify-content: space-between">
+        <div style="display: flex;">
+          <p class="comment-date" style="margin-right: 5px">${comment.createdAt}</p>
+          <a type="button" onclick="addReply('${comment.id}', '${boardId}')">답글 쓰기</a>
+        </div>
+        <div id="comment-actions-${comment.id}" style="margin-left: auto"> 
           <button type="button" class="btn btn-secondary mr-2" onclick="editComment('${comment.id}')">수정</button>
           <button type="button" class="btn btn-secondary mr-2" onclick="deleteComment('${comment.id}')">삭제</button>
         </div>
@@ -259,3 +265,108 @@ async function fetchPostData(boardId) {
     return [];
   }
 }
+
+// ----------
+
+// 답글 쓰기 클릭 시, 함수
+function addReply(commentId, boardId) {
+  // 이미 열린 답글 입력창이 있는지 확인
+  const existingReplyBox = document.getElementById(`reply-box-${commentId}`);
+  // 이미 답글 입력창이 있으면 추가 작업을 중단
+  if (existingReplyBox) {
+    return;
+  }
+
+  // 답글 입력창 생성
+  const replyBox = document.createElement('div');
+  replyBox.id = `reply-box-${commentId}`;
+  replyBox.innerHTML = `
+    <div style="display: flex; flex-direction: column; margin-left: 20px;">
+      <textarea id="reply-content-${commentId}" class="form-control" rows="3" placeholder="댓글을 입력하세요"></textarea>
+      <div class="reply-actions" style="margin-top: 10px; display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-secondary" onclick="cancelReply('${commentId}')">취소</button>
+        <button type="button" class="btn btn-primary" onclick="saveReply('${boardId}', '${commentId}')">저장</button>
+      </div>
+    </div>
+    <hr>
+  `;
+
+  // 답글 입력창을 댓글 아래에 추가
+  const commentElement = document.getElementById(`comment-${commentId}`);
+  commentElement.appendChild(replyBox);
+}
+
+// 답글 취소 함수
+function cancelReply(commentId) {
+  const replyBox = document.getElementById(`reply-box-${commentId}`);
+  if (replyBox) {
+    replyBox.remove(); // 답글 입력창 제거
+  }
+}
+
+// 답글 저장 함수
+function saveReply(boardId, commentId) {
+  const replyContent = document.getElementById(`reply-content-${commentId}`).value;
+  // 답글 내용을 서버에 저장하는 코드를 여기에 추가
+  // 예시: axios.post('/api/comments', { commentId: commentId, content: replyContent })
+  //       .then(response => { /* 성공 처리 */ })
+  //       .catch(error => { /* 에러 처리 */ });
+
+  const commentData = {
+    content: replyContent
+  };
+
+  $.ajax({
+    url: `/board-comments/${boardId}/reply/${commentId}`,
+    type: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify(commentData),
+    success: function (response) {
+      addReplyCommentToPage(response, commentId);
+    },
+    error: function (xhr, textStatus, error) {
+      // 토큰 만료 -> 재발급
+      if (xhr.status === 401) {
+        console.log("refreshToken");
+        refreshToken(saveReply);
+      } else if (xhr.status === 403) {
+        alert("권한이 없습니다.");
+        console.log(xhr.status);
+        window.history.back();
+      } else {
+        console.error("오류: " + textStatus + ": " + error);
+      }
+    }
+  })
+
+  cancelReply(commentId); // 답글 입력창 제거
+}
+
+function addReplyCommentToPage(comment, parentCommentId) {
+  // 새 대댓글 HTML 생성
+  const newCommentHtml = `
+    <div id="comment-${comment.id}" class="comment reply-to-${parentCommentId}" style="margin-left: ${comment.depth * 50}px">
+      <p><strong>${comment.loginId}</strong></p>
+      <p id="comment-content-${comment.id}">${comment.content}</p>
+      <div class="comment-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <p class="comment-date">${comment.createdAt}</p>
+        <div id="comment-actions-${comment.id}">
+          <button type="button" class="btn btn-secondary mr-2" onclick="editComment('${comment.id}')">수정</button>
+          <button type="button" class="btn btn-secondary mr-2" onclick="deleteComment('${comment.id}')">삭제</button>
+        </div>
+      </div>
+      <hr>
+    </div>
+  `;
+
+  // 부모 댓글 아래에 있는 마지막 대댓글 찾기
+  const lastReply = $(`.reply-to-${parentCommentId}`).last();
+
+  // 마지막 대댓글이 있으면 그 다음에 새 대댓글 추가, 없으면 부모 댓글 바로 다음에 추가
+  if (lastReply.length) {
+    lastReply.after(newCommentHtml);
+  } else {
+    $(`#comment-${parentCommentId}`).after(newCommentHtml);
+  }
+}
+

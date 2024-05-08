@@ -167,7 +167,7 @@
                 success: function(response) {
                   $('.input-container').val('');
                   // 새 댓글을 페이지에 추가
-                  addCommentToPage(response);
+                  addCommentToPage(response, boardId);
                 },
                 error: function (xhr, textStatus, error) {
                   // 토큰 만료 -> 재발급
@@ -201,8 +201,6 @@
         }
       });
     }
-
-
 
     // 글쓰기 버튼 클릭 이벤트
     $('#write-button').click(function () {
