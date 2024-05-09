@@ -164,7 +164,7 @@
           window.location.href = `/board/${categoryId}`
         },
         error: function(xhr, status, error) {
-          if (xhr.status === 403) {
+          if (xhr.status === 403 || xhr.status === 401) {
             alert("권한이 없습니다.");
             window.history.back();
           }

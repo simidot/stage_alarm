@@ -214,19 +214,31 @@
       window.location.href = '/board/new-post';
     })
 
-    // 수정 버튼 클릭 이벤트
+    // 게시글 수정 버튼 클릭 이벤트
     $('#update-button').click(function () {
       const token = localStorage.getItem('jwtToken');
       if (token === null) {
         alert('로그인이 필요합니다.')
         return;
       }
-
-      // update-view로 이동
-      window.location.href = `/board/rewriting/${boardId}`;
+      // 권한이 없다면 rewrite.html을 보여주지 않기 위해 설정
+      $.ajax({
+        url: `/auth/check-authority/${boardId}`,
+        type: 'GET',
+        success: function (response) {
+          // update-view로 이동
+          window.location.href = `/board/rewriting/${boardId}`;
+        },
+        error: function(xhr, status, error) {
+          if (xhr.status === 401 || xhr.status === 403) {
+            alert("권한이 없습니다.");
+            window.history.back();
+          }
+        }
+      })
     })
 
-    // 삭제 버튼 클릭 이벤트
+    // 게시글 삭제 버튼 클릭 이벤트
     $('#delete-button').click(function () {
       const token = localStorage.getItem('jwtToken');
       if (token === null) {
@@ -242,7 +254,7 @@
           window.location.href = `/board/${categoryId}`
         },
         error: function(xhr, status, error) {
-          if (xhr.status === 403) {
+          if (xhr.status === 401 || xhr.status === 403) {
             alert("권한이 없습니다.");
             window.history.back();
           }

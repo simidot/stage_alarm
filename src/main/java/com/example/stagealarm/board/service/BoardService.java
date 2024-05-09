@@ -41,7 +41,6 @@ public class BoardService {
   private final QBoardRepo qBoardRepo;
   private final S3FileService s3FileService;
   private final ImageRepository imageRepository;
-  private final JPAQueryFactory jpaQueryFactory;
 
   // Create
   @Transactional
@@ -131,16 +130,8 @@ public class BoardService {
   @Transactional
   public void deleteBoard(Long boardId) {
     try {
-      // 해당 board 가져오기
-      Board targetBoard = boardRepository.findById(boardId)
-          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-      // 삭제 요청자 정보 가져오기
-      UserEntity targetUser = auth.getUserEntity();
-
-      // 권한 확인
-      if (!targetUser.getId().equals(targetBoard.getUserEntity().getId()))
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+      // 권한 확인하고 targetBoard 가져오기
+      Board targetBoard = checkAuthority(boardId);
 
       // 이미지가 있다면 삭제 진행
       if (!targetBoard.getImageList().isEmpty()) {
@@ -195,16 +186,8 @@ public class BoardService {
       BoardDto dto
   ) {
     try {
-      // 해당 board 가져오기
-      Board targetBoard = boardRepository.findById(boardId)
-          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-      // 수정 요청자 정보 가져오기
-      UserEntity targetUser = auth.getUserEntity();
-
-      // 권한 확인
-      if (!targetUser.getId().equals(targetBoard.getUserEntity().getId()))
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+      // 권한 확인하고 targetBoard 가져오기
+      Board targetBoard = checkAuthority(boardId);
 
       // 카테고리 정보 가져오기
       Category targetCategory = categoryRepository.findById(dto.getCategoryId())
@@ -231,17 +214,8 @@ public class BoardService {
       List<String> existingImages
   ) {
     try {
-      // 해당 board 가져오기
-      Board targetBoard = boardRepository.findById(boardId)
-          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-      // 수정 요청자 정보 가져오기
-      UserEntity targetUser = auth.getUserEntity();
-
-      // 권한 확인
-      if (!targetUser.getId().equals(targetBoard.getUserEntity().getId())) {
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-      }
+      // 권한 확인하고 targetBoard 가져오기
+      Board targetBoard = checkAuthority(boardId);
 
       List<Image> targetImages = imageRepository.findAllByBoard_Id(boardId);
 
@@ -300,5 +274,20 @@ public class BoardService {
       log.error("err: {}", e.getMessage());
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "find categoryId");
     }
+  }
+
+  public Board checkAuthority(Long boardId) {
+    // 해당 board 가져오기
+    Board targetBoard = boardRepository.findById(boardId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    // 수정 요청자 정보 가져오기
+    UserEntity targetUser = auth.getUserEntity();
+
+    // 권한 확인
+    if (!targetUser.getId().equals(targetBoard.getUserEntity().getId()))
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+    return targetBoard;
   }
 }

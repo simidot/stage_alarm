@@ -73,7 +73,6 @@ public class BoardCommentService {
   }
 
   // Read
-  // todo 생성일 기준 오름차순으로 정렬되는지 체크
   public List<BoardCommentDto> readComment(Long boardId) {
     List<BoardComment> comments = boardCommentRepository.findAllByBoard_Id(boardId);
 

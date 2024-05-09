@@ -1,5 +1,7 @@
 package com.example.stagealarm.user.controller;
 
+import com.example.stagealarm.board.service.BoardService;
+import com.example.stagealarm.facade.AuthenticationFacade;
 import com.example.stagealarm.jwt.JwtResponseDto;
 import com.example.stagealarm.jwt.JwtTokenUtils;
 import com.example.stagealarm.user.service.UserService;
@@ -7,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class RestAuthController {
-
     private final UserService userService;
+    private final BoardService boardService;
     @PostMapping("/auth/refresh")
     public JwtResponseDto refreshToken(HttpServletRequest request){
         // 쿠키에있는 토큰 UUID 꺼내기
@@ -33,5 +36,10 @@ public class RestAuthController {
 
     }
 
-
+    @GetMapping("/auth/check-authority/{boardId}")
+    public void checkAuthority(
+        @PathVariable("boardId") Long boardId
+    ) {
+        boardService.checkAuthority(boardId);
+    }
 }

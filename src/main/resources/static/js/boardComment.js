@@ -109,7 +109,7 @@ function saveEditedComment(commentId) {
       commentActionsElement.style.display = 'block';
     },
     error: function(xhr, status, error) {
-      if (xhr.status === 403) {
+      if (xhr.status === 401 || xhr.status === 403) {
         alert("권한이 없습니다.");
         window.history.back();
       }
@@ -138,7 +138,7 @@ function deleteComment(commentId) {
     },
     error: function(xhr, status, error) {
       // 요청이 실패했을 때 실행할 코드
-      if (xhr.status === 403) {
+      if (xhr.status === 401 || xhr.status === 403) {
         alert("권한이 없습니다.");
         window.history.back();
       }
