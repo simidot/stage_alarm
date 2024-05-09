@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link rel="stylesheet" href="/css/writeBoard.css">
   <script src="/js/board.js"></script>
+  <script src="/js/boardAuthenticated.js"></script>
 </head>
 <body>
 
@@ -117,20 +118,6 @@
       $('#image-upload').click();
     });
 
-
-
-    function addDeleteEventListener(imageObject, imgId) {
-      document.getElementById(imgId).querySelector('.delete-img-btn').addEventListener('click', function() {
-        // 미리보기에서 이미지 컨테이너 삭제
-        document.getElementById(imgId).remove();
-        deletedImageNames = imageFiles.filter(f => {
-          if (f.type === 'existing') {
-            deletedImageNames.push(f.name);
-          }
-        })
-      });
-    }
-
     // "등록" 버튼 클릭 이벤트
     $('#write-button').click(function (e) {
       e.preventDefault(); // 폼 전송 기본 이벤트 방지
@@ -177,7 +164,7 @@
           window.location.href = `/board/${categoryId}`
         },
         error: function(xhr, status, error) {
-          if (xhr.status === 403) {
+          if (xhr.status === 403 || xhr.status === 401) {
             alert("권한이 없습니다.");
             window.history.back();
           }

@@ -193,7 +193,6 @@
 
           // 페이지네이션 생성
           const totalPages = data.totalPages;
-          console.log("totalPages "+ totalPages)
           for (let i = 0; i < totalPages; i++) {
             const pageNumber = i + 1;
             const $pageItem = $('<li class="page-item"><a class="page-link" href="#" style="color: black">' + pageNumber + '</a></li>');
@@ -202,7 +201,6 @@
               loadData(i, sortParam);
             });
             $pagination.append($pageItem);
-            console.log("pagination "+$pagination.html());
           }
         },
         error: function (xhr, status, error) {
