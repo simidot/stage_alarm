@@ -172,7 +172,7 @@
             // 예시 URL 및 결과 처리 로직, 실제 구현에 맞게 수정 필요
             $.ajax({
                 type: "POST",
-                url: "/user/loginId-check",
+                url: "/users/loginId-check",
                 data: { "loginId": loginId },
                 success: function(res) {
                     if (!res) {
@@ -199,7 +199,7 @@
             // 서버에 이메일 중복 검사 요청
             $.ajax({
                 type: "POST",
-                url: "/user/email-check",
+                url: "/users/email-check",
                 data: { "email": email },
                 success: function(res) {
                     if (!res) {
@@ -235,7 +235,7 @@
             // 인증 이메일 전송
             $.ajax({
                 type: "POST",
-                url: "/user/email-send",
+                url: "/users/email-send",
                 data: { "email": email },
                 success: function(response) {
                     // 사용자에게 성공 메시지 표시
@@ -259,7 +259,7 @@
             //여기에 인증번호 서버로 전송 및 검증 AJAX 요청 구현
             $.ajax({
                 type: "POST",
-                url: "/user/email-auth",
+                url: "/users/email-auth",
                 data: { "email": email,
                     "code": verificationCode
                 },
@@ -347,7 +347,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/user',
+                url: '/users',
                 contentType: false, // contentType을 false로 설정하여 jQuery가 자동으로 multipart/form-data 형식으로 요청을 설정하도록 합니다.
                 processData: false,
                 data: formData,
