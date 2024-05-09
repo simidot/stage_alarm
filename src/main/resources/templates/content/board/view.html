@@ -111,10 +111,17 @@
         success: function (data) {
           // 게시물 헤더 생성
           const boardHeader = `
-                  <h2>${data.title}</h2>
-                  <p>${data.loginId}</p>
-                  <hr>
-                `;
+            <div style="display: flex; justify-content: space-between;">
+              <h2>${data.title}</h2>
+              <button type="button"
+                      onclick="window.location.href='/board/' + ${data.categoryId}"
+                      style="background-color: green; color: white; width: 50px; height: 30px; border: none">
+                  목록으로
+              </button>
+            </div>
+            <p>${data.loginId}</p>
+            <hr>
+          `;
 
           // imageList가 있을 경우 실행
           if (data.imageList.length > 0) {
