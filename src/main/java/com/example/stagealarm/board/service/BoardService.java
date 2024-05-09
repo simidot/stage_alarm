@@ -93,6 +93,7 @@ public class BoardService {
       return BoardDto.fromEntity(boardRepository.save(newBoard));
     } catch (Exception e) {
       log.error("err: {}", e.getMessage());
+      if (e instanceof ResponseStatusException) throw (ResponseStatusException) e;
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "createBoard");
     }
   }
@@ -139,7 +140,7 @@ public class BoardService {
 
       // 권한 확인
       if (!targetUser.getId().equals(targetBoard.getUserEntity().getId()))
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
       // 이미지가 있다면 삭제 진행
       if (!targetBoard.getImageList().isEmpty()) {
@@ -158,6 +159,7 @@ public class BoardService {
       boardRepository.deleteById(boardId);
     } catch (Exception e) {
       log.error("err: {}", e.getMessage());
+      if (e instanceof ResponseStatusException) throw (ResponseStatusException) e;
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "deleteBoard");
     }
   }
@@ -202,7 +204,7 @@ public class BoardService {
 
       // 권한 확인
       if (!targetUser.getId().equals(targetBoard.getUserEntity().getId()))
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
       // 카테고리 정보 가져오기
       Category targetCategory = categoryRepository.findById(dto.getCategoryId())
@@ -217,6 +219,7 @@ public class BoardService {
       return BoardDto.fromEntity(boardRepository.save(targetBoard));
     } catch (Exception e) {
       log.error("err: {}", e.getMessage());
+      if (e instanceof ResponseStatusException) throw (ResponseStatusException) e;
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "update board");
     }
   }
@@ -237,7 +240,7 @@ public class BoardService {
 
       // 권한 확인
       if (!targetUser.getId().equals(targetBoard.getUserEntity().getId())) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
       }
 
       List<Image> targetImages = imageRepository.findAllByBoard_Id(boardId);
@@ -281,6 +284,7 @@ public class BoardService {
       return true;
     } catch (Exception e) {
       log.error("err: {}", e.getMessage());
+      if (e instanceof ResponseStatusException) throw (ResponseStatusException) e;
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "update image");
     }
   }
