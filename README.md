@@ -13,6 +13,7 @@
 
 | 소개 영상 |
 |:-----:|
+| [![소개 영상 유튜브로 보기](https://img.youtube.com/vi/Z9pxJ1-OkzQ/0.jpg)](https://www.youtube.com/watch?v=Z9pxJ1-OkzQ&t=10s) |
 |   ![i5](https://github.com/TECHIT-TEAM-i5/stage_alarm/assets/128130163/fbd350a1-4eb7-470b-a8ee-5bd5a0ea5900)   |
 
 
