@@ -128,13 +128,13 @@ MSA 아키텍처로 구성
 
 ---
 
-<p style="font-size: 30px">💾ERD</p>
+### 💾ERD
 
 ![ERD](image/ERD.png)
 
 ---
 
-<p style="font-size: 30px">📄API 명세서</p>
+### 📄API 명세서
 <details>
 <summary><strong>API 명세서</strong></summary>
 
@@ -145,7 +145,7 @@ http://localhost:8080/swagger-ui/index.html
 
 ---
 
-<p style="font-size: 30px">📊테스트 결과</p>
+### 📊테스트 결과
 <details>
 <summary><strong>nGrinder 테스트 결과</strong></summary>
 
